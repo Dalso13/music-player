@@ -45,6 +45,7 @@ dependencies:
   go_router: ^13.0.1
   audio_video_progress_bar: ^2.0.1
   audio_service: ^0.18.12
+  on_audio_query: ^2.9.0
 
 dev_dependencies:
   flutter_test:
