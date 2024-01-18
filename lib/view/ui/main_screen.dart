@@ -1,8 +1,11 @@
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+
+import '../view_model/state/progress_bar_state.dart';
 
 
 class MainScreen extends StatefulWidget {
@@ -55,7 +58,7 @@ class _MainScreenState extends State<MainScreen> {
             child: Center(
               child: !_hasPermission
                   ? noAccessToLibraryWidget()
-                  : viewModel.isLoading
+                  : viewModel.mainState.isLoading
                       ? const Center(
                           child: CircularProgressIndicator(),
                         )
@@ -90,27 +93,42 @@ class _MainScreenState extends State<MainScreen> {
                             ),
             ),
           ),
-          Container(
-              child: StreamBuilder<bool>(
-            initialData: false,
-            stream: viewModel.isPlaying,
-            builder: (context, snapshot) {
-              if (snapshot.data == true) {
-                return IconButton(
-                    onPressed: () {
-                      viewModel.stopMusic();
-                    },
-                    icon: const Icon(Icons.pause));
-              } else {
-                return IconButton(
-                  onPressed: () {
-                    viewModel.playMusic();
-                  },
-                  icon: const Icon(Icons.play_arrow),
-                );
-              }
-            },
-          )),
+          Column(
+            children: [
+              ValueListenableBuilder<ProgressBarState>(
+                valueListenable: viewModel.progressNotifier,
+                builder: (_, value, __) {
+                  return ProgressBar(
+                    progress: value.current,
+                    buffered: value.buffered,
+                    total: value.total,
+                    onSeek: viewModel.seek,
+                  );
+                },
+              ),
+              Container(
+                  child: StreamBuilder<bool>(
+                initialData: false,
+                stream: viewModel.isPlaying,
+                builder: (context, snapshot) {
+                  if (snapshot.data == true) {
+                    return IconButton(
+                        onPressed: () {
+                          viewModel.stopMusic();
+                        },
+                        icon: const Icon(Icons.pause));
+                  } else {
+                    return IconButton(
+                      onPressed: () {
+                        viewModel.playMusic();
+                      },
+                      icon: const Icon(Icons.play_arrow),
+                    );
+                  }
+                },
+              )),
+            ],
+          ),
         ],
       ),
     );
@@ -141,7 +159,9 @@ class _MainScreenState extends State<MainScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pop(); //창 닫기
-                        openAppSettings();
+                        openAppSettings().then((_) {
+                          checkAndRequestPermissions();
+                        });
                       },
                       child: Text("닫기"),
                     ),
