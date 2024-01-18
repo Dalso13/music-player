@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 
@@ -17,22 +18,30 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    // Check and request for permission.
-    Future.microtask(() {
-      checkAndRequestPermissions(context.read<MainViewModel>().audioQuery);
-      context.read<MainViewModel>().init();
+    checkAndRequestPermissions().then((_) {
+      if (_hasPermission){
+        Future.microtask(() {
+          context.read<MainViewModel>().init();
+        });
+      }
     });
   }
-  checkAndRequestPermissions(OnAudioQuery audioQuery ,{bool retry = false}) async {
-    // The param 'retryRequest' is false, by default.
-    _hasPermission = await audioQuery.checkAndRequest(
-      retryRequest: retry,
-    );
+  Future<void> checkAndRequestPermissions({bool retry = false}) async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.audio,
+      Permission.photos,
+      Permission.videos,
+    ].request();
 
-    // Only call update the UI if application has all required permissions.
-    _hasPermission ? setState(() {}) : null;
+    if (await Permission.audio.isGranted &&
+        await Permission.photos.isGranted &&
+        await Permission.videos.isGranted) {
+      _hasPermission = true;
+    }
+    setState(() {
+
+    });
   }
-
   @override
   Widget build(BuildContext context) {
     final MainViewModel viewModel = context.watch<MainViewModel>();
@@ -45,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
           Expanded(
             child: Center(
               child: !_hasPermission
-                  ? noAccessToLibraryWidget(viewModel.audioQuery)
+                  ? noAccessToLibraryWidget()
                   : viewModel.isLoading
                       ? const Center(
                           child: CircularProgressIndicator(),
@@ -107,7 +116,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget noAccessToLibraryWidget(OnAudioQuery audioQuery) {
+  Widget noAccessToLibraryWidget() {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -120,7 +129,26 @@ class _MainScreenState extends State<MainScreen> {
           const Text("Application doesn't have access to the library"),
           const SizedBox(height: 10),
           ElevatedButton(
-            onPressed: () => checkAndRequestPermissions(audioQuery , retry: true),
+            onPressed: () {showDialog(
+                context: context,
+                barrierDismissible: false, //바깥 영역 터치시 닫을지 여부 결정
+                builder: ((context) {
+              return AlertDialog(
+                title: Text("권한 요청"),
+                content: Text("권한을 직접 요청하셔야 합니다."),
+                actions: <Widget>[
+                  Container(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); //창 닫기
+                        openAppSettings();
+                      },
+                      child: Text("닫기"),
+                    ),
+                  ),
+                ],
+              );
+            }));},
             child: const Text("Allow"),
           ),
         ],
