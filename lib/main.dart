@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:music_player/di/di_setup.dart';
 import 'package:music_player/route/router.dart';
 
-void main() {
+void main()  {
   diSetup();
   runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {
@@ -22,3 +23,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+

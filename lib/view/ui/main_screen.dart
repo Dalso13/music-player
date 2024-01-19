@@ -1,12 +1,11 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:music_player/core/button_state.dart';
+import 'package:music_player/view/ui/progress_bar.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-
-import '../view_model/state/progress_bar_state.dart';
-
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -22,13 +21,14 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     checkAndRequestPermissions().then((_) {
-      if (_hasPermission){
+      if (_hasPermission) {
         Future.microtask(() {
           context.read<MainViewModel>().init();
         });
       }
     });
   }
+
   Future<void> checkAndRequestPermissions({bool retry = false}) async {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.audio,
@@ -41,16 +41,21 @@ class _MainScreenState extends State<MainScreen> {
         await Permission.videos.isGranted) {
       _hasPermission = true;
     }
-    setState(() {
-
-    });
+    setState(() {});
   }
+
+  @override
+  void dispose() {
+    context.read<MainViewModel>().dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final MainViewModel viewModel = context.watch<MainViewModel>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('music player'),
+        title: Text('${viewModel.currentIndex},${viewModel.shuffleIndices}'),
       ),
       body: Column(
         children: [
@@ -71,8 +76,7 @@ class _MainScreenState extends State<MainScreen> {
                               children: viewModel.songList.map((e) {
                                 return ListTile(
                                   onTap: () {
-                                    viewModel.playMusic(
-                                        path: e.getMap['_data']);
+                                    viewModel.playMusic(index: viewModel.songList.indexOf(e));
                                   },
                                   title: Text(e.displayNameWOExt,
                                       maxLines: 1,
@@ -93,43 +97,12 @@ class _MainScreenState extends State<MainScreen> {
                             ),
             ),
           ),
-          Column(
-            children: [
-              ValueListenableBuilder<ProgressBarState>(
-                valueListenable: viewModel.progressNotifier,
-                builder: (_, value, __) {
-                  return ProgressBar(
-                    progress: value.current,
-                    buffered: value.buffered,
-                    total: value.total,
-                    onSeek: viewModel.seek,
-                  );
-                },
-              ),
-              Container(
-                  child: StreamBuilder<bool>(
-                initialData: false,
-                stream: viewModel.isPlaying,
-                builder: (context, snapshot) {
-                  if (snapshot.data == true) {
-                    return IconButton(
-                        onPressed: () {
-                          viewModel.stopMusic();
-                        },
-                        icon: const Icon(Icons.pause));
-                  } else {
-                    return IconButton(
-                      onPressed: () {
-                        viewModel.playMusic();
-                      },
-                      icon: const Icon(Icons.play_arrow),
-                    );
-                  }
-                },
-              )),
-            ],
-          ),
+          const AudioBar()
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: viewModel.shufflePlayList,
+        child: Icon(Icons.shuffle),
       ),
     );
   }
@@ -147,28 +120,30 @@ class _MainScreenState extends State<MainScreen> {
           const Text("Application doesn't have access to the library"),
           const SizedBox(height: 10),
           ElevatedButton(
-            onPressed: () {showDialog(
-                context: context,
-                barrierDismissible: false, //바깥 영역 터치시 닫을지 여부 결정
-                builder: ((context) {
-              return AlertDialog(
-                title: Text("권한 요청"),
-                content: Text("권한을 직접 요청하셔야 합니다."),
-                actions: <Widget>[
-                  Container(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(); //창 닫기
-                        openAppSettings().then((_) {
-                          checkAndRequestPermissions();
-                        });
-                      },
-                      child: Text("닫기"),
-                    ),
-                  ),
-                ],
-              );
-            }));},
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  barrierDismissible: false, //바깥 영역 터치시 닫을지 여부 결정
+                  builder: ((context) {
+                    return AlertDialog(
+                      title: Text("권한 요청"),
+                      content: Text("권한을 직접 요청하셔야 합니다."),
+                      actions: <Widget>[
+                        Container(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); //창 닫기
+                              openAppSettings().then((_) {
+                                checkAndRequestPermissions();
+                              });
+                            },
+                            child: Text("닫기"),
+                          ),
+                        ),
+                      ],
+                    );
+                  }));
+            },
             child: const Text("Allow"),
           ),
         ],
