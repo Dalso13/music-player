@@ -1,11 +1,12 @@
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:music_player/core/button_state.dart';
+import 'package:go_router/go_router.dart';
+import 'package:music_player/view/ui/now_play_music_screen.dart';
 import 'package:music_player/view/ui/progress_bar.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+
+import 'music_list_view.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -53,50 +54,28 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final MainViewModel viewModel = context.watch<MainViewModel>();
+    final state = viewModel.mainState;
     return Scaffold(
       appBar: AppBar(
-        title: Text('${viewModel.currentIndex},${viewModel.shuffleIndices}'),
-      ),
+        title: Text('${state.currentIndex},${state.shuffleIndices}'),
+      ), 
       body: Column(
         children: [
           Expanded(
             child: Center(
-              child: !_hasPermission
-                  ? noAccessToLibraryWidget()
-                  : viewModel.mainState.isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : viewModel.songList.isEmpty
-                          ? const Text("Nothing found!")
-                          :
-                          // You can use [item.data!] direct or you can create a:
-                          // List<SongModel> songs = item.data!;
-                          ListView(
-                              children: viewModel.songList.map((e) {
-                                return ListTile(
-                                  onTap: () {
-                                    viewModel.playMusic(index: viewModel.songList.indexOf(e));
-                                  },
-                                  title: Text(e.displayNameWOExt,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis),
-                                  subtitle: Text(e.artist ?? "No Artist"),
-                                  // e.getMap['_data'] 파일 위치 얻기
-                                  trailing: Text('${e.duration ?? 0}',
-                                      style: TextStyle(color: Colors.grey)),
-                                  // This Widget will query/load image.
-                                  // You can use/create your own widget/method using [queryArtwork].
-                                  leading: QueryArtworkWidget(
-                                    controller: viewModel.audioQuery,
-                                    id: e.id,
-                                    type: ArtworkType.AUDIO,
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-            ),
+                child: !_hasPermission
+                    ? noAccessToLibraryWidget()
+                    : viewModel.mainState.isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : viewModel.songList.isEmpty
+                            ? const Text("Nothing found!")
+                            : const MusicListView()),
           ),
+          IconButton(onPressed: (){
+            context.push('/nowMusic');
+          }, icon: Icon(Icons.abc)),
           const AudioBar()
         ],
       ),
