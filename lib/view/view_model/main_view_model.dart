@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:flutter/material.dart';
 import 'package:music_player/core/button_state.dart';
 import 'package:music_player/data/reposiotry/audio_repository.dart';
 import 'package:music_player/data/reposiotry/song_repository.dart';
+import 'package:music_player/domain/model/audio_model.dart';
 import 'package:music_player/domain/use_case/button_change/interface/shuffle_change.dart';
 import 'package:music_player/domain/use_case/music_controller/interface/music_controller.dart';
 import 'package:music_player/domain/use_case/music_controller/interface/seek_controller.dart';
@@ -12,6 +12,7 @@ import 'package:music_player/view/view_model/state/main_state.dart';
 import 'package:music_player/view/view_model/state/progress_bar_state.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
+import '../../domain/use_case/audio_player_stream/interface/audio_player_state_stream.dart';
 import '../../domain/use_case/button_change/interface/repeat_change.dart';
 import '../../domain/use_case/play_list/interface/click_play_list_song.dart';
 
@@ -19,9 +20,8 @@ class MainViewModel extends ChangeNotifier {
   final SongRepository _songRepository;
   MainState _mainState = const MainState();
   final AudioRepository _audioRepository = AudioRepository();
-  List<SongModel> _songList = [];
-  List<SongModel> _playList = [];
-  final OnAudioQuery _audioQuery;
+  List<AudioModel> _songList = [];
+  List<AudioModel> _playList = [];
 
   // use_case
   final PlayListSetting _setMusicList;
@@ -34,6 +34,7 @@ class MainViewModel extends ChangeNotifier {
   final ShuffleChange _shuffleChange;
   final ClickPlayListSong _clickPlayListSong;
   final SeekController _seekController;
+  final AudioPlayerStateStream _audioPlayerStateStream;
   // use_case
 
   ProgressBarState _progressNotifier = ProgressBarState(
@@ -54,6 +55,7 @@ class MainViewModel extends ChangeNotifier {
     required ShuffleChange shuffleChange,
     required ClickPlayListSong clickPlayListSong,
     required SeekController seekController,
+    required AudioPlayerStateStream audioPlayerPositionStream,
   })  : _songRepository = songRepository,
         _setMusicList = setMusicList,
         _shuffleMusicList = shuffleMusicList,
@@ -65,15 +67,15 @@ class MainViewModel extends ChangeNotifier {
         _shuffleChange = shuffleChange,
         _clickPlayListSong = clickPlayListSong,
         _seekController = seekController,
-        _audioQuery = songRepository.audioQuery;
+        _audioPlayerStateStream = audioPlayerPositionStream;
 
 
 
   ProgressBarState get progressNotifier => _progressNotifier;
   MainState get mainState => _mainState;
-  List<SongModel> get songList => _songList;
-  OnAudioQuery get audioQuery => _audioQuery;
-  List<SongModel> get playList => _playList;
+  List<AudioModel> get songList => _songList;
+  OnAudioQuery get audioQuery => _songRepository.audioQuery;
+  List<AudioModel> get playList => _playList;
 
 
   void init() async {
@@ -82,7 +84,7 @@ class MainViewModel extends ChangeNotifier {
     _songList = await _songRepository.getAudioSource();
     _mainState = _mainState.copyWith(isLoading: false);
 
-    _audioPlayerStateStream();
+    _audioPlayerStateStreamController();
     _audioPlayerPositionStream();
     _audioPlayerSequenceStateStream();
 
@@ -149,29 +151,14 @@ class MainViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 오디오 플레이어 상태 조작
-  void _audioPlayerStateStream() {
+  // TODO: 오디오 플레이어 상태 조작
+  void _audioPlayerStateStreamController() {
     _audioRepository.audioPlayer.playerStateStream.listen((playerState) {
-      final isPlaying = playerState.playing;
-      final processingState = playerState.processingState;
-      if (processingState == ProcessingState.loading ||
-          processingState == ProcessingState.buffering) {
+        final ButtonState buttonState = _audioPlayerStateStream.execute(playerState);
         _mainState = _mainState.copyWith(
-            buttonState : ButtonState.loading
+          buttonState: buttonState
         );
-      } else if (!isPlaying) {
-        _mainState = _mainState.copyWith(
-            buttonState : ButtonState.paused
-        );
-      } else if (processingState != ProcessingState.completed) {
-        _mainState = _mainState.copyWith(
-            buttonState : ButtonState.playing
-        );
-      } else {
-        _audioRepository.audioPlayer.seek(Duration.zero);
-        _audioRepository.audioPlayer.pause();
-      }
-      notifyListeners();
+        notifyListeners();
     });
   }
 
@@ -217,6 +204,7 @@ class MainViewModel extends ChangeNotifier {
         buffered: oldState.buffered,
         total: totalDuration ?? Duration.zero,
       );
+      notifyListeners();
     });
   }
 

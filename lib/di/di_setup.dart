@@ -1,12 +1,18 @@
 import 'package:get_it/get_it.dart';
 import 'package:music_player/data/reposiotry/song_repository.dart';
 import 'package:music_player/data/reposiotry/song_repository_impl.dart';
+import 'package:music_player/domain/use_case/audio_player_stream/impl/audio_player_state_stream_impl.dart';
+import 'package:music_player/domain/use_case/audio_player_stream/interface/audio_player_state_stream.dart';
 import 'package:music_player/domain/use_case/button_change/interface/shuffle_change.dart';
-import 'package:music_player/domain/use_case/music_controller/interface/next_play_controller.dart';
-import 'package:music_player/domain/use_case/music_controller/interface/play_controller.dart';
-import 'package:music_player/domain/use_case/music_controller/interface/previous_play_controller.dart';
-import 'package:music_player/domain/use_case/music_controller/interface/stop_controller.dart';
+import 'package:music_player/domain/use_case/music_controller/impl/next_play_controller.dart';
+import 'package:music_player/domain/use_case/music_controller/impl/play_controller.dart';
+import 'package:music_player/domain/use_case/music_controller/impl/previous_play_controller.dart';
+import 'package:music_player/domain/use_case/music_controller/impl/seek_controller_impl.dart';
+import 'package:music_player/domain/use_case/music_controller/impl/stop_controller.dart';
+import 'package:music_player/domain/use_case/music_controller/interface/seek_controller.dart';
+import 'package:music_player/domain/use_case/play_list/impl/click_play_list_song_impl.dart';
 import 'package:music_player/domain/use_case/play_list/impl/set_music_list.dart';
+import 'package:music_player/domain/use_case/play_list/interface/click_play_list_song.dart';
 import 'package:music_player/domain/use_case/play_list/interface/play_list_setting.dart';
 import 'package:music_player/domain/use_case/play_list/interface/shuffle_play_list_setting.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
@@ -28,19 +34,45 @@ void diSetup() {
 
   getIt.registerSingleton<PlayListSetting>(SetMusicList());
   getIt.registerSingleton<ShufflePlayListSetting>(ShuffleMusicList());
+  getIt.registerSingleton<ClickPlayListSong>(ClickPlayListSongImpl());
 
   getIt.registerSingleton<RepeatChange>(RepeatChangeImpl());
   getIt.registerSingleton<ShuffleChange>(ShuffleChangeImpl());
+  getIt.registerSingleton<SeekController>(SeekControllerImpl());
+
+  getIt.registerSingleton<AudioPlayerStateStream>(AudioPlayerStateStreamImpl());
   // USE_CASE
 
-  getIt.registerFactory<MainViewModel>(() => MainViewModel(
-      songRepository: getIt<SongRepository>(),
-      setMusicList: getIt<PlayListSetting>(),
-      shuffleMusicList: getIt<ShufflePlayListSetting>(),
-      playController: getIt<PlayController>(),
-      previousPlayController: getIt<PreviousPlayController>(),
-      stopController: getIt<StopController>(),
-      nextPlayController: getIt<NextPlayController>(),
-      repeatChange: getIt<RepeatChange>(),
-      shuffleChange: getIt<ShuffleChange>()));
+  getIt.registerFactory <MainViewModel>(() => MainViewModel(
+    songRepository: getIt<SongRepository>(),
+    setMusicList: getIt<PlayListSetting>(),
+    shuffleMusicList: getIt<ShufflePlayListSetting>(),
+    playController: getIt<PlayController>(),
+    previousPlayController: getIt<PreviousPlayController>(),
+    stopController: getIt<StopController>(),
+    nextPlayController: getIt<NextPlayController>(),
+    repeatChange: getIt<RepeatChange>(),
+    shuffleChange: getIt<ShuffleChange>(),
+    clickPlayListSong: getIt<ClickPlayListSong>(),
+    seekController: getIt<SeekController>(),
+    audioPlayerPositionStream: getIt<AudioPlayerStateStream>(),
+  ));
+
+
 }
+
+
+// getIt.registerSingleton<MainViewModel>(MainViewModel(
+//   songRepository: getIt<SongRepository>(),
+//   setMusicList: getIt<PlayListSetting>(),
+//   shuffleMusicList: getIt<ShufflePlayListSetting>(),
+//   playController: getIt<PlayController>(),
+//   previousPlayController: getIt<PreviousPlayController>(),
+//   stopController: getIt<StopController>(),
+//   nextPlayController: getIt<NextPlayController>(),
+//   repeatChange: getIt<RepeatChange>(),
+//   shuffleChange: getIt<ShuffleChange>(),
+//   clickPlayListSong: getIt<ClickPlayListSong>(),
+//   seekController: getIt<SeekController>(),
+//   audioPlayerPositionStream: getIt<AudioPlayerStateStream>(),
+// ));

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_player/view/ui/now_play_music_screen.dart';
-import 'package:music_player/view/ui/progress_bar.dart';
+import 'package:music_player/view/ui/audio_bar.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -42,13 +42,6 @@ class _MainScreenState extends State<MainScreen> {
         await Permission.videos.isGranted) {
       _hasPermission = true;
     }
-    setState(() {});
-  }
-
-  @override
-  void dispose() {
-    context.read<MainViewModel>().dispose();
-    super.dispose();
   }
 
   @override
@@ -57,7 +50,7 @@ class _MainScreenState extends State<MainScreen> {
     final state = viewModel.mainState;
     return Scaffold(
       appBar: AppBar(
-        title: Text('${state.currentIndex},${state.shuffleIndices}'),
+        title: Text('Music Player'),
       ), 
       body: Column(
         children: [
@@ -74,9 +67,9 @@ class _MainScreenState extends State<MainScreen> {
                             : const MusicListView()),
           ),
           IconButton(onPressed: (){
-            context.push('/nowMusic');
+            context.push('/now-music');
           }, icon: Icon(Icons.abc)),
-          const AudioBar()
+          viewModel.playList.isEmpty ? Container() : const AudioBar()
         ],
       ),
       floatingActionButton: FloatingActionButton(

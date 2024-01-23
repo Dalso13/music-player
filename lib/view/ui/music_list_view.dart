@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
+
+import 'audio_image.dart';
 
 class MusicListView extends StatelessWidget {
   const MusicListView({super.key});
@@ -9,26 +11,25 @@ class MusicListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<MainViewModel>();
+    final state = viewModel.mainState;
     return ListView(
       children: viewModel.songList.map((e) {
+        int idx = viewModel.playList.isEmpty ? -1 : viewModel.playList.indexOf(e);
         return ListTile(
+          tileColor: idx == state.currentIndex ? Colors.grey[200] : null,
           onTap: () {
+            if (idx == state.currentIndex) {
+              return;
+            }
             viewModel.playMusic(index: viewModel.songList.indexOf(e));
           },
           title: Text(e.displayNameWOExt,
               maxLines: 1,
               overflow: TextOverflow.ellipsis),
-          subtitle: Text(e.artist ?? "No Artist"),
-          // e.getMap['_data'] 파일 위치 얻기
-          trailing: Text('${e.duration ?? 0}',
+          subtitle: Text(e.artist),
+          trailing: Text(DateFormat('mm:ss').format(DateTime.fromMillisecondsSinceEpoch(e.duration)),
               style: TextStyle(color: Colors.grey)),
-          // This Widget will query/load image.
-          // You can use/create your own widget/method using [queryArtwork].
-          leading: QueryArtworkWidget(
-            controller: viewModel.audioQuery,
-            id: e.id,
-            type: ArtworkType.AUDIO,
-          ),
+          leading: AudioImage(audioId: e.id),
         );
       }).toList(),
     );
