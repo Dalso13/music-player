@@ -4,7 +4,8 @@ import 'package:music_player/core/button_state.dart';
 import 'package:music_player/data/reposiotry/audio_repository.dart';
 import 'package:music_player/data/reposiotry/song_repository.dart';
 import 'package:music_player/domain/use_case/button_change/interface/shuffle_change.dart';
-import 'package:music_player/domain/use_case/music_controller/impl/music_controller.dart';
+import 'package:music_player/domain/use_case/music_controller/interface/music_controller.dart';
+import 'package:music_player/domain/use_case/music_controller/interface/seek_controller.dart';
 import 'package:music_player/domain/use_case/play_list/interface/play_list_setting.dart';
 import 'package:music_player/domain/use_case/play_list/interface/shuffle_play_list_setting.dart';
 import 'package:music_player/view/view_model/state/main_state.dart';
@@ -12,12 +13,12 @@ import 'package:music_player/view/view_model/state/progress_bar_state.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 import '../../domain/use_case/button_change/interface/repeat_change.dart';
+import '../../domain/use_case/play_list/interface/click_play_list_song.dart';
 
 class MainViewModel extends ChangeNotifier {
   final SongRepository _songRepository;
   MainState _mainState = const MainState();
   final AudioRepository _audioRepository = AudioRepository();
-  late final AudioPlayer _audioPlayer;
   List<SongModel> _songList = [];
   List<SongModel> _playList = [];
   final OnAudioQuery _audioQuery;
@@ -31,6 +32,8 @@ class MainViewModel extends ChangeNotifier {
   final MusicController _nextPlayController;
   final RepeatChange _repeatChange;
   final ShuffleChange _shuffleChange;
+  final ClickPlayListSong _clickPlayListSong;
+  final SeekController _seekController;
   // use_case
 
   ProgressBarState _progressNotifier = ProgressBarState(
@@ -49,6 +52,8 @@ class MainViewModel extends ChangeNotifier {
     required MusicController nextPlayController,
     required RepeatChange repeatChange,
     required ShuffleChange shuffleChange,
+    required ClickPlayListSong clickPlayListSong,
+    required SeekController seekController,
   })  : _songRepository = songRepository,
         _setMusicList = setMusicList,
         _shuffleMusicList = shuffleMusicList,
@@ -58,6 +63,8 @@ class MainViewModel extends ChangeNotifier {
         _nextPlayController = nextPlayController,
         _repeatChange = repeatChange,
         _shuffleChange = shuffleChange,
+        _clickPlayListSong = clickPlayListSong,
+        _seekController = seekController,
         _audioQuery = songRepository.audioQuery;
 
 
@@ -74,22 +81,13 @@ class MainViewModel extends ChangeNotifier {
     notifyListeners();
     _songList = await _songRepository.getAudioSource();
     _mainState = _mainState.copyWith(isLoading: false);
-    _audioPlayer = _audioRepository.audioPlayer;
 
     _audioPlayerStateStream();
     _audioPlayerPositionStream();
-
-     _audioPlayer.sequenceStateStream.listen((sequenceState) {
-      if (sequenceState == null) return;
-      _mainState = _mainState.copyWith(
-          shuffleIndices : sequenceState.shuffleIndices,
-          currentIndex : sequenceState.currentIndex,
-          isShuffleModeEnabled : sequenceState. shuffleModeEnabled
-      );
-      notifyListeners();
-    });
+    _audioPlayerSequenceStateStream();
 
     notifyListeners();
+
   }
 
   // TODO: 리스트에 곡 클릭시
@@ -118,7 +116,7 @@ class MainViewModel extends ChangeNotifier {
 
   // TODO: 프로그레스 바 클릭 이벤트
   void seek(Duration position) {
-    _audioPlayer.seek(position);
+    _seekController.execute(position: position);
   }
 
   // TODO: 다음 곡
@@ -129,6 +127,11 @@ class MainViewModel extends ChangeNotifier {
   // TODO: 이전 곡
   void previousPlay() async {
     _previousPlayController.execute();
+  }
+
+  // TODO : 플레이 리스트 곡 클릭
+  void clickPlayListSong({required int idx}) async {
+    _clickPlayListSong.execute(idx: idx);
   }
 
   // TODO: 반복 재생 버튼 클릭
@@ -145,9 +148,10 @@ class MainViewModel extends ChangeNotifier {
     await _shuffleChange.execute(isShuffleModeEnabled: _mainState.isShuffleModeEnabled);
     notifyListeners();
   }
-  //
+
+  // 오디오 플레이어 상태 조작
   void _audioPlayerStateStream() {
-    _audioPlayer.playerStateStream.listen((playerState) {
+    _audioRepository.audioPlayer.playerStateStream.listen((playerState) {
       final isPlaying = playerState.playing;
       final processingState = playerState.processingState;
       if (processingState == ProcessingState.loading ||
@@ -164,17 +168,29 @@ class MainViewModel extends ChangeNotifier {
             buttonState : ButtonState.playing
         );
       } else {
-        _audioPlayer.seek(Duration.zero);
-        _audioPlayer.pause();
+        _audioRepository.audioPlayer.seek(Duration.zero);
+        _audioRepository.audioPlayer.pause();
       }
       notifyListeners();
     });
   }
 
+  // 오디오 플레이어 재생순서 조작
+  void _audioPlayerSequenceStateStream() {
+    _audioRepository.audioPlayer.sequenceStateStream.listen((sequenceState) {
+      if (sequenceState == null) return;
+      _mainState = _mainState.copyWith(
+          shuffleIndices : sequenceState.shuffleIndices,
+          currentIndex : sequenceState.currentIndex,
+          isShuffleModeEnabled : sequenceState. shuffleModeEnabled
+      );
+      notifyListeners();
+    });
+  }
 
   // 프로그레스바 사용을 위한 메소드
   void _audioPlayerPositionStream() {
-    _audioPlayer.positionStream.listen((position) {
+    _audioRepository.audioPlayer.positionStream.listen((position) {
       final oldState = _progressNotifier;
       _progressNotifier = ProgressBarState(
         current: position,
@@ -184,7 +200,7 @@ class MainViewModel extends ChangeNotifier {
       notifyListeners();
     });
 
-    _audioPlayer.bufferedPositionStream.listen((bufferedPosition) {
+    _audioRepository.audioPlayer.bufferedPositionStream.listen((bufferedPosition) {
       final oldState = _progressNotifier;
       _progressNotifier = ProgressBarState(
         current: oldState.current,
@@ -194,7 +210,7 @@ class MainViewModel extends ChangeNotifier {
       notifyListeners();
     });
 
-    _audioPlayer.durationStream.listen((totalDuration) {
+    _audioRepository.audioPlayer.durationStream.listen((totalDuration) {
       final oldState = _progressNotifier;
       _progressNotifier = ProgressBarState(
         current: oldState.current,
@@ -206,7 +222,7 @@ class MainViewModel extends ChangeNotifier {
 
 
   void dispose() {
-    _audioPlayer.dispose();
+    _audioRepository.audioPlayer.dispose();
   }
 
 }

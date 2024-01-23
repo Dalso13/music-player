@@ -16,6 +16,7 @@ class NowPlayMusicScreen extends StatelessWidget {
     final viewModel = context.watch<MainViewModel>();
     final state = viewModel.mainState;
     final song = viewModel.playList[state.currentIndex];
+
     return Scaffold(
       appBar: AppBar(
         title: Text('${state.currentIndex}'),
@@ -37,7 +38,8 @@ class NowPlayMusicScreen extends StatelessWidget {
                     ),
                     QueryArtworkWidget(
                       nullArtworkWidget: Image.network(
-                          'https://thumb.silhouette-ac.com/t/96/9629eae865b0d9e1725335c9985216a7_t.jpeg'),
+                        'https://thumb.silhouette-ac.com/t/96/9629eae865b0d9e1725335c9985216a7_t.jpeg',
+                      ),
                       controller: viewModel.audioQuery,
                       id: viewModel.playList[state.currentIndex].id,
                       type: ArtworkType.AUDIO,
@@ -141,7 +143,9 @@ class NowPlayMusicScreen extends StatelessWidget {
             ],
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              context.push('/now-play-list');
+            },
             icon: Icon(Icons.playlist_add_check),
             iconSize: 40,
           )
