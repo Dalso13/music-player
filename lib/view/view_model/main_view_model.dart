@@ -1,5 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:music_player/data/mapper/audio_model_mapper.dart';
+import 'package:music_player/data/mapper/mediaItem_mapper.dart';
 
 import '../../core/button_state.dart';
 import '../../core/repeat_state.dart';
@@ -24,7 +26,6 @@ class MainViewModel extends ChangeNotifier {
   MainState _mainState = const MainState();
   final AudioRepository _audioRepository = AudioRepositoryImpl();
   ProgressBarState _progressNotifier = const ProgressBarState();
-  List<String> playlistNotifier = [];
 
   //background-service
   final _audioHandler = getIt<AudioHandler>();
@@ -80,8 +81,6 @@ class MainViewModel extends ChangeNotifier {
     _mainState = _mainState.copyWith(songList: await _songRepository.getAudioSource());
     _mainState = _mainState.copyWith(isLoading: false);
 
-
-    await _loadPlaylist();
     _listenToChangesInPlaylist();
     _listenToPlaybackState();
     _listenToCurrentPosition();
@@ -92,47 +91,37 @@ class MainViewModel extends ChangeNotifier {
 
   }
 
-  Future<void> _loadPlaylist() async {
-    final songList = mainState.songList.toList();
-
-    final mediaItems = songList
-        .map((song) => MediaItem(
-      id: '${song.id}',
-      title: song.displayNameWOExt,
-      extras: {'url': song.data},
-    )).toList();
-    _audioHandler.addQueueItems(mediaItems);
-    notifyListeners();
-  }
 
   // TODO: 리스트에 곡 클릭시
   void playMusic({required int index}) async {
     final songList = mainState.songList.toList();
 
-    final mediaItems = songList
-        .map((song) => MediaItem(
-      id: '${song.id}',
-      title: song.displayNameWOExt,
-      extras: {'url': song.data},
-    )).toList();
-    _audioHandler.addQueueItems(mediaItems);
-    clickPlayButton();
+    final mediaItems = songList.getRange(index, songList.length)
+        .map((song) => song.toMediaItem()).toList();
+    await _audioHandler.addQueueItems(mediaItems);
     notifyListeners();
+    clickPlayButton();
+  }
+
+  // TODO: 메인 화면 서플 버튼 누를시
+  void shufflePlayList() async {
+    final songList = mainState.songList.toList();
+    songList.shuffle();
+    final mediaItems = songList
+        .map((song) => song.toMediaItem()).toList();
+    await _audioHandler.addQueueItems(mediaItems);
+    notifyListeners();
+    clickPlayButton();
   }
 
   void _listenToChangesInPlaylist() {
     _audioHandler.queue.listen((playlist) {
       if (playlist.isEmpty) return;
-      final newList = playlist.map((item) => AudioModel(
-        displayNameWOExt: item.title,
-        data: item.extras?['url'] ?? '',
-        duration: item.duration?.inMicroseconds ?? 0,
-        id: int.parse(item.id),
-        artist: item.artist ?? 'no Artist'
-      )).toList();
+      final newList = playlist.map((item) => item.toAudioModel()).toList();
       _mainState = _mainState.copyWith(
         playList: newList
       );
+      notifyListeners();
     });
   }
   void _listenToPlaybackState() {
@@ -186,20 +175,6 @@ class MainViewModel extends ChangeNotifier {
   }
 
 
-  // TODO: 메인 화면 서플 버튼 누를시
-  void shufflePlayList() async {
-    final songList = mainState.songList.toList();
-
-    final mediaItems = songList
-        .map((song) => MediaItem(
-      id: '${song.id}',
-      title: song.displayNameWOExt,
-      extras: {'url': song.data},
-    )).toList();
-    _audioHandler.addQueueItems(mediaItems);
-    notifyListeners();
-  }
-
 
   // TODO: 음악 멈추기
   void stopMusic() => _audioHandler.pause();
@@ -250,54 +225,6 @@ class MainViewModel extends ChangeNotifier {
       isShuffleModeEnabled: enable
     );
     notifyListeners();
-  }
-
-  // TODO: 오디오 플레이어 상태 조작
-  void _audioPlayerStateStreamController() {
-    _audioRepository.audioPlayer.playerStateStream.listen((playerState) {
-        final buttonState = _audioPlayerStateStream.execute(playerState);
-        _mainState = _mainState.copyWith(
-          buttonState: buttonState
-        );
-        notifyListeners();
-    });
-  }
-
-  // 오디오 플레이어 재생순서 조작
-  void _audioPlayerSequenceStateStream() {
-    _audioRepository.audioPlayer.sequenceStateStream.listen((sequenceState) {
-      if (sequenceState == null) return;
-      _mainState = _mainState.copyWith(
-          shuffleIndices : sequenceState.shuffleIndices,
-          currentIndex : sequenceState.currentIndex,
-          isShuffleModeEnabled : sequenceState. shuffleModeEnabled
-      );
-      notifyListeners();
-    });
-  }
-
-  // 프로그레스바 사용을 위한 메소드
-  void _audioPlayerPositionStream() {
-    _audioRepository.audioPlayer.positionStream.listen((position) {
-      _progressNotifier = _progressNotifier.copyWith(
-        current: position,
-      );
-      notifyListeners();
-    });
-
-    _audioRepository.audioPlayer.bufferedPositionStream.listen((bufferedPosition) {
-      _progressNotifier = progressNotifier.copyWith(
-        buffered: bufferedPosition,
-      );
-      notifyListeners();
-    });
-
-    _audioRepository.audioPlayer.durationStream.listen((totalDuration) {
-      _progressNotifier = _progressNotifier.copyWith(
-        total: totalDuration ?? Duration.zero,
-      );
-      notifyListeners();
-    });
   }
 
 

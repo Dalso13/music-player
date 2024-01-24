@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:music_player/domain/model/audio_model.dart';
 
 Future<AudioHandler> initAudioService() async {
   return await AudioService.init(
@@ -15,33 +16,23 @@ Future<AudioHandler> initAudioService() async {
 
 class MyAudioHandler extends BaseAudioHandler {
   final _player = AudioPlayer();
-  final _playlist = ConcatenatingAudioSource(children: []);
 
   MyAudioHandler() {
-    _loadEmptyPlaylist();
     _notifyAudioHandlerAboutPlaybackEvents();
     _listenForDurationChanges();
     _listenForCurrentSongIndexChanges();
     _listenForSequenceStateChanges();
   }
 
-  Future<void> _loadEmptyPlaylist() async {
-    try {
-      await _player.setAudioSource(_playlist);
-    } catch (e) {
-      print("Error: $e");
-    }
-  }
-
   @override
   Future<void> addQueueItems(List<MediaItem> mediaItems) async {
     // manage Just Audio
     final audioSource = mediaItems.map(_createAudioSource);
-    _playlist.addAll(audioSource.toList());
+    _player.setAudioSource(ConcatenatingAudioSource(children: audioSource.toList()));
 
     // notify system
     final newQueue = queue.value..addAll(mediaItems);
-    queue.add(newQueue);
+    queue.add(mediaItems);
   }
 
   UriAudioSource _createAudioSource(MediaItem mediaItem) {
