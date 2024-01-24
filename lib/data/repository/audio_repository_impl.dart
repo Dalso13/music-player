@@ -1,15 +1,19 @@
 import 'package:just_audio/just_audio.dart';
+import 'package:music_player/domain/repository/audio_repository.dart';
 
-class AudioRepository {
-  AudioRepository._internal();
+class AudioRepositoryImpl implements AudioRepository {
+  AudioRepositoryImpl._internal();
 
-  static final AudioRepository _instance = AudioRepository._internal();
-  static final AudioPlayer _audioPlayer = AudioPlayer();
+  static final AudioRepositoryImpl _instance = AudioRepositoryImpl._internal();
 
-  factory AudioRepository() {
+
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  factory AudioRepositoryImpl() {
     return _instance;
   }
 
+  @override
   AudioPlayer get audioPlayer => _audioPlayer;
 }
 

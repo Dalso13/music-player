@@ -4,7 +4,7 @@ import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/button_state.dart';
+import '../../../core/button_state.dart';
 import 'audio_image.dart';
 
 class AudioBar extends StatelessWidget {
@@ -13,13 +13,14 @@ class AudioBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<MainViewModel>();
+    final state = viewModel.mainState;
     return Row(
       children: [
         Container(
           height: 60,
             child: AudioImage(
                 audioId:
-                    viewModel.playList[viewModel.mainState.currentIndex].id)),
+                state.playList[state.currentIndex].id)),
         Expanded(
           child: Column(
             children: [

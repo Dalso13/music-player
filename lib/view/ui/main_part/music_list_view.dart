@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:provider/provider.dart';
 
-import 'audio_image.dart';
+import '../audio_part/audio_image.dart';
 
 class MusicListView extends StatelessWidget {
   const MusicListView({super.key});
@@ -13,15 +13,15 @@ class MusicListView extends StatelessWidget {
     final viewModel = context.watch<MainViewModel>();
     final state = viewModel.mainState;
     return ListView(
-      children: viewModel.songList.map((e) {
-        int idx = viewModel.playList.isEmpty ? -1 : viewModel.playList.indexOf(e);
+      children: state.songList.map((e) {
+        int idx = state.playList.isEmpty ? -1 : state.playList.indexOf(e);
         return ListTile(
           tileColor: idx == state.currentIndex ? Colors.grey[200] : null,
           onTap: () {
             if (idx == state.currentIndex) {
               return;
             }
-            viewModel.playMusic(index: viewModel.songList.indexOf(e));
+            viewModel.playMusic(index: state.songList.indexOf(e));
           },
           title: Text(e.displayNameWOExt,
               maxLines: 1,

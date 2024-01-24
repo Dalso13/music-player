@@ -1,10 +1,10 @@
 import 'package:just_audio/just_audio.dart';
 import 'package:music_player/core/repeat_state.dart';
-import 'package:music_player/data/reposiotry/audio_repository.dart';
+import 'package:music_player/data/repository/audio_repository_impl.dart';
 import '../interface/repeat_change.dart';
 
 class RepeatChangeImpl implements RepeatChange{
-  final AudioRepository _audioRepository = AudioRepository();
+  final AudioRepositoryImpl _audioRepository = AudioRepositoryImpl();
 
   RepeatState execute(RepeatState repeatState) {
     switch(repeatState){

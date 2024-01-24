@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:music_player/view/ui/now_play_music_screen.dart';
-import 'package:music_player/view/ui/audio_bar.dart';
+import 'package:music_player/view/ui/play_screen/now_play_music_screen.dart';
+import 'package:music_player/view/ui/audio_part/audio_bar.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-import 'music_list_view.dart';
+import '../main_part/music_list_view.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -62,14 +62,14 @@ class _MainScreenState extends State<MainScreen> {
                         ? const Center(
                             child: CircularProgressIndicator(),
                           )
-                        : viewModel.songList.isEmpty
+                        : state.songList.isEmpty
                             ? const Text("Nothing found!")
                             : const MusicListView()),
           ),
           IconButton(onPressed: (){
             context.push('/now-music');
           }, icon: Icon(Icons.abc)),
-          viewModel.playList.isEmpty ? Container() : const AudioBar()
+          state.playList.isEmpty ? Container() : const AudioBar()
         ],
       ),
       floatingActionButton: FloatingActionButton(

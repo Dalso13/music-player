@@ -6,7 +6,7 @@ import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/button_state.dart';
+import '../../../core/button_state.dart';
 
 class NowPlayMusicScreen extends StatelessWidget {
   const NowPlayMusicScreen({super.key});
@@ -15,7 +15,7 @@ class NowPlayMusicScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<MainViewModel>();
     final state = viewModel.mainState;
-    final song = viewModel.playList[state.currentIndex];
+    final song = state.playList[state.currentIndex];
 
     return Scaffold(
       appBar: AppBar(
@@ -41,7 +41,7 @@ class NowPlayMusicScreen extends StatelessWidget {
                         'https://thumb.silhouette-ac.com/t/96/9629eae865b0d9e1725335c9985216a7_t.jpeg',
                       ),
                       controller: viewModel.audioQuery,
-                      id: viewModel.playList[state.currentIndex].id,
+                      id: state.playList[state.currentIndex].id,
                       type: ArtworkType.AUDIO,
                     ),
                   ],

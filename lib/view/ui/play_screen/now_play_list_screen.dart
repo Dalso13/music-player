@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:music_player/view/ui/audio_bar.dart';
+import 'package:music_player/view/ui/audio_part/audio_bar.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:provider/provider.dart';
 
-import 'audio_image.dart';
+import '../audio_part/audio_image.dart';
 
 class NowPlayListScreen extends StatelessWidget {
   const NowPlayListScreen({super.key});
@@ -19,8 +19,8 @@ class NowPlayListScreen extends StatelessWidget {
           const AudioBar(),
           Expanded(
             child: ListView(
-              children: viewModel.playList.map((e) {
-                int idx = viewModel.playList.indexOf(e);
+              children: state.playList.map((e) {
+                int idx = state.playList.indexOf(e);
                 return ListTile(
                   tileColor: idx == state.currentIndex ? Colors.grey[200] : null,
                   onTap: () {

@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/core/button_state.dart';
-import 'package:music_player/data/reposiotry/audio_repository.dart';
-import 'package:music_player/data/reposiotry/song_repository.dart';
-import 'package:music_player/domain/model/audio_model.dart';
-import 'package:music_player/domain/use_case/button_change/interface/shuffle_change.dart';
-import 'package:music_player/domain/use_case/music_controller/interface/music_controller.dart';
-import 'package:music_player/domain/use_case/music_controller/interface/seek_controller.dart';
-import 'package:music_player/domain/use_case/play_list/interface/play_list_setting.dart';
-import 'package:music_player/domain/use_case/play_list/interface/shuffle_play_list_setting.dart';
-import 'package:music_player/view/view_model/state/main_state.dart';
-import 'package:music_player/view/view_model/state/progress_bar_state.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
+import '../../data/repository/audio_repository_impl.dart';
+import '../../domain/repository/song_repository.dart';
+import '../../domain/use_case/button_change/interface/shuffle_change.dart';
+import '../../domain/use_case/music_controller/interface/music_controller.dart';
+import '../../domain/use_case/music_controller/interface/seek_controller.dart';
+import '../../domain/use_case/play_list/interface/play_list_setting.dart';
+import '../../domain/use_case/play_list/interface/shuffle_play_list_setting.dart';
+import 'state/main_state.dart';
+import 'state/progress_bar_state.dart';
+import '../../domain/repository/audio_repository.dart';
 import '../../domain/use_case/audio_player_stream/interface/audio_player_state_stream.dart';
 import '../../domain/use_case/button_change/interface/repeat_change.dart';
 import '../../domain/use_case/play_list/interface/click_play_list_song.dart';
@@ -19,10 +18,12 @@ import '../../domain/use_case/play_list/interface/click_play_list_song.dart';
 class MainViewModel extends ChangeNotifier {
   final SongRepository _songRepository;
   MainState _mainState = const MainState();
-  final AudioRepository _audioRepository = AudioRepository();
-  List<AudioModel> _songList = [];
-  List<AudioModel> _playList = [];
-
+  final AudioRepository _audioRepository = AudioRepositoryImpl();
+  ProgressBarState _progressNotifier = ProgressBarState(
+    current: Duration.zero,
+    buffered: Duration.zero,
+    total: Duration.zero,
+  );
   // use_case
   final PlayListSetting _setMusicList;
   final ShufflePlayListSetting _shuffleMusicList;
@@ -37,11 +38,6 @@ class MainViewModel extends ChangeNotifier {
   final AudioPlayerStateStream _audioPlayerStateStream;
   // use_case
 
-  ProgressBarState _progressNotifier = ProgressBarState(
-    current: Duration.zero,
-    buffered: Duration.zero,
-    total: Duration.zero,
-  );
 
   MainViewModel({
     required SongRepository songRepository,
@@ -73,15 +69,12 @@ class MainViewModel extends ChangeNotifier {
 
   ProgressBarState get progressNotifier => _progressNotifier;
   MainState get mainState => _mainState;
-  List<AudioModel> get songList => _songList;
   OnAudioQuery get audioQuery => _songRepository.audioQuery;
-  List<AudioModel> get playList => _playList;
-
 
   void init() async {
     _mainState = _mainState.copyWith(isLoading: true);
     notifyListeners();
-    _songList = await _songRepository.getAudioSource();
+    _mainState = _mainState.copyWith(songList: await _songRepository.getAudioSource());
     _mainState = _mainState.copyWith(isLoading: false);
 
     _audioPlayerStateStreamController();
@@ -94,14 +87,19 @@ class MainViewModel extends ChangeNotifier {
 
   // TODO: 리스트에 곡 클릭시
   void playMusic({required int index}) async {
-    _playList = await _setMusicList.execute(index: index, songList: _songList);
+    final songList = mainState.songList.toList();
+
+    final playList = await _setMusicList.execute(index: index, songList: songList);
+    _mainState = _mainState.copyWith(playList: playList);
     notifyListeners();
     clickPlayButton();
   }
 
   // TODO: 메인 화면 서플 버튼 누를시
   void shufflePlayList() async {
-    _playList = await _shuffleMusicList.execute(songList: _songList);
+    final songList = mainState.songList.toList();
+    final playList = await _shuffleMusicList.execute(songList: songList);
+    _mainState = _mainState.copyWith(playList: playList);
     notifyListeners();
     clickPlayButton();
   }
@@ -154,7 +152,7 @@ class MainViewModel extends ChangeNotifier {
   // TODO: 오디오 플레이어 상태 조작
   void _audioPlayerStateStreamController() {
     _audioRepository.audioPlayer.playerStateStream.listen((playerState) {
-        final ButtonState buttonState = _audioPlayerStateStream.execute(playerState);
+        final buttonState = _audioPlayerStateStream.execute(playerState);
         _mainState = _mainState.copyWith(
           buttonState: buttonState
         );
@@ -209,8 +207,10 @@ class MainViewModel extends ChangeNotifier {
   }
 
 
+  @override
   void dispose() {
     _audioRepository.audioPlayer.dispose();
+    super.dispose();
   }
 
 }

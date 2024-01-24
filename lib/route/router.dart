@@ -1,11 +1,11 @@
 import 'package:go_router/go_router.dart';
-import 'package:music_player/view/ui/main_screen.dart';
-import 'package:music_player/view/ui/now_play_music_screen.dart';
-import 'package:music_player/view/ui/permission_page.dart';
+import 'package:music_player/view/ui/main/main_screen.dart';
+import 'package:music_player/view/ui/play_screen/now_play_music_screen.dart';
+import 'package:music_player/view/ui/main/permission_page.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:provider/provider.dart';
 import '../di/di_setup.dart';
-import '../view/ui/now_play_list_screen.dart';
+import '../view/ui/play_screen/now_play_list_screen.dart';
 
 final _value = getIt<MainViewModel>();
 

@@ -1,10 +1,10 @@
 import 'package:just_audio/just_audio.dart';
 import '../../../../core/button_state.dart';
-import '../../../../data/reposiotry/audio_repository.dart';
+import '../../../../data/repository/audio_repository_impl.dart';
 import '../interface/audio_player_state_stream.dart';
 
 class AudioPlayerStateStreamImpl implements AudioPlayerStateStream {
-  final _audioRepository = AudioRepository();
+  final _audioRepository = AudioRepositoryImpl();
 
   @override
   ButtonState execute(PlayerState playerState) {

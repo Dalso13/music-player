@@ -1,11 +1,11 @@
 import 'package:just_audio/just_audio.dart';
 import 'package:music_player/domain/use_case/play_list/interface/play_list_setting.dart';
-import '../../../../data/reposiotry/audio_repository.dart';
+import '../../../../data/repository/audio_repository_impl.dart';
 import '../../../model/audio_model.dart';
 
 // TODO: 리스트에 곡 클릭시
 class SetMusicList implements PlayListSetting {
-  final _audioRepository = AudioRepository();
+  final _audioRepository = AudioRepositoryImpl();
 
   @override
   Future<List<AudioModel>> execute({required int index, required List<AudioModel> songList}) async {
