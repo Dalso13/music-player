@@ -19,6 +19,7 @@ class MainViewModel extends ChangeNotifier {
   MainState _mainState = const MainState();
   final AudioRepository _audioRepository = AudioRepositoryImpl();
   ProgressBarState _progressNotifier = const ProgressBarState();
+
   // use_case
   final PlayListSetting _setMusicList;
   final ShufflePlayListSetting _shuffleMusicList;
@@ -32,7 +33,6 @@ class MainViewModel extends ChangeNotifier {
   final SeekController _seekController;
   final AudioPlayerStateStream _audioPlayerStateStream;
   // use_case
-
 
   MainViewModel({
     required SongRepository songRepository,

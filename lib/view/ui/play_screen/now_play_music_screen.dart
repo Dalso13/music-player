@@ -69,11 +69,14 @@ class NowPlayMusicScreen extends StatelessWidget {
           ),
           Column(
             children: [
-              Text(
-                song.displayNameWOExt,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                child: Text(
+                  song.displayNameWOExt,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
               ),
               Text(
                 song.artist ?? "No Artist",
