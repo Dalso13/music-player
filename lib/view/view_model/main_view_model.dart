@@ -1,6 +1,11 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/button_state.dart';
+import '../../core/repeat_state.dart';
 import '../../data/repository/audio_repository_impl.dart';
+import '../../di/di_setup.dart';
+import '../../domain/model/audio_model.dart';
 import '../../domain/repository/song_repository.dart';
 import '../../domain/use_case/button_change/interface/shuffle_change.dart';
 import '../../domain/use_case/music_controller/interface/music_controller.dart';
@@ -19,6 +24,10 @@ class MainViewModel extends ChangeNotifier {
   MainState _mainState = const MainState();
   final AudioRepository _audioRepository = AudioRepositoryImpl();
   ProgressBarState _progressNotifier = const ProgressBarState();
+  List<String> playlistNotifier = [];
+
+  //background-service
+  final _audioHandler = getIt<AudioHandler>();
 
   // use_case
   final PlayListSetting _setMusicList;
@@ -71,57 +80,140 @@ class MainViewModel extends ChangeNotifier {
     _mainState = _mainState.copyWith(songList: await _songRepository.getAudioSource());
     _mainState = _mainState.copyWith(isLoading: false);
 
-    _audioPlayerStateStreamController();
-    _audioPlayerPositionStream();
-    _audioPlayerSequenceStateStream();
+
+    await _loadPlaylist();
+    _listenToChangesInPlaylist();
+    _listenToPlaybackState();
+    _listenToCurrentPosition();
+    _listenToBufferedPosition();
+    _listenToTotalDuration();
 
     notifyListeners();
 
+  }
+
+  Future<void> _loadPlaylist() async {
+    final songList = mainState.songList.toList();
+
+    final mediaItems = songList
+        .map((song) => MediaItem(
+      id: '${song.id}',
+      title: song.displayNameWOExt,
+      extras: {'url': song.data},
+    )).toList();
+    _audioHandler.addQueueItems(mediaItems);
+    notifyListeners();
   }
 
   // TODO: 리스트에 곡 클릭시
   void playMusic({required int index}) async {
     final songList = mainState.songList.toList();
 
-    final playList = await _setMusicList.execute(index: index, songList: songList);
-    _mainState = _mainState.copyWith(playList: playList);
-    notifyListeners();
+    final mediaItems = songList
+        .map((song) => MediaItem(
+      id: '${song.id}',
+      title: song.displayNameWOExt,
+      extras: {'url': song.data},
+    )).toList();
+    _audioHandler.addQueueItems(mediaItems);
     clickPlayButton();
+    notifyListeners();
   }
+
+  void _listenToChangesInPlaylist() {
+    _audioHandler.queue.listen((playlist) {
+      if (playlist.isEmpty) return;
+      final newList = playlist.map((item) => AudioModel(
+        displayNameWOExt: item.title,
+        data: item.extras?['url'] ?? '',
+        duration: item.duration?.inMicroseconds ?? 0,
+        id: int.parse(item.id),
+        artist: item.artist ?? 'no Artist'
+      )).toList();
+      _mainState = _mainState.copyWith(
+        playList: newList
+      );
+    });
+  }
+  void _listenToPlaybackState() {
+    _audioHandler.playbackState.listen((playbackState) {
+      final isPlaying = playbackState.playing;
+      final processingState = playbackState.processingState;
+      if (processingState == AudioProcessingState.loading ||
+          processingState == AudioProcessingState.buffering) {
+        _mainState = _mainState.copyWith(
+          buttonState: ButtonState.loading
+        );
+      } else if (!isPlaying) {
+        _mainState = _mainState.copyWith(
+            buttonState: ButtonState.paused
+        );
+      } else if (processingState != AudioProcessingState.completed) {
+        _mainState = _mainState.copyWith(
+            buttonState: ButtonState.playing
+        );
+      } else {
+        _audioHandler.seek(Duration.zero);
+        _audioHandler.pause();
+      }
+      notifyListeners();
+    });
+  }
+  void _listenToCurrentPosition() {
+    AudioService.position.listen((position) {
+       _progressNotifier = _progressNotifier.copyWith(
+        current: position,
+      );
+       notifyListeners();
+    });
+  }
+  void _listenToBufferedPosition() {
+    _audioHandler.playbackState.listen((playbackState) {
+      _progressNotifier = _progressNotifier.copyWith(
+        buffered: playbackState.bufferedPosition,
+      );
+      notifyListeners();
+    });
+  }
+
+  void _listenToTotalDuration() {
+    _audioHandler.mediaItem.listen((mediaItem) {
+      _progressNotifier = _progressNotifier.copyWith(
+        total: mediaItem?.duration ?? Duration.zero,
+      );
+      notifyListeners();
+    });
+  }
+
 
   // TODO: 메인 화면 서플 버튼 누를시
   void shufflePlayList() async {
     final songList = mainState.songList.toList();
-    final playList = await _shuffleMusicList.execute(songList: songList);
-    _mainState = _mainState.copyWith(playList: playList);
+
+    final mediaItems = songList
+        .map((song) => MediaItem(
+      id: '${song.id}',
+      title: song.displayNameWOExt,
+      extras: {'url': song.data},
+    )).toList();
+    _audioHandler.addQueueItems(mediaItems);
     notifyListeners();
-    clickPlayButton();
   }
+
 
   // TODO: 음악 멈추기
-  void stopMusic() {
-    _stopController.execute();
-  }
+  void stopMusic() => _audioHandler.pause();
 
   // TODO: 재생 버튼 누르기
-  void clickPlayButton() {
-    _playController.execute();
-  }
+  void clickPlayButton() => _audioHandler.play();
 
   // TODO: 프로그레스 바 클릭 이벤트
-  void seek(Duration position) {
-    _seekController.execute(position: position);
-  }
+  void seek(Duration position) => _audioHandler.seek(position);
 
   // TODO: 다음 곡
-  void nextPlay() {
-    _nextPlayController.execute();
-  }
-
+  void nextPlay()  => _audioHandler.skipToNext();
   // TODO: 이전 곡
-  void previousPlay() async {
-    _previousPlayController.execute();
-  }
+  void previousPlay() => _audioHandler.skipToPrevious();
 
   // TODO : 플레이 리스트 곡 클릭
   void clickPlayListSong({required int idx}) async {
@@ -130,16 +222,33 @@ class MainViewModel extends ChangeNotifier {
 
   // TODO: 반복 재생 버튼 클릭
   void repeatModeChange() {
-    final result = _repeatChange.execute(_mainState.repeatState);
-    _mainState = _mainState.copyWith(
-        repeatState : result
-    );
+    final repeatMode = _mainState.repeatState;
+    switch (repeatMode) {
+      case RepeatState.off:
+        _audioHandler.setRepeatMode(AudioServiceRepeatMode.none);
+        break;
+      case RepeatState.repeatSong:
+        _audioHandler.setRepeatMode(AudioServiceRepeatMode.one);
+        break;
+      case RepeatState.repeatPlaylist:
+        _audioHandler.setRepeatMode(AudioServiceRepeatMode.all);
+        break;
+    }
     notifyListeners();
   }
 
   // TODO: 서플 여부 버튼 클릭
   void shuffleModeChange() async {
-    await _shuffleChange.execute(isShuffleModeEnabled: _mainState.isShuffleModeEnabled);
+
+    final enable = !_mainState.isShuffleModeEnabled;
+    if (enable) {
+      _audioHandler.setShuffleMode(AudioServiceShuffleMode.all);
+    } else {
+      _audioHandler.setShuffleMode(AudioServiceShuffleMode.none);
+    }
+    _mainState = _mainState.copyWith(
+      isShuffleModeEnabled: enable
+    );
     notifyListeners();
   }
 

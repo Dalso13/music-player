@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:music_player/domain/repository/song_repository.dart';
 import 'package:music_player/data/repository/song_repository_impl.dart';
@@ -16,6 +17,7 @@ import 'package:music_player/domain/use_case/play_list/interface/click_play_list
 import 'package:music_player/domain/use_case/play_list/interface/play_list_setting.dart';
 import 'package:music_player/domain/use_case/play_list/interface/shuffle_play_list_setting.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
+import '../domain/service/audio_handler.dart';
 import '../domain/use_case/button_change/impl/repeat_change_impl.dart';
 import '../domain/use_case/button_change/impl/shuffle_change_impl.dart';
 import '../domain/use_case/button_change/interface/repeat_change.dart';
@@ -23,7 +25,7 @@ import '../domain/use_case/play_list/impl/shuffle_music_list.dart';
 
 final getIt = GetIt.instance;
 
-void diSetup() {
+Future<void> diSetup() async {
   getIt.registerSingleton<SongRepository>(SongRepositoryImpl());
 
   // USE_CASE
@@ -59,6 +61,8 @@ void diSetup() {
   ));
 
 
+  //background-service
+  getIt.registerSingleton<AudioHandler>(await initAudioService());
 }
 
 
