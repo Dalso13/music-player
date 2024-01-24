@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 
 import '../../data/repository/audio_repository_impl.dart';
 import '../../domain/repository/song_repository.dart';
@@ -19,11 +18,7 @@ class MainViewModel extends ChangeNotifier {
   final SongRepository _songRepository;
   MainState _mainState = const MainState();
   final AudioRepository _audioRepository = AudioRepositoryImpl();
-  ProgressBarState _progressNotifier = ProgressBarState(
-    current: Duration.zero,
-    buffered: Duration.zero,
-    total: Duration.zero,
-  );
+  ProgressBarState _progressNotifier = const ProgressBarState();
   // use_case
   final PlayListSetting _setMusicList;
   final ShufflePlayListSetting _shuffleMusicList;
@@ -69,7 +64,6 @@ class MainViewModel extends ChangeNotifier {
 
   ProgressBarState get progressNotifier => _progressNotifier;
   MainState get mainState => _mainState;
-  OnAudioQuery get audioQuery => _songRepository.audioQuery;
 
   void init() async {
     _mainState = _mainState.copyWith(isLoading: true);
@@ -176,30 +170,21 @@ class MainViewModel extends ChangeNotifier {
   // 프로그레스바 사용을 위한 메소드
   void _audioPlayerPositionStream() {
     _audioRepository.audioPlayer.positionStream.listen((position) {
-      final oldState = _progressNotifier;
-      _progressNotifier = ProgressBarState(
+      _progressNotifier = _progressNotifier.copyWith(
         current: position,
-        buffered: oldState.buffered,
-        total: oldState.total,
       );
       notifyListeners();
     });
 
     _audioRepository.audioPlayer.bufferedPositionStream.listen((bufferedPosition) {
-      final oldState = _progressNotifier;
-      _progressNotifier = ProgressBarState(
-        current: oldState.current,
+      _progressNotifier = progressNotifier.copyWith(
         buffered: bufferedPosition,
-        total: oldState.total,
       );
       notifyListeners();
     });
 
     _audioRepository.audioPlayer.durationStream.listen((totalDuration) {
-      final oldState = _progressNotifier;
-      _progressNotifier = ProgressBarState(
-        current: oldState.current,
-        buffered: oldState.buffered,
+      _progressNotifier = _progressNotifier.copyWith(
         total: totalDuration ?? Duration.zero,
       );
       notifyListeners();
