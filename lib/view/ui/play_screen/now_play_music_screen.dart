@@ -24,11 +24,24 @@ class NowPlayMusicScreen extends StatelessWidget {
       body: Column(
         children: [
           SizedBox(
-            width: double.maxFinite,
-            child: Stack(
+            height: 400,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(
+                Stack(
                   children: [
+                    Container(
+                      width: 300,
+                      height: 300,
+                      child: QueryArtworkWidget(
+                        keepOldArtwork: true,
+                        nullArtworkWidget: Image.network(
+                          'https://thumb.silhouette-ac.com/t/96/9629eae865b0d9e1725335c9985216a7_t.jpeg',
+                        ),
+                        id: state.playList[state.currentIndex].id,
+                        type: ArtworkType.AUDIO,
+                      ),
+                    ),
                     IconButton(
                       onPressed: () {
                         context.pop();
@@ -36,16 +49,8 @@ class NowPlayMusicScreen extends StatelessWidget {
                       icon: Icon(Icons.expand_more),
                       iconSize: 40,
                     ),
-                    QueryArtworkWidget(
-                      nullArtworkWidget: Image.network(
-                        'https://thumb.silhouette-ac.com/t/96/9629eae865b0d9e1725335c9985216a7_t.jpeg',
-                      ),
-                      controller: viewModel.audioQuery,
-                      id: state.playList[state.currentIndex].id,
-                      type: ArtworkType.AUDIO,
-                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),

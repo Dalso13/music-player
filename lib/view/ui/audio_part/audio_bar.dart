@@ -17,6 +17,8 @@ class AudioBar extends StatelessWidget {
     return Row(
       children: [
         Container(
+          margin: const EdgeInsets.only(right: 8, left: 8),
+          width: 60,
           height: 60,
             child: AudioImage(
                 audioId:
