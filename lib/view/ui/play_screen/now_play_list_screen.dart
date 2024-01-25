@@ -31,7 +31,7 @@ class NowPlayListScreen extends StatelessWidget {
                   },
                   title: Text(e.displayNameWOExt,
                       maxLines: 1, overflow: TextOverflow.ellipsis),
-                  subtitle: Text(e.artist),
+                  subtitle: Text('$idx : ${state.currentIndex}'),
                   trailing: Text(DateFormat('mm:ss').format(DateTime.fromMillisecondsSinceEpoch(e.duration)),
                       style: TextStyle(color: Colors.grey)),
                   leading: AudioImage(audioId: e.id),

@@ -1,3 +1,3 @@
 abstract interface class MusicController {
-  void execute();
+  Future<void> execute();
 }

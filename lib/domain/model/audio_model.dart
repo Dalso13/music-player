@@ -15,5 +15,6 @@ class AudioModel with _$AudioModel {
     required String data,
   }) = _AudioModel;
 
+
   factory AudioModel.fromJson(Map<String, Object?> json) => _$AudioModelFromJson(json);
 }

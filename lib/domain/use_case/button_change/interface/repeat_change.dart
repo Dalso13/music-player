@@ -1,5 +1,6 @@
-import '../../../../core/repeat_state.dart';
+import 'package:audio_service/audio_service.dart';
+
 
 abstract interface class RepeatChange {
-  RepeatState execute(RepeatState repeatState);
+  void execute(AudioServiceRepeatMode repeatMode);
 }

@@ -1,6 +1,8 @@
+import 'dart:async';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:music_player/domain/model/audio_model.dart';
+import 'package:music_player/data/repository/audio_repository_impl.dart';
 
 Future<AudioHandler> initAudioService() async {
   return await AudioService.init(
@@ -15,7 +17,7 @@ Future<AudioHandler> initAudioService() async {
 }
 
 class MyAudioHandler extends BaseAudioHandler {
-  final _player = AudioPlayer();
+  final _player = AudioRepositoryImpl().audioPlayer;
 
   MyAudioHandler() {
     _notifyAudioHandlerAboutPlaybackEvents();
@@ -24,14 +26,13 @@ class MyAudioHandler extends BaseAudioHandler {
     _listenForSequenceStateChanges();
   }
 
+
   @override
   Future<void> addQueueItems(List<MediaItem> mediaItems) async {
     // manage Just Audio
     final audioSource = mediaItems.map(_createAudioSource);
     _player.setAudioSource(ConcatenatingAudioSource(children: audioSource.toList()));
 
-    // notify system
-    final newQueue = queue.value..addAll(mediaItems);
     queue.add(mediaItems);
   }
 
@@ -111,8 +112,8 @@ class MyAudioHandler extends BaseAudioHandler {
     _player.sequenceStateStream.listen((SequenceState? sequenceState) {
       final sequence = sequenceState?.effectiveSequence;
       if (sequence == null || sequence.isEmpty) return;
-      final items = sequence.map((source) => source.tag as MediaItem);
-      queue.add(items.toList());
+      final items = sequence.map((source) => source.tag as MediaItem).toList();
+      queue.add(items);
     });
   }
 
@@ -156,4 +157,5 @@ class MyAudioHandler extends BaseAudioHandler {
       _player.setShuffleModeEnabled(true);
     }
   }
+
 }

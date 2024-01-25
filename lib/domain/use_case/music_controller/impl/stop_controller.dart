@@ -5,7 +5,7 @@ class StopController implements MusicController {
   final _audioRepository = AudioRepositoryImpl();
 
   @override
-  void execute() async {
+  Future<void> execute() async {
     if (_audioRepository.audioPlayer.playing) {
       await _audioRepository.audioPlayer.pause();
     }

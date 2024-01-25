@@ -5,7 +5,7 @@ class PlayController implements MusicController {
   final _audioRepository = AudioRepositoryImpl();
 
   @override
-  void execute() async {
+  Future<void> execute() async {
     await _audioRepository.audioPlayer.play();
   }
 

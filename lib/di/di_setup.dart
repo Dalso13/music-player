@@ -45,26 +45,38 @@ Future<void> diSetup() async {
   getIt.registerSingleton<AudioPlayerStateStream>(AudioPlayerStateStreamImpl());
   // USE_CASE
 
-  getIt.registerFactory<MainViewModel>(() => MainViewModel(
-    songRepository: getIt<SongRepository>(),
-    setMusicList: getIt<PlayListSetting>(),
-    shuffleMusicList: getIt<ShufflePlayListSetting>(),
-    playController: getIt<PlayController>(),
-    previousPlayController: getIt<PreviousPlayController>(),
-    stopController: getIt<StopController>(),
-    nextPlayController: getIt<NextPlayController>(),
-    repeatChange: getIt<RepeatChange>(),
-    shuffleChange: getIt<ShuffleChange>(),
-    clickPlayListSong: getIt<ClickPlayListSong>(),
-    seekController: getIt<SeekController>(),
-    audioPlayerPositionStream: getIt<AudioPlayerStateStream>(),
-  ));
-
-
   //background-service
   getIt.registerSingleton<AudioHandler>(await initAudioService());
+
+  getIt.registerFactory<MainViewModel>(() => MainViewModel(
+         songRepository: getIt<SongRepository>(),
+          audioHandler:  getIt<AudioHandler>(),
+        // setMusicList: getIt<PlayListSetting>(),
+        // shuffleMusicList: getIt<ShufflePlayListSetting>(),
+        // playController: getIt<PlayController>(),
+        // previousPlayController: getIt<PreviousPlayController>(),
+        // stopController: getIt<StopController>(),
+        // nextPlayController: getIt<NextPlayController>(),
+        // repeatChange: getIt<RepeatChange>(),
+        // shuffleChange: getIt<ShuffleChange>(),
+        // clickPlayListSong: getIt<ClickPlayListSong>(),
+        // seekController: getIt<SeekController>(),
+        // audioPlayerPositionStream: getIt<AudioPlayerStateStream>(),
+      ));
+
 }
 
+Future<AudioHandler> initAudioService() async {
+  return await AudioService.init(
+    builder: () => MyAudioHandler(),
+    config: const AudioServiceConfig(
+      androidNotificationChannelId: 'com.mycompany.myapp.audio',
+      androidNotificationChannelName: 'Audio Service Demo',
+      androidNotificationOngoing: true,
+      androidStopForegroundOnPause: true,
+    ),
+  );
+}
 
 // getIt.registerSingleton<MainViewModel>(MainViewModel(
 //   songRepository: getIt<SongRepository>(),
