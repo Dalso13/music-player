@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import '../../../../core/button_state.dart';
 import '../../../../data/repository/audio_repository_impl.dart';
@@ -7,9 +8,9 @@ class AudioPlayerStateStreamImpl implements AudioPlayerStateStream {
   final _audioRepository = AudioRepositoryImpl();
 
   @override
-  ButtonState execute(PlayerState playerState) {
-    final isPlaying = playerState.playing;
-    final processingState = playerState.processingState;
+  ButtonState execute({required PlaybackState playbackState}) {
+    final isPlaying = playbackState.playing;
+    final processingState = playbackState.processingState;
     if (processingState == ProcessingState.loading ||
         processingState == ProcessingState.buffering) {
       return ButtonState.playing;
