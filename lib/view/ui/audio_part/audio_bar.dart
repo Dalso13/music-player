@@ -13,7 +13,7 @@ class AudioBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<MainViewModel>();
-    final state = viewModel.mainState;
+    final song = viewModel.mainState.nowPlaySong;
     return Row(
       children: [
         Container(
@@ -22,7 +22,7 @@ class AudioBar extends StatelessWidget {
           height: 60,
             child: AudioImage(
                 audioId:
-                state.playList[state.currentIndex].id)),
+                song.id)),
         Expanded(
           child: Column(
             children: [

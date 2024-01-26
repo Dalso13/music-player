@@ -12,11 +12,12 @@ class MusicListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<MainViewModel>();
     final state = viewModel.mainState;
+    final song = state.nowPlaySong;
     return ListView(
       children: state.songList.map((e) {
         int idx = viewModel.mainState.playList.indexOf(e);
         return ListTile(
-          tileColor: idx == state.currentIndex ? Colors.grey[200] : null,
+          tileColor: e.id == song.id ? Colors.grey[200] : null,
           onTap: () {
             if (idx == state.currentIndex) {
               return;

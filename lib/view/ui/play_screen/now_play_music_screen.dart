@@ -15,7 +15,7 @@ class NowPlayMusicScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<MainViewModel>();
     final state = viewModel.mainState;
-    final song = state.playList[state.currentIndex];
+    final song = state.nowPlaySong;
 
     return Scaffold(
       appBar: AppBar(
@@ -38,7 +38,7 @@ class NowPlayMusicScreen extends StatelessWidget {
                         nullArtworkWidget: Image.network(
                           'https://thumb.silhouette-ac.com/t/96/9629eae865b0d9e1725335c9985216a7_t.jpeg',
                         ),
-                        id: state.playList[state.currentIndex].id,
+                        id: song.id,
                         type: ArtworkType.AUDIO,
                       ),
                     ),
@@ -79,7 +79,7 @@ class NowPlayMusicScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                song.artist ?? "No Artist",
+                song.artist,
                 style: TextStyle(color: Colors.grey, fontSize: 16),
               ),
             ],

@@ -4,6 +4,7 @@ import 'package:music_player/data/mapper/mediaItem_mapper.dart';
 
 // 리포지터리
 import '../../data/repository/audio_repository_impl.dart';
+import '../../domain/model/audio_model.dart';
 import '../../domain/repository/song_repository.dart';
 
 // use_case
@@ -95,6 +96,7 @@ class MainViewModel extends ChangeNotifier {
 
   // TODO: 리스트에 곡 클릭시
   void playMusic({required int index}) async {
+    _mainState = _mainState.copyWith(isShuffleModeEnabled: false);
     final songList = mainState.songList.toList();
 
     await _setMusicList.execute(
@@ -105,6 +107,7 @@ class MainViewModel extends ChangeNotifier {
 
   // TODO: 메인 화면 서플 버튼 누를시
   void shufflePlayList() async {
+    _mainState = _mainState.copyWith(isShuffleModeEnabled: false);
     final songList = mainState.songList.toList();
     songList.shuffle();
     await _setMusicList.execute(songList: songList);
@@ -120,6 +123,7 @@ class MainViewModel extends ChangeNotifier {
       _mainState = _mainState.copyWith(playList: newList);
       notifyListeners();
     });
+    notifyListeners();
   }
   
   // TODO :  재생 상태 조작
@@ -159,6 +163,11 @@ class MainViewModel extends ChangeNotifier {
       _progressNotifier = _progressNotifier.copyWith(
         total: mediaItem?.duration ?? Duration.zero,
       );
+      if (mediaItem != null) {
+        _mainState = _mainState.copyWith(
+          nowPlaySong: mediaItem.toAudioModel(),
+        );
+      }
       notifyListeners();
     });
   }

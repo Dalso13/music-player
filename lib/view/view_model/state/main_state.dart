@@ -19,6 +19,7 @@ class MainState with _$MainState {
     @Default(RepeatState.off) RepeatState repeatState,
     @Default([]) List<AudioModel> songList,
     @Default([]) List<AudioModel> playList,
+    @Default(AudioModel()) AudioModel nowPlaySong,
   }) = _MainState;
 
   factory MainState.fromJson(Map<String, Object?> json) => _$MainStateFromJson(json);

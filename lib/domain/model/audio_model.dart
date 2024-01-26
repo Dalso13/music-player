@@ -8,11 +8,11 @@ part 'audio_model.g.dart';
 @freezed
 class AudioModel with _$AudioModel {
   const factory AudioModel({
-    required String displayNameWOExt,
-    required String artist,
-    required int duration,
-    required int id,
-    required String data,
+    @Default('No title') String displayNameWOExt,
+    @Default('No artist') String artist,
+    @Default(0) int duration,
+    @Default(-1) int id,
+    @Default('') String data,
   }) = _AudioModel;
 
 

@@ -13,6 +13,8 @@ class NowPlayListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<MainViewModel>();
     final state = viewModel.mainState;
+    final song = state.nowPlaySong;
+
     return Scaffold(
       body: Column(
         children: [
@@ -22,9 +24,9 @@ class NowPlayListScreen extends StatelessWidget {
               children: state.playList.map((e) {
                 int idx = state.playList.indexOf(e);
                 return ListTile(
-                  tileColor: idx == state.currentIndex ? Colors.grey[200] : null,
+                  tileColor: e.id == song.id ? Colors.grey[200] : null,
                   onTap: () {
-                    if (idx == state.currentIndex) {
+                    if (e.id == song.id) {
                       return;
                     }
                     viewModel.clickPlayListSong(idx: idx);

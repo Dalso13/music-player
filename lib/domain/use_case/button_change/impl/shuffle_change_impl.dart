@@ -14,11 +14,11 @@ class ShuffleChangeImpl implements ShuffleChange{
 
     final enable = !isShuffleModeEnabled;
     // TODO : 뭔가 작동이 이상하게 되서 보류
-    // if (enable) {
-    //   await _audioService.setShuffleMode(AudioServiceShuffleMode.all);
-    // } else {
-    //   await _audioService.setShuffleMode(AudioServiceShuffleMode.none);
-    // }
+    if (enable) {
+      await _audioService.setShuffleMode(AudioServiceShuffleMode.all);
+    } else {
+      await _audioService.setShuffleMode(AudioServiceShuffleMode.none);
+    }
     return enable;
 
   }

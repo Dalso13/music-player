@@ -18,20 +18,23 @@ Future<AudioHandler> initAudioService() async {
 
 class MyAudioHandler extends BaseAudioHandler {
   final _player = AudioRepositoryImpl().audioPlayer;
+  var _playlist = ConcatenatingAudioSource(children: []);
 
   MyAudioHandler() {
     _notifyAudioHandlerAboutPlaybackEvents();
     _listenForDurationChanges();
     _listenForCurrentSongIndexChanges();
     _listenForSequenceStateChanges();
-  }
 
+  }
 
   @override
   Future<void> addQueueItems(List<MediaItem> mediaItems) async {
     // manage Just Audio
+    _player.setShuffleModeEnabled(false);
     final audioSource = mediaItems.map(_createAudioSource);
-    _player.setAudioSource(ConcatenatingAudioSource(children: audioSource.toList()));
+    _playlist = ConcatenatingAudioSource(children: audioSource.toList());
+    _player.setAudioSource(_playlist);
 
     queue.add(mediaItems);
   }
@@ -149,13 +152,44 @@ class MyAudioHandler extends BaseAudioHandler {
   }
 
   @override
+  Future<void> removeQueueItemAt(int index) async {
+    _playlist.removeAt(index);
+    // notify system
+    final newQueue = queue.value..removeAt(index);
+    queue.add(newQueue);
+  }
+
+  @override
   Future<void> setShuffleMode(AudioServiceShuffleMode shuffleMode) async {
-    if (shuffleMode == AudioServiceShuffleMode.none) {
-      _player.setShuffleModeEnabled(false);
-    } else {
-      await _player.shuffle();
-      _player.setShuffleModeEnabled(true);
+    final oldIndices = _player.effectiveIndices!;
+    switch (shuffleMode) {
+      case AudioServiceShuffleMode.none:
+        final list = List.generate(
+            oldIndices.length, (index) => queue.value![oldIndices[index]]);
+        queue.add(list);
+        _player.setShuffleModeEnabled(false);
+        break;
+      case AudioServiceShuffleMode.group:
+      case AudioServiceShuffleMode.all:
+        _player.setShuffleModeEnabled(true);
+        _player.shuffle();
+        final playlist =
+        _player.shuffleIndices!.map((index) => queue.value[index]).toList();
+        queue.add(playlist);
+        break;
+    }
+  }
+  @override
+  Future<void> customAction(String name, [Map<String, dynamic>? extras]) async {
+    if (name == 'dispose') {
+      await _player.dispose();
+      super.stop();
     }
   }
 
+  @override
+  Future<void> stop() async {
+    await _player.stop();
+    return super.stop();
+  }
 }
