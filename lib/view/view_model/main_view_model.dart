@@ -3,19 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:music_player/data/mapper/mediaItem_mapper.dart';
 
 // 리포지터리
-import '../../data/repository/audio_repository_impl.dart';
-import '../../domain/model/audio_model.dart';
 import '../../domain/repository/song_repository.dart';
 
 // use_case
 import '../../domain/use_case/audio_player_stream/interface/audio_player_state_stream.dart';
+import '../../domain/use_case/audio_player_stream/interface/dispose_controller.dart';
 import '../../domain/use_case/button_change/interface/repeat_change.dart';
 import '../../domain/use_case/button_change/interface/shuffle_change.dart';
 import '../../domain/use_case/music_controller/interface/music_controller.dart';
 import '../../domain/use_case/music_controller/interface/seek_controller.dart';
 import '../../domain/use_case/play_list/interface/click_play_list_song.dart';
 import '../../domain/use_case/play_list/interface/play_list_setting.dart';
-import '../../domain/repository/audio_repository.dart';
 
 // state
 import 'state/main_state.dart';
@@ -29,7 +27,6 @@ import 'state/progress_bar_state.dart';
 class MainViewModel extends ChangeNotifier {
   final SongRepository _songRepository;
   MainState _mainState = const MainState();
-  final AudioRepository _audioRepository = AudioRepositoryImpl();
   ProgressBarState _progressNotifier = const ProgressBarState();
 
   //background-service
@@ -46,6 +43,7 @@ class MainViewModel extends ChangeNotifier {
   final ClickPlayListSong _clickPlayListSong;
   final SeekController _seekController;
   final AudioPlayerStateStream _audioPlayerStateStream;
+  final DisposeController _disposeController;
   // use_case
 
   MainViewModel({
@@ -61,6 +59,7 @@ class MainViewModel extends ChangeNotifier {
     required ClickPlayListSong clickPlayListSong,
     required SeekController seekController,
     required AudioPlayerStateStream audioPlayerPositionStream,
+    required DisposeController disposeController,
   })  : _songRepository = songRepository,
         _setMusicList = setMusicList,
         _playController = playController,
@@ -72,6 +71,7 @@ class MainViewModel extends ChangeNotifier {
         _clickPlayListSong = clickPlayListSong,
         _seekController = seekController,
         _audioPlayerStateStream = audioPlayerPositionStream,
+        _disposeController = disposeController,
         _audioHandler = audioHandler;
 
   ProgressBarState get progressNotifier => _progressNotifier;
@@ -113,63 +113,6 @@ class MainViewModel extends ChangeNotifier {
     await _setMusicList.execute(songList: songList);
     clickPlayButton();
     notifyListeners();
-  }
-
-  // TODO : 재생 목록 바뀔때마다 플레이리스트 갱신
-  void _listenToChangesInPlaylist() {
-    _audioHandler.queue.listen((playlist) {
-      if (playlist.isEmpty) return;
-      final newList = playlist.map((item) => item.toAudioModel()).toList();
-      _mainState = _mainState.copyWith(playList: newList);
-      notifyListeners();
-    });
-    notifyListeners();
-  }
-  
-  // TODO :  재생 상태 조작
-  void _listenToPlaybackState() {
-    _audioHandler.playbackState.listen((playbackState) {
-      final buttonState = _audioPlayerStateStream.execute(playbackState: playbackState);
-      _mainState = _mainState.copyWith(buttonState: buttonState);
-      notifyListeners();
-    });
-  }
-
-  void _listenToCurrentPosition() {
-    AudioService.position.listen((position) {
-      _progressNotifier = _progressNotifier.copyWith(
-        current: position,
-      );
-      notifyListeners();
-    });
-  }
-
-  void _listenToBufferedPosition() {
-    _audioHandler.playbackState.listen((playbackState) {
-      _progressNotifier = _progressNotifier.copyWith(
-        buffered: playbackState.bufferedPosition,
-      );
-      if (playbackState.queueIndex != null && mainState.playList.isNotEmpty) {
-        _mainState =
-            _mainState.copyWith(currentIndex: playbackState.queueIndex!);
-      }
-
-      notifyListeners();
-    });
-  }
-
-  void _listenToTotalDuration() {
-    _audioHandler.mediaItem.listen((mediaItem) {
-      _progressNotifier = _progressNotifier.copyWith(
-        total: mediaItem?.duration ?? Duration.zero,
-      );
-      if (mediaItem != null) {
-        _mainState = _mainState.copyWith(
-          nowPlaySong: mediaItem.toAudioModel(),
-        );
-      }
-      notifyListeners();
-    });
   }
 
   // TODO: 음악 멈추기
@@ -216,9 +159,75 @@ class MainViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+
+
+
+  // TODO : 재생 목록 바뀔때마다 플레이리스트 갱신
+  void _listenToChangesInPlaylist() {
+    _audioHandler.queue.listen((playlist) {
+      if (playlist.isEmpty) return;
+      final newList = playlist.map((item) => item.toAudioModel()).toList();
+      _mainState = _mainState.copyWith(playList: newList);
+      notifyListeners();
+    });
+    notifyListeners();
+  }
+
+  // TODO :  재생 상태 조작
+  void _listenToPlaybackState() {
+    _audioHandler.playbackState.listen((playbackState) {
+      final buttonState = _audioPlayerStateStream.execute(playbackState: playbackState);
+      _mainState = _mainState.copyWith(buttonState: buttonState);
+      notifyListeners();
+    });
+  }
+
+  void _listenToCurrentPosition() {
+    AudioService.position.listen((position) {
+      _progressNotifier = _progressNotifier.copyWith(
+        current: position,
+      );
+      notifyListeners();
+    });
+  }
+
+  void _listenToBufferedPosition() {
+    _audioHandler.playbackState.listen((playbackState) {
+      _progressNotifier = _progressNotifier.copyWith(
+        buffered: playbackState.bufferedPosition,
+      );
+      if (playbackState.queueIndex != null && mainState.playList.isNotEmpty) {
+        _mainState =
+            _mainState.copyWith(currentIndex: playbackState.queueIndex!);
+      }
+
+      notifyListeners();
+    });
+  }
+
+  void _listenToTotalDuration() {
+    _audioHandler.mediaItem.listen((mediaItem) {
+      _progressNotifier = _progressNotifier.copyWith(
+        total: mediaItem?.duration ?? Duration.zero,
+      );
+      if (mediaItem != null) {
+        _mainState = _mainState.copyWith(
+          nowPlaySong: mediaItem.toAudioModel(),
+        );
+      }
+      notifyListeners();
+    });
+  }
+
+
+
+
+
+
+
   @override
   void dispose() {
-    _audioRepository.audioPlayer.dispose();
+    _disposeController.execute();
     super.dispose();
   }
 }

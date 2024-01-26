@@ -1,7 +1,10 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+
 import 'package:music_player/core/repeat_state.dart';
+import 'package:music_player/view/ui/play_screen/now_play_list_screen.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
@@ -18,30 +21,15 @@ class NowPlayMusicScreen extends StatelessWidget {
     final song = state.nowPlaySong;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('${state.currentIndex}'),
-      ),
       body: Column(
         children: [
           SizedBox(
-            height: 400,
-            child: Row(
+            height: 500,
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Stack(
+                Row(
                   children: [
-                    Container(
-                      width: 300,
-                      height: 300,
-                      child: QueryArtworkWidget(
-                        keepOldArtwork: true,
-                        nullArtworkWidget: Image.network(
-                          'https://thumb.silhouette-ac.com/t/96/9629eae865b0d9e1725335c9985216a7_t.jpeg',
-                        ),
-                        id: song.id,
-                        type: ArtworkType.AUDIO,
-                      ),
-                    ),
                     IconButton(
                       onPressed: () {
                         context.pop();
@@ -50,6 +38,18 @@ class NowPlayMusicScreen extends StatelessWidget {
                       iconSize: 40,
                     ),
                   ],
+                ),
+                Container(
+                  width: 300,
+                  height: 300,
+                  child: QueryArtworkWidget(
+                    keepOldArtwork: true,
+                    nullArtworkWidget: Image.network(
+                      'https://thumb.silhouette-ac.com/t/96/9629eae865b0d9e1725335c9985216a7_t.jpeg',
+                    ),
+                    id: song.id,
+                    type: ArtworkType.AUDIO,
+                  ),
                 ),
               ],
             ),
@@ -150,13 +150,18 @@ class NowPlayMusicScreen extends StatelessWidget {
               ),
             ],
           ),
-          IconButton(
-            onPressed: () {
-              context.push('/now-play-list');
-            },
-            icon: Icon(Icons.playlist_add_check),
-            iconSize: 40,
-          )
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: (value) {
+          final myModel = Provider.of<MainViewModel>(context, listen: false);
+          showMaterialModalBottomSheet(context: context, builder: (context) {
+            return ChangeNotifierProvider.value(value: myModel, child: const NowPlayListScreen());
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.playlist_add), label: '리스트'),
+          BottomNavigationBarItem(icon: Icon(Icons.playlist_add), label: '리스트'),
         ],
       ),
     );

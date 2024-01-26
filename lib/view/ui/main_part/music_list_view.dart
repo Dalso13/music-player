@@ -27,7 +27,7 @@ class MusicListView extends StatelessWidget {
           title: Text(e.displayNameWOExt,
               maxLines: 1,
               overflow: TextOverflow.ellipsis),
-          subtitle: Text('$idx : ${state.currentIndex}'),
+          subtitle: Text(e.artist),
           trailing: Text(DateFormat('mm:ss').format(DateTime.fromMillisecondsSinceEpoch(e.duration)),
               style: TextStyle(color: Colors.grey)),
           leading: AudioImage(audioId: e.id),

@@ -24,10 +24,10 @@ final router = GoRouter(
       path: '/now-music',
       builder: (context, state) => ChangeNotifierProvider.value(value: _value,  child: const NowPlayMusicScreen())
     ),
-    GoRoute(
-      path: '/now-play-list',
-      builder: (context, state) => ChangeNotifierProvider.value(value: _value,  child: const NowPlayListScreen())
-    ),
+    // GoRoute(
+    //   path: '/now-play-list',
+    //   builder: (context, state) => ChangeNotifierProvider.value(value: _value,  child: const NowPlayListScreen())
+    // ),
   ],
 );
 

@@ -3,7 +3,9 @@ import 'package:get_it/get_it.dart';
 import 'package:music_player/domain/repository/song_repository.dart';
 import 'package:music_player/data/repository/song_repository_impl.dart';
 import 'package:music_player/domain/use_case/audio_player_stream/impl/audio_player_state_stream_impl.dart';
+import 'package:music_player/domain/use_case/audio_player_stream/impl/dispose_controller_impl.dart';
 import 'package:music_player/domain/use_case/audio_player_stream/interface/audio_player_state_stream.dart';
+import 'package:music_player/domain/use_case/audio_player_stream/interface/dispose_controller.dart';
 import 'package:music_player/domain/use_case/button_change/interface/shuffle_change.dart';
 import 'package:music_player/domain/use_case/music_controller/impl/next_play_controller.dart';
 import 'package:music_player/domain/use_case/music_controller/impl/play_controller.dart';
@@ -43,6 +45,7 @@ Future<void> diSetup() async {
   getIt.registerSingleton<SeekController>(SeekControllerImpl(audioService: getIt<AudioHandler>()));
 
   getIt.registerSingleton<AudioPlayerStateStream>(AudioPlayerStateStreamImpl());
+  getIt.registerSingleton<DisposeController>(DisposeControllerImpl(audioService: getIt<AudioHandler>()));
   // USE_CASE
 
 
@@ -59,6 +62,7 @@ Future<void> diSetup() async {
         clickPlayListSong: getIt<ClickPlayListSong>(),
         seekController: getIt<SeekController>(),
         audioPlayerPositionStream: getIt<AudioPlayerStateStream>(),
+        disposeController: getIt<DisposeController>(),
       ));
 
 }
