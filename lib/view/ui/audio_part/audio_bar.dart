@@ -15,56 +15,94 @@ class AudioBar extends StatelessWidget {
     final song = viewModel.mainState.nowPlaySong;
     return Row(
       children: [
-        Container(
-          margin: const EdgeInsets.only(right: 8, left: 8),
-          width: 60,
-          height: 60,
-            child: AudioImage(
-                audioId:
-                song.id)),
         Expanded(
           child: Column(
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(right: 8, left: 8),
+                        width: 60,
+                        height: 60,
+                        child: Hero(
+                          tag: song.id,
+                          child: AudioImage(audioId: song.id),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(left: 8),
+                        width: 150,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              song.displayNameWOExt,
+                              softWrap: false,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                              maxLines: 1,
+                            ),
+                            Text(
+                              song.artist,
+                              style: TextStyle(color: Colors.grey),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    child: Row(
+                      children: [
+                        Container(
+                          child: IconButton(
+                            onPressed: viewModel.previousPlay,
+                            icon: Icon(Icons.skip_previous),
+                          ),
+                        ),
+                        Container(
+                            child: switch (viewModel.mainState.buttonState) {
+                          ButtonState.paused => IconButton(
+                              icon: const Icon(Icons.play_arrow),
+                              onPressed: viewModel.clickPlayButton,
+                            ),
+                          ButtonState.playing => IconButton(
+                              icon: const Icon(Icons.pause),
+                              onPressed: viewModel.stopMusic,
+                            ),
+                          ButtonState.loading => Container(
+                              margin: EdgeInsets.only(right: 8, left: 8),
+                              width: 16.0,
+                              height: 16.0,
+                              child: const CircularProgressIndicator(),
+                            ),
+                        }),
+                        Container(
+                          child: IconButton(
+                            onPressed: viewModel.nextPlay,
+                            icon: Icon(Icons.skip_next),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
               Container(
                 child: ProgressBar(
                   progress: viewModel.progressNotifier.current,
                   buffered: viewModel.progressNotifier.buffered,
                   total: viewModel.progressNotifier.total,
                   onSeek: viewModel.seek,
+                  timeLabelLocation: TimeLabelLocation.none,
+                  barHeight: 3,
                 ),
-              ),
-              Row(
-                children: [
-                  Container(
-                    child: IconButton(
-                      onPressed: viewModel.previousPlay,
-                      icon: Icon(Icons.skip_previous),
-                    ),
-                  ),
-                  Container(
-                      child: switch (viewModel.mainState.buttonState) {
-                    ButtonState.paused => IconButton(
-                        icon: const Icon(Icons.play_arrow),
-                        onPressed: viewModel.clickPlayButton,
-                      ),
-                    ButtonState.playing => IconButton(
-                        icon: const Icon(Icons.pause),
-                        onPressed: viewModel.stopMusic,
-                      ),
-                    ButtonState.loading => Container(
-                        margin: EdgeInsets.only(right: 8, left: 8),
-                        width: 16.0,
-                        height: 16.0,
-                        child: const CircularProgressIndicator(),
-                      ),
-                  }),
-                  Container(
-                    child: IconButton(
-                      onPressed: viewModel.nextPlay,
-                      icon: Icon(Icons.skip_next),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),

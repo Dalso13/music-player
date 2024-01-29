@@ -15,20 +15,24 @@ class MusicListView extends StatelessWidget {
     final song = state.nowPlaySong;
     return ListView(
       children: state.songList.map((e) {
-        int idx = viewModel.mainState.playList.indexOf(e);
+        bool isEquals = e.id == song.id;
         return ListTile(
-          tileColor: e.id == song.id ? Colors.grey[200] : null,
+          tileColor:isEquals
+                  ? Colors.grey[200]
+                  : null,
           onTap: () {
-            if (idx == state.currentIndex) {
+            if (isEquals) {
               return;
             }
             viewModel.playMusic(index: state.songList.indexOf(e));
           },
           title: Text(e.displayNameWOExt,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis),
-          subtitle: Text(e.artist),
-          trailing: Text(DateFormat('mm:ss').format(DateTime.fromMillisecondsSinceEpoch(e.duration)),
+              maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.bold),),
+          subtitle:
+              Text(e.artist, maxLines: 1, overflow: TextOverflow.ellipsis),
+          trailing: Text(
+              DateFormat('mm:ss')
+                  .format(DateTime.fromMillisecondsSinceEpoch(e.duration)),
               style: TextStyle(color: Colors.grey)),
           leading: AudioImage(audioId: e.id),
         );

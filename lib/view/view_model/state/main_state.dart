@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:flutter/foundation.dart';
 import '../../../core/button_state.dart';
 import '../../../core/repeat_state.dart';
 import '../../../domain/model/audio_model.dart';
@@ -13,6 +12,7 @@ class MainState with _$MainState {
   const factory MainState({
     @Default(false) bool isLoading,
     @Default(false) bool isShuffleModeEnabled,
+    @Default(0xff000000)  int artColor,
     @Default([]) List<int> shuffleIndices,
     @Default(0) int currentIndex,
     @Default(ButtonState.paused) ButtonState buttonState,

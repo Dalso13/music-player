@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:music_player/view/ui/play_screen/now_play_music_screen.dart';
 import 'package:music_player/view/ui/audio_part/audio_bar.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
@@ -50,8 +51,8 @@ class _MainScreenState extends State<MainScreen> {
     final state = viewModel.mainState;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Music Player'),
-      ), 
+        title: const Text('Music Player'),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -66,19 +67,58 @@ class _MainScreenState extends State<MainScreen> {
                             ? const Text("Nothing found!")
                             : const MusicListView()),
           ),
-          IconButton(onPressed: (){
-            context.push('/now-music');
-          }, icon: Icon(Icons.abc)),
-          state.playList.isEmpty ? Container() : const AudioBar()
+          state.nowPlaySong.id < 0
+              ? Container()
+              : GestureDetector(
+                  onTap: () {
+                    final myModel =
+                        Provider.of<MainViewModel>(context, listen: false);
+                    showModalBottomSheet(
+                      isScrollControlled: true,
+                        context: context,
+                        builder: (context) {
+                          return ChangeNotifierProvider.value(
+                              value: myModel,
+                              child: const NowPlayMusicScreen());
+                        });
+                  },
+                  child: const AudioBar(),),
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: null,
         onPressed: viewModel.shufflePlayList,
         child: Icon(Icons.shuffle),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
+      bottomNavigationBar: Container(
+        width: double.maxFinite,
+        height: 60,
+        child: const InkWell(
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              children: <Widget>[
+                Icon(Icons.home, color: Colors.deepPurple),
+                Text('home'),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
-
+  void goRouters() {
+    final myModel =
+    Provider.of<MainViewModel>(context, listen: false);
+    showMaterialModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return ChangeNotifierProvider.value(
+              value: myModel,
+              child: const NowPlayMusicScreen());
+        });
+  }
   Widget noAccessToLibraryWidget() {
     return Container(
       decoration: BoxDecoration(

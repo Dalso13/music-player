@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:music_player/data/mapper/mediaItem_mapper.dart';
+import 'package:music_player/domain/use_case/color/interface/imag_base_color.dart';
 
 // 리포지터리
 import '../../domain/repository/song_repository.dart';
@@ -44,6 +45,7 @@ class MainViewModel extends ChangeNotifier {
   final SeekController _seekController;
   final AudioPlayerStateStream _audioPlayerStateStream;
   final DisposeController _disposeController;
+  final ImageBaseColor _imageBaseColor;
   // use_case
 
   MainViewModel({
@@ -60,6 +62,7 @@ class MainViewModel extends ChangeNotifier {
     required SeekController seekController,
     required AudioPlayerStateStream audioPlayerPositionStream,
     required DisposeController disposeController,
+    required ImageBaseColor imageBaseColor,
   })  : _songRepository = songRepository,
         _setMusicList = setMusicList,
         _playController = playController,
@@ -72,6 +75,7 @@ class MainViewModel extends ChangeNotifier {
         _seekController = seekController,
         _audioPlayerStateStream = audioPlayerPositionStream,
         _disposeController = disposeController,
+        _imageBaseColor = imageBaseColor,
         _audioHandler = audioHandler;
 
   ProgressBarState get progressNotifier => _progressNotifier;
@@ -97,10 +101,7 @@ class MainViewModel extends ChangeNotifier {
   // TODO: 리스트에 곡 클릭시
   void playMusic({required int index}) async {
     _mainState = _mainState.copyWith(isShuffleModeEnabled: false);
-    final songList = mainState.songList.toList();
-
-    await _setMusicList.execute(
-        songList: songList.getRange(index, songList.length).toList());
+    await _setMusicList.execute(songList: mainState.songList.toList(), index: index);
     clickPlayButton();
     notifyListeners();
   }
@@ -140,8 +141,9 @@ class MainViewModel extends ChangeNotifier {
   }
 
   // TODO : 플레이 리스트 곡 클릭
-  void clickPlayListSong({required int idx}) async {
+  void clickPlayListSong({required int idx}) {
     _clickPlayListSong.execute(idx: idx);
+    notifyListeners();
   }
 
   // TODO: 반복 재생 버튼 클릭
@@ -210,20 +212,22 @@ class MainViewModel extends ChangeNotifier {
       _progressNotifier = _progressNotifier.copyWith(
         total: mediaItem?.duration ?? Duration.zero,
       );
-      if (mediaItem != null) {
+      notifyListeners();
+      if (mediaItem == null) return;
+      if (mediaItem.toAudioModel() == _mainState.nowPlaySong) return;
         _mainState = _mainState.copyWith(
           nowPlaySong: mediaItem.toAudioModel(),
         );
-      }
-      notifyListeners();
+      _color(id: int.parse(mediaItem.id));
     });
   }
 
-
-
-
-
-
+  void _color({required int id}) async {
+    int color = await _imageBaseColor.execute(id: id);
+   _mainState = _mainState.copyWith(
+     artColor: color
+   );
+  }
 
   @override
   void dispose() {

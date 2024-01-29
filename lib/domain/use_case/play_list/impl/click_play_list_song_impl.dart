@@ -7,6 +7,7 @@ class ClickPlayListSongImpl implements ClickPlayListSong {
 
   @override
   void execute({required int idx}) async {
-    await _audioRepository.audioPlayer.seek(Duration.zero, index: _audioRepository.audioPlayer.effectiveIndices![idx]);
+    int lisIdx = _audioRepository.audioPlayer.effectiveIndices![idx];
+    await _audioRepository.audioPlayer.seek(Duration.zero, index: lisIdx);
   }
 }

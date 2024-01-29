@@ -7,6 +7,7 @@ import 'package:music_player/domain/use_case/audio_player_stream/impl/dispose_co
 import 'package:music_player/domain/use_case/audio_player_stream/interface/audio_player_state_stream.dart';
 import 'package:music_player/domain/use_case/audio_player_stream/interface/dispose_controller.dart';
 import 'package:music_player/domain/use_case/button_change/interface/shuffle_change.dart';
+import 'package:music_player/domain/use_case/color/interface/imag_base_color.dart';
 import 'package:music_player/domain/use_case/music_controller/impl/next_play_controller.dart';
 import 'package:music_player/domain/use_case/music_controller/impl/play_controller.dart';
 import 'package:music_player/domain/use_case/music_controller/impl/previous_play_controller.dart';
@@ -21,6 +22,7 @@ import 'package:music_player/view/view_model/main_view_model.dart';
 import '../domain/use_case/button_change/impl/repeat_change_impl.dart';
 import '../domain/use_case/button_change/impl/shuffle_change_impl.dart';
 import '../domain/use_case/button_change/interface/repeat_change.dart';
+import '../domain/use_case/color/impl/imag_base_color_impl.dart';
 import '../service/audio_handler.dart';
 
 final getIt = GetIt.instance;
@@ -46,6 +48,8 @@ Future<void> diSetup() async {
 
   getIt.registerSingleton<AudioPlayerStateStream>(AudioPlayerStateStreamImpl());
   getIt.registerSingleton<DisposeController>(DisposeControllerImpl(audioService: getIt<AudioHandler>()));
+
+  getIt.registerSingleton<ImageBaseColor>(ImageBaseColorImpl());
   // USE_CASE
 
 
@@ -63,6 +67,7 @@ Future<void> diSetup() async {
         seekController: getIt<SeekController>(),
         audioPlayerPositionStream: getIt<AudioPlayerStateStream>(),
         disposeController: getIt<DisposeController>(),
+        imageBaseColor: getIt<ImageBaseColor>(),
       ));
 
 }

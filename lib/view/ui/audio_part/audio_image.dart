@@ -10,8 +10,8 @@ class AudioImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return QueryArtworkWidget(
       keepOldArtwork: true,
-      nullArtworkWidget: Image.network(
-          'https://thumb.silhouette-ac.com/t/96/9629eae865b0d9e1725335c9985216a7_t.jpeg',
+      nullArtworkWidget: Image.asset(
+          'assets/images/art_image.jpeg',
           // color: Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
           // colorBlendMode: BlendMode.lighten
         ),

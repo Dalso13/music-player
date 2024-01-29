@@ -18,7 +18,7 @@ Future<AudioHandler> initAudioService() async {
 
 class MyAudioHandler extends BaseAudioHandler {
   final _player = AudioRepositoryImpl().audioPlayer;
-  var _playlist = ConcatenatingAudioSource(children: []);
+  final _playlist = ConcatenatingAudioSource(children: []);
 
   MyAudioHandler() {
     _notifyAudioHandlerAboutPlaybackEvents();
@@ -30,11 +30,13 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> addQueueItems(List<MediaItem> mediaItems) async {
-    // manage Just Audio
-    _player.setShuffleModeEnabled(false);
+    await _player.setShuffleModeEnabled(false);
+    if (_player.playing){
+      await _player.pause();
+    }
     final audioSource = mediaItems.map(_createAudioSource);
-    _playlist = ConcatenatingAudioSource(children: audioSource.toList());
-    _player.setAudioSource(_playlist);
+    _playlist.clear();
+    _playlist.addAll(audioSource.toList());
 
     queue.add(mediaItems);
   }
