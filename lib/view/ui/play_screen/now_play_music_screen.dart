@@ -22,9 +22,8 @@ class NowPlayMusicScreen extends StatelessWidget {
     final song = state.nowPlaySong;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Color(state.artColor).withOpacity(0.6),
       body: Container(
-        color: Color(state.artColor).withOpacity(0.5),
         child: Column(
           children: [
               Container(
@@ -38,21 +37,24 @@ class NowPlayMusicScreen extends StatelessWidget {
                           onPressed: () {
                             context.pop();
                           },
-                          icon: Icon(Icons.expand_more, color: Colors.white),
+                          icon: Icon(Icons.expand_more),
                           iconSize: 40,
                         ),
                       ],
                     ),
-                    Container(
-                      width: 300,
-                      height: 300,
-                      child: QueryArtworkWidget(
-                        keepOldArtwork: true,
-                        nullArtworkWidget: Image.asset(
-                          'assets/images/art_image.jpeg',
+                    ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                      child: Container(
+                        width: 300,
+                        height: 300,
+                        child: QueryArtworkWidget(
+                          keepOldArtwork: true,
+                          nullArtworkWidget: Image.asset(
+                            'assets/images/art_image.jpeg',
+                          ),
+                          id: song.id,
+                          type: ArtworkType.AUDIO,
                         ),
-                        id: song.id,
-                        type: ArtworkType.AUDIO,
                       ),
                     ),
                   ],
@@ -61,6 +63,7 @@ class NowPlayMusicScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ProgressBar(
+                timeLabelPadding: 8,
                 progress: viewModel.progressNotifier.current,
                 buffered: viewModel.progressNotifier.buffered,
                 total: viewModel.progressNotifier.total,
@@ -79,7 +82,7 @@ class NowPlayMusicScreen extends StatelessWidget {
                     song.displayNameWOExt,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Text(
@@ -99,8 +102,8 @@ class NowPlayMusicScreen extends StatelessWidget {
                     onPressed: viewModel.repeatModeChange,
                     icon: switch (state.repeatState) {
                       RepeatState.off => Icon(Icons.repeat, color: Colors.grey),
-                      RepeatState.repeatPlaylist => Icon(Icons.repeat, color: Colors.white),
-                      RepeatState.repeatSong => Icon(Icons.repeat_one, color: Colors.white),
+                      RepeatState.repeatPlaylist => Icon(Icons.repeat),
+                      RepeatState.repeatSong => Icon(Icons.repeat_one),
                     },
                   ),
                 ),
@@ -110,7 +113,7 @@ class NowPlayMusicScreen extends StatelessWidget {
                       child: IconButton(
                         iconSize: 40,
                         onPressed: viewModel.previousPlay,
-                        icon: Icon(Icons.skip_previous, color: Colors.white),
+                        icon: Icon(Icons.skip_previous),
                       ),
                     ),
                     Container(
@@ -137,7 +140,7 @@ class NowPlayMusicScreen extends StatelessWidget {
                       child: IconButton(
                         iconSize: 40,
                         onPressed: viewModel.nextPlay,
-                        icon: Icon(Icons.skip_next, color: Colors.white),
+                        icon: Icon(Icons.skip_next),
                       ),
                     ),
                   ],
@@ -148,7 +151,7 @@ class NowPlayMusicScreen extends StatelessWidget {
                       icon: Icon(
                         Icons.shuffle,
                         color: state.isShuffleModeEnabled
-                            ? Colors.white
+                            ? Colors.black
                             : Colors.grey,
                       )),
                 ),
@@ -162,10 +165,10 @@ class NowPlayMusicScreen extends StatelessWidget {
         height: 60,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
           ),
-         color: Color(state.artColor).withOpacity(0.8),
+         color: Color(state.artColor),
         ),
         child: InkWell(
           onTap: () {
@@ -181,7 +184,7 @@ class NowPlayMusicScreen extends StatelessWidget {
             padding: EdgeInsets.all(8.0),
             child: Column(
               children: <Widget>[
-                Icon(Icons.playlist_add, color: Colors.deepPurple),
+                Icon(Icons.playlist_add, color: Colors.black),
                 Text('List'),
               ],
             ),

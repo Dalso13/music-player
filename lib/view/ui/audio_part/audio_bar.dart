@@ -24,7 +24,7 @@ class AudioBar extends StatelessWidget {
                   Row(
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(right: 8, left: 8),
+                        margin: const EdgeInsets.only(right: 8, left: 8,top: 8),
                         width: 60,
                         height: 60,
                         child: Hero(
@@ -105,7 +105,7 @@ class AudioBar extends StatelessWidget {
                 ),
               ),
             ],
-          ),
+          )
         ),
       ],
     );

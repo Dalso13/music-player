@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:music_player/view/ui/play_screen/now_play_music_screen.dart';
 import 'package:music_player/view/ui/audio_part/audio_bar.dart';
@@ -7,7 +6,8 @@ import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-import '../main_part/music_list_view.dart';
+import '../audio_part/empty_audio_bar.dart';
+import '../song_part/music_list_view.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -50,75 +50,69 @@ class _MainScreenState extends State<MainScreen> {
     final MainViewModel viewModel = context.watch<MainViewModel>();
     final state = viewModel.mainState;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Music Player'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Center(
-                child: !_hasPermission
-                    ? noAccessToLibraryWidget()
-                    : viewModel.mainState.isLoading
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : state.songList.isEmpty
-                            ? const Text("Nothing found!")
-                            : const MusicListView()),
-          ),
-          state.nowPlaySong.id < 0
-              ? Container()
-              : GestureDetector(
-                  onTap: () {
-                    final myModel =
-                        Provider.of<MainViewModel>(context, listen: false);
-                    showModalBottomSheet(
-                      isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return ChangeNotifierProvider.value(
-                              value: myModel,
-                              child: const NowPlayMusicScreen());
-                        });
-                  },
-                  child: const AudioBar(),),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: null,
-        onPressed: viewModel.shufflePlayList,
-        child: Icon(Icons.shuffle),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
-      bottomNavigationBar: Container(
-        width: double.maxFinite,
-        height: 60,
-        child: const InkWell(
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Column(
-              children: <Widget>[
-                Icon(Icons.home, color: Colors.deepPurple),
-                Text('home'),
-              ],
-            ),
-          ),
+        appBar: AppBar(
+          title: const Text('Music Player'),
         ),
-      ),
-    );
+        body: Column(
+          children: [
+            Expanded(
+              child: Center(
+                  child: !_hasPermission
+                      ? noAccessToLibraryWidget()
+                      : viewModel.mainState.isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : state.songList.isEmpty
+                              ? const Text("Nothing found!")
+                              : const MusicListView()),
+            ),
+            viewModel.mainState.playList.isNotEmpty
+                ? GestureDetector(
+                    onTap: () {
+                      final myModel =
+                          Provider.of<MainViewModel>(context, listen: false);
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return ChangeNotifierProvider.value(
+                                value: myModel,
+                                child: const NowPlayMusicScreen());
+                          });
+                    },
+                    child:
+                        Container(color: Colors.white, child: const AudioBar()),
+                  )
+                : const EmptyAudioBar(),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          heroTag: null,
+          onPressed: viewModel.shufflePlayList,
+          child: Icon(Icons.shuffle),
+        ),
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.miniEndDocked,
+        bottomNavigationBar: BottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.playlist_add_check), label: 'play list'),
+          ],
+        ));
   }
+
   void goRouters() {
-    final myModel =
-    Provider.of<MainViewModel>(context, listen: false);
+    final myModel = Provider.of<MainViewModel>(context, listen: false);
     showMaterialModalBottomSheet(
         context: context,
         builder: (context) {
           return ChangeNotifierProvider.value(
-              value: myModel,
-              child: const NowPlayMusicScreen());
+              value: myModel, child: const NowPlayMusicScreen());
         });
   }
+
   Widget noAccessToLibraryWidget() {
     return Container(
       decoration: BoxDecoration(

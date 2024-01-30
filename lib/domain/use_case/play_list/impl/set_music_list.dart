@@ -25,8 +25,8 @@ class SetMusicList implements PlayListSetting {
     )
     ).toList());
     await _audioService.addQueueItems(songList.map((e) => e.toMediaItem()).toList());
-
-    await _player.setAudioSource(playList, initialIndex: index ?? 0);
+    if(index == null || index <= 0) return;
+    _audioService.skipToQueueItem(index);
   }
 
 }

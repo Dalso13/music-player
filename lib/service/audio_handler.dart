@@ -21,11 +21,20 @@ class MyAudioHandler extends BaseAudioHandler {
   final _playlist = ConcatenatingAudioSource(children: []);
 
   MyAudioHandler() {
+    _loadEmptyPlaylist();
     _notifyAudioHandlerAboutPlaybackEvents();
     _listenForDurationChanges();
     _listenForCurrentSongIndexChanges();
     _listenForSequenceStateChanges();
 
+  }
+
+  Future<void> _loadEmptyPlaylist() async {
+    try {
+      await _player.setAudioSource(_playlist);
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   @override
@@ -41,11 +50,42 @@ class MyAudioHandler extends BaseAudioHandler {
     queue.add(mediaItems);
   }
 
+  @override
+  Future<void> addQueueItem(MediaItem mediaItem) async {
+    // manage Just Audio
+    final audioSource = _createAudioSource(mediaItem);
+    _playlist.add(audioSource);
+
+    // notify system
+    final newQueue = queue.value..add(mediaItem);
+    queue.add(newQueue);
+  }
+
+  @override
+  Future<void> insertQueueItem(int index, MediaItem mediaItem) async {
+    // manage Just Audio
+    final audioSource = _createAudioSource(mediaItem);
+    if(index <= 0){
+      _playlist.add(audioSource);
+    } else{
+      _playlist.insert(index+1,audioSource);
+    }
+
+    // notify system
+    final newQueue = queue.value..insert(index, mediaItem);
+    queue.add(newQueue);
+  }
+
   UriAudioSource _createAudioSource(MediaItem mediaItem) {
     return AudioSource.file(
       mediaItem.extras!['url'] as String,
       tag: mediaItem,
     );
+  }
+
+  @override
+  Future<void> skipToQueueItem(int index) async {
+    await _player.setAudioSource(_playlist, initialIndex: index);
   }
 
   void _notifyAudioHandlerAboutPlaybackEvents() {
@@ -181,6 +221,10 @@ class MyAudioHandler extends BaseAudioHandler {
         break;
     }
   }
+
+
+
+
   @override
   Future<void> customAction(String name, [Map<String, dynamic>? extras]) async {
     if (name == 'dispose') {

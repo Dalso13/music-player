@@ -1,7 +1,11 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:music_player/data/mapper/audio_model_mapper.dart';
 import 'package:music_player/data/mapper/mediaItem_mapper.dart';
+import 'package:music_player/domain/model/audio_model.dart';
 import 'package:music_player/domain/use_case/color/interface/imag_base_color.dart';
+import 'package:music_player/domain/use_case/play_list/interface/add_song.dart';
+import 'package:music_player/domain/use_case/play_list/interface/insert_song.dart';
 
 // 리포지터리
 import '../../domain/repository/song_repository.dart';
@@ -46,6 +50,8 @@ class MainViewModel extends ChangeNotifier {
   final AudioPlayerStateStream _audioPlayerStateStream;
   final DisposeController _disposeController;
   final ImageBaseColor _imageBaseColor;
+  final InsertSong _insertSong;
+  final AddSong _addSong;
   // use_case
 
   MainViewModel({
@@ -63,6 +69,8 @@ class MainViewModel extends ChangeNotifier {
     required AudioPlayerStateStream audioPlayerPositionStream,
     required DisposeController disposeController,
     required ImageBaseColor imageBaseColor,
+    required InsertSong insertSong,
+    required AddSong addSong,
   })  : _songRepository = songRepository,
         _setMusicList = setMusicList,
         _playController = playController,
@@ -76,6 +84,8 @@ class MainViewModel extends ChangeNotifier {
         _audioPlayerStateStream = audioPlayerPositionStream,
         _disposeController = disposeController,
         _imageBaseColor = imageBaseColor,
+        _insertSong = insertSong,
+        _addSong = addSong,
         _audioHandler = audioHandler;
 
   ProgressBarState get progressNotifier => _progressNotifier;
@@ -159,6 +169,17 @@ class MainViewModel extends ChangeNotifier {
         isShuffleModeEnabled: _mainState.isShuffleModeEnabled);
     _mainState = _mainState.copyWith(isShuffleModeEnabled: enable);
     notifyListeners();
+  }
+
+  // TODO: 재생 목록에 곡 추가
+  void addSong({bool isCurrentPlaylistNext = false, required AudioModel song}) async {
+    isCurrentPlaylistNext
+        ? _insertSong.execute(model: song, index: _mainState.currentIndex)
+        : _addSong.execute(model: song);
+  }
+  // TODO: 재생 목록에 곡 추가
+  void removeSong({required int index}) async {
+
   }
 
 
