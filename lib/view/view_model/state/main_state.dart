@@ -14,7 +14,7 @@ class MainState with _$MainState {
     @Default(false) bool isShuffleModeEnabled,
     @Default(0xff000000)  int artColor,
     @Default([]) List<int> shuffleIndices,
-    @Default(0) int currentIndex,
+    @Default(-1) int currentIndex,
     @Default(ButtonState.paused) ButtonState buttonState,
     @Default(RepeatState.off) RepeatState repeatState,
     @Default([]) List<AudioModel> songList,

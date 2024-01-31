@@ -11,7 +11,7 @@ class AudioImage extends StatelessWidget {
     return QueryArtworkWidget(
       keepOldArtwork: true,
       nullArtworkWidget: Image.asset(
-          'assets/images/art_image.jpeg',
+          'assets/images/art_image.png',
           // color: Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
           // colorBlendMode: BlendMode.lighten
         ),

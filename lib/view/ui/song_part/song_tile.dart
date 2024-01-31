@@ -19,25 +19,52 @@ class SongTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       tileColor: _isEqual ? Colors.grey[200]!.withOpacity(0.6) : null,
-      title: Text(
-          _song.displayNameWOExt,
+      title: Text(_song.displayNameWOExt,
           overflow: TextOverflow.ellipsis,
           softWrap: false,
           maxLines: 1,
-          style:
-          const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-      subtitle: Text(
-        _song.artist,
-        overflow: TextOverflow.ellipsis,
-        softWrap: false,
-        maxLines: 1,
-        style: const TextStyle(color: Colors.grey, fontSize: 12),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+      subtitle: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            _song.artist,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            maxLines: 1,
+            style: const TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+          Text(
+            DateFormat('mm:ss')
+                .format(DateTime.fromMillisecondsSinceEpoch(_song.duration)),
+            style: const TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+        ],
       ),
       leading: AudioImage(audioId: _song.id),
-      trailing: Text(
-          DateFormat('mm:ss').format(
-              DateTime.fromMillisecondsSinceEpoch(_song.duration)),
-          style: const TextStyle(color: Colors.grey)),
+      trailing: IconButton(
+        onPressed: () {
+          final myModel = Provider.of<MainViewModel>(context, listen: false);
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+            builder: (context) {
+              return DraggableScrollableSheet(
+                expand: false,
+                initialChildSize: 0.3,
+                builder: (context, scrollController) =>
+                    ChangeNotifierProvider.value(
+                  value: myModel,
+                  child: DetailSongControl(song: _song),
+                ),
+              );
+            },
+          );
+        },
+        icon: Icon(Icons.more_vert_outlined, color: Colors.grey[500], size: 20,),
+      ),
     );
   }
 }

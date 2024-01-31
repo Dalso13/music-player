@@ -1,11 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:music_player/data/mapper/audio_model_mapper.dart';
 import 'package:music_player/data/mapper/mediaItem_mapper.dart';
 import 'package:music_player/domain/model/audio_model.dart';
-import 'package:music_player/domain/use_case/color/interface/imag_base_color.dart';
-import 'package:music_player/domain/use_case/play_list/interface/add_song.dart';
-import 'package:music_player/domain/use_case/play_list/interface/insert_song.dart';
 
 // 리포지터리
 import '../../domain/repository/song_repository.dart';
@@ -13,12 +9,16 @@ import '../../domain/repository/song_repository.dart';
 // use_case
 import '../../domain/use_case/audio_player_stream/interface/audio_player_state_stream.dart';
 import '../../domain/use_case/audio_player_stream/interface/dispose_controller.dart';
+import '../../domain/use_case/audio_player_stream/interface/get_current_index.dart';
 import '../../domain/use_case/button_change/interface/repeat_change.dart';
 import '../../domain/use_case/button_change/interface/shuffle_change.dart';
 import '../../domain/use_case/music_controller/interface/music_controller.dart';
 import '../../domain/use_case/music_controller/interface/seek_controller.dart';
 import '../../domain/use_case/play_list/interface/click_play_list_song.dart';
 import '../../domain/use_case/play_list/interface/play_list_setting.dart';
+import 'package:music_player/domain/use_case/color/interface/imag_base_color.dart';
+import 'package:music_player/domain/use_case/play_list/interface/add_song.dart';
+import 'package:music_player/domain/use_case/play_list/interface/insert_song.dart';
 
 // state
 import 'state/main_state.dart';
@@ -52,6 +52,7 @@ class MainViewModel extends ChangeNotifier {
   final ImageBaseColor _imageBaseColor;
   final InsertSong _insertSong;
   final AddSong _addSong;
+  final GetCurrentIndex _getCurrentIndex;
   // use_case
 
   MainViewModel({
@@ -71,6 +72,7 @@ class MainViewModel extends ChangeNotifier {
     required ImageBaseColor imageBaseColor,
     required InsertSong insertSong,
     required AddSong addSong,
+    required GetCurrentIndex getCurrentIndex,
   })  : _songRepository = songRepository,
         _setMusicList = setMusicList,
         _playController = playController,
@@ -86,6 +88,7 @@ class MainViewModel extends ChangeNotifier {
         _imageBaseColor = imageBaseColor,
         _insertSong = insertSong,
         _addSong = addSong,
+        _getCurrentIndex = getCurrentIndex,
         _audioHandler = audioHandler;
 
   ProgressBarState get progressNotifier => _progressNotifier;
@@ -168,16 +171,20 @@ class MainViewModel extends ChangeNotifier {
     final enable = await _shuffleChange.execute(
         isShuffleModeEnabled: _mainState.isShuffleModeEnabled);
     _mainState = _mainState.copyWith(isShuffleModeEnabled: enable);
+
     notifyListeners();
   }
 
   // TODO: 재생 목록에 곡 추가
   void addSong({bool isCurrentPlaylistNext = false, required AudioModel song}) async {
-    isCurrentPlaylistNext
-        ? _insertSong.execute(model: song, index: _mainState.currentIndex)
-        : _addSong.execute(model: song);
+    if (!isCurrentPlaylistNext && _mainState.playList.isEmpty){
+      _addSong.execute(model: song);
+    } else {
+      _insertSong.execute(model: song, index: _mainState.currentIndex);
+    }
+    notifyListeners();
   }
-  // TODO: 재생 목록에 곡 추가
+  // TODO: 재생 목록에 곡 제거
   void removeSong({required int index}) async {
 
   }
@@ -220,8 +227,9 @@ class MainViewModel extends ChangeNotifier {
         buffered: playbackState.bufferedPosition,
       );
       if (playbackState.queueIndex != null && mainState.playList.isNotEmpty) {
+        int index = _getCurrentIndex.execute(index: playbackState.queueIndex!);
         _mainState =
-            _mainState.copyWith(currentIndex: playbackState.queueIndex!);
+            _mainState.copyWith(currentIndex: index);
       }
 
       notifyListeners();

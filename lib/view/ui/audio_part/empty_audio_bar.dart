@@ -21,16 +21,16 @@ class EmptyAudioBar extends StatelessWidget {
                 ),
                 Container(
                   padding: const EdgeInsets.only(left: 8),
-                  width: 150,
+                  width: 180,
                   child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        '재생 목록 비어있음',
+                        '재생중인 목록이 없습니다.',
                         softWrap: false,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
+                            fontWeight: FontWeight.bold, fontSize: 14),
                         maxLines: 1,
                       ),
                     ],
@@ -38,32 +38,22 @@ class EmptyAudioBar extends StatelessWidget {
                 ),
               ],
             ),
-            Container(
-              child: Row(
-                children: [
-                  Container(
-                      child: Icon(Icons.skip_previous)
-                  ),
-                  Container(
-                      child: const Icon(Icons.play_arrow)
-                  ),
-                  Container(
-                      child: Icon(Icons.skip_next)
-                  ),
-                ],
-              ),
+            Row(
+              children: [
+                IconButton(onPressed: (){}, icon: const Icon(Icons.skip_previous)),
+                IconButton(onPressed: (){}, icon: const Icon(Icons.play_arrow)),
+                IconButton(onPressed: (){}, icon: const Icon(Icons.skip_next)),
+              ],
             ),
           ],
         ),
-        Container(
-          child: const ProgressBar(
-            progress: Duration.zero,
-            buffered: null,
-            total: Duration.zero,
-            onSeek: null,
-            timeLabelLocation: TimeLabelLocation.none,
-            barHeight: 3,
-          ),
+        const ProgressBar(
+          progress: Duration.zero,
+          buffered: null,
+          total: Duration.zero,
+          onSeek: null,
+          timeLabelLocation: TimeLabelLocation.none,
+          barHeight: 3,
         ),
       ],
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_player/domain/model/audio_model.dart';
+import 'package:music_player/view/ui/song_part/detail_tile.dart';
 import 'package:music_player/view/ui/song_part/song_tile.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:provider/provider.dart';
@@ -26,23 +27,32 @@ class DetailSongControl extends StatelessWidget {
                 ),
               ),
             ),
-            child: SongTile(song: _song, isEqual: false),
+            child: DetailTile(song: _song,),
           ),
-          InkWell(
-            onTap: () {
-              viewModel.addSong(song: _song, isCurrentPlaylistNext: true);
-              context.pop();
-            },
-            child: Container(
-              width: double.maxFinite,
-              child: const Row(
-                children: [Padding(
-                  padding: EdgeInsets.only(top: 8,right: 16,left: 16,bottom: 8),
-                  child: Icon(Icons.playlist_play, size: 32),
-                ), Text('다음 곡으로 재생', style: TextStyle(fontSize: 14),)],
-              ),
-            ),
-          ),
+          viewModel.mainState.isShuffleModeEnabled
+              ? Container()
+              : InkWell(
+                  onTap: () {
+                    viewModel.addSong(song: _song, isCurrentPlaylistNext: true);
+                    context.pop();
+                  },
+                  child: Container(
+                    width: double.maxFinite,
+                    child: const Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: 8, right: 16, left: 16, bottom: 8),
+                          child: Icon(Icons.playlist_play, size: 32),
+                        ),
+                        Text(
+                          '다음 곡으로 재생',
+                          style: TextStyle(fontSize: 14),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
           InkWell(
             onTap: () {
               viewModel.addSong(song: _song);
@@ -51,10 +61,17 @@ class DetailSongControl extends StatelessWidget {
             child: Container(
               width: double.maxFinite,
               child: const Row(
-                children: [Padding(
-                  padding: EdgeInsets.only(top: 8,right: 16,left: 16,bottom: 8),
-                  child: Icon(Icons.playlist_add, size: 32),
-                ), Text('현재 재생목록에 추가', style: TextStyle(fontSize: 14),)],
+                children: [
+                  Padding(
+                    padding:
+                        EdgeInsets.only(top: 8, right: 16, left: 16, bottom: 8),
+                    child: Icon(Icons.playlist_add, size: 32),
+                  ),
+                  Text(
+                    '현재 재생목록에 추가',
+                    style: TextStyle(fontSize: 14),
+                  )
+                ],
               ),
             ),
           ),

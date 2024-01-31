@@ -4,6 +4,7 @@ import 'package:music_player/domain/repository/song_repository.dart';
 import 'package:music_player/data/repository/song_repository_impl.dart';
 import 'package:music_player/domain/use_case/audio_player_stream/impl/audio_player_state_stream_impl.dart';
 import 'package:music_player/domain/use_case/audio_player_stream/impl/dispose_controller_impl.dart';
+import 'package:music_player/domain/use_case/audio_player_stream/impl/get_current_index_impl.dart';
 import 'package:music_player/domain/use_case/audio_player_stream/interface/audio_player_state_stream.dart';
 import 'package:music_player/domain/use_case/audio_player_stream/interface/dispose_controller.dart';
 import 'package:music_player/domain/use_case/button_change/interface/shuffle_change.dart';
@@ -23,6 +24,7 @@ import 'package:music_player/domain/use_case/play_list/interface/click_play_list
 import 'package:music_player/domain/use_case/play_list/interface/insert_song.dart';
 import 'package:music_player/domain/use_case/play_list/interface/play_list_setting.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
+import '../domain/use_case/audio_player_stream/interface/get_current_index.dart';
 import '../domain/use_case/button_change/impl/repeat_change_impl.dart';
 import '../domain/use_case/button_change/impl/shuffle_change_impl.dart';
 import '../domain/use_case/button_change/interface/repeat_change.dart';
@@ -35,7 +37,7 @@ Future<void> diSetup() async {
   getIt.registerSingleton<SongRepository>(SongRepositoryImpl());
 
   //background-service
-  getIt.registerSingleton<AudioHandler>(await _initAudioService());
+  getIt.registerSingleton<AudioHandler>(await initAudioService());
 
   // USE_CASE
   getIt.registerSingleton<NextPlayController>(NextPlayController(audioService: getIt<AudioHandler>()));
@@ -57,6 +59,7 @@ Future<void> diSetup() async {
 
   getIt.registerSingleton<InsertSong>(InsertSongImpl(audioService: getIt<AudioHandler>()));
   getIt.registerSingleton<AddSong>(AddSongImpl(audioService: getIt<AudioHandler>()));
+  getIt.registerSingleton<GetCurrentIndex>(GetCurrentIndexImpl());
   // USE_CASE
 
 
@@ -77,20 +80,9 @@ Future<void> diSetup() async {
         imageBaseColor: getIt<ImageBaseColor>(),
         insertSong: getIt<InsertSong>(),
         addSong: getIt<AddSong>(),
+        getCurrentIndex: getIt<GetCurrentIndex>(),
 
       ));
 
-}
-
-Future<AudioHandler> _initAudioService() async {
-  return await AudioService.init(
-    builder: () => MyAudioHandler(),
-    config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.mycompany.myapp.audio',
-      androidNotificationChannelName: 'Audio Service Demo',
-      androidNotificationOngoing: true,
-      androidStopForegroundOnPause: true,
-    ),
-  );
 }
 
