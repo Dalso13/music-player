@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_player/data/repository/audio_repository_impl.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 Future<AudioHandler> initAudioService() async {
   return await AudioService.init(
@@ -61,19 +62,24 @@ class MyAudioHandler extends BaseAudioHandler {
     queue.add(newQueue);
   }
 
+
   @override
   Future<void> insertQueueItem(int index, MediaItem mediaItem) async {
     // manage Just Audio
+    index++;
     final audioSource = _createAudioSource(mediaItem);
-    if(index <= 0){
-      _playlist.add(audioSource);
-    } else{
-      _playlist.insert(index+1,audioSource);
+    if (_player.shuffleModeEnabled) {
+      // TODO: 서플 모드일때 로직이 너무 어려워서 힘들다...
+      // _playlist.insert(index,audioSource);
+
+      //final newQueue = queue.value..insert(index,mediaItem);
+      //queue.add(newQueue);
+    } else {
+      _playlist.insert(index,audioSource);
+      final newQueue = queue.value..insert(index, mediaItem);
+      queue.add(newQueue);
     }
 
-    // notify system
-    final newQueue = queue.value..insert(index, mediaItem);
-    queue.add(newQueue);
   }
 
   UriAudioSource _createAudioSource(MediaItem mediaItem) {
@@ -153,6 +159,7 @@ class MyAudioHandler extends BaseAudioHandler {
     });
   }
 
+
   void _listenForSequenceStateChanges() {
     _player.sequenceStateStream.listen((SequenceState? sequenceState) {
       final sequence = sequenceState?.effectiveSequence;
@@ -201,15 +208,41 @@ class MyAudioHandler extends BaseAudioHandler {
     queue.add(newQueue);
   }
 
+  // TODO: 셔플 사용후 곡추가 때문에 만들어 보았지만 안될거같음..
+  //   List<AudioSource> _oldPlayList = [];
+  // @override
+  // Future<void> setShuffleMode(AudioServiceShuffleMode shuffleMode) async {
+  //   switch (shuffleMode) {
+  //     case AudioServiceShuffleMode.none:
+  //       _playlist.clear();
+  //       await _playlist.addAll(_oldPlayList);
+  //       _oldPlayList.clear();
+  //       break;
+  //     case AudioServiceShuffleMode.group:
+  //     case AudioServiceShuffleMode.all:
+  //       _oldPlayList.addAll(_playlist.children);
+  //       await _player.setShuffleModeEnabled(true);
+  //       _player.shuffle();
+  //      // final playlist = _player.shuffleIndices!.map((index) => queue.value[index]).toList();
+  //       final newPlayList = _player.shuffleIndices!.map((index) => _playlist.children[index]).toList();
+  //      await  _player.setShuffleModeEnabled(false);
+  //       _playlist.clear();
+  //       await _playlist.addAll(newPlayList);
+  //    //   queue.add(playlist);
+  //       break;
+  //   }
+  // }
+
+
   @override
   Future<void> setShuffleMode(AudioServiceShuffleMode shuffleMode) async {
     final oldIndices = _player.effectiveIndices!;
     switch (shuffleMode) {
       case AudioServiceShuffleMode.none:
         final list = List.generate(
-            oldIndices.length, (index) => queue.value![oldIndices[index]]);
+            oldIndices.length, (index) => queue.value[oldIndices[index]]);
         queue.add(list);
-        _player.setShuffleModeEnabled(false);
+        await _player.setShuffleModeEnabled(false);
         break;
       case AudioServiceShuffleMode.group:
       case AudioServiceShuffleMode.all:
