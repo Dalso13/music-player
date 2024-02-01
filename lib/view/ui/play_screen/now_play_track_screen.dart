@@ -6,19 +6,19 @@ import 'package:go_router/go_router.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:music_player/core/repeat_state.dart';
-import 'package:music_player/view/ui/play_screen/now_play_list_screen.dart';
-import 'package:music_player/view/view_model/main_view_model.dart';
+import 'package:music_player/view/ui/play_screen/now_play_track_list_screen.dart';
+import 'package:music_player/view/view_model/audio_view_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/button_state.dart';
 
-class NowPlayMusicScreen extends StatelessWidget {
-  const NowPlayMusicScreen({super.key});
+class NowPlayTrackScreen extends StatelessWidget {
+  const NowPlayTrackScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<MainViewModel>();
+    final viewModel = context.watch<AudioViewModel>();
     final state = viewModel.mainState;
     final song = state.nowPlaySong;
     final size = MediaQuery.of(context).size;
@@ -29,11 +29,11 @@ class NowPlayMusicScreen extends StatelessWidget {
           Container(
             width: double.maxFinite,
             height: double.maxFinite,
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withOpacity(0.5),
             child: Opacity(
-              opacity: 0.4,
+              opacity: 0.6,
               child: ImageFiltered(
-                imageFilter: ImageFilter.blur(sigmaX: 7.0, sigmaY: 7.0),
+                imageFilter: ImageFilter.blur(sigmaX: 6.0, sigmaY: 6.0),
                 child: QueryArtworkWidget(
                   keepOldArtwork: true,
                   nullArtworkWidget: Image.asset(
@@ -41,7 +41,7 @@ class NowPlayMusicScreen extends StatelessWidget {
                   ),
                   id: song.id,
                   type: ArtworkType.AUDIO,
-                  artworkFit: BoxFit.fitHeight,
+                  artworkFit: BoxFit.cover,
                 ),
               ),
             ),
@@ -94,6 +94,7 @@ class NowPlayMusicScreen extends StatelessWidget {
                           child: Container(
                             width: 250,
                             height: 250,
+                            decoration: BoxDecoration(),
                             child: QueryArtworkWidget(
                               keepOldArtwork: true,
                               nullArtworkWidget: Image.asset(
@@ -218,13 +219,13 @@ class NowPlayMusicScreen extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: () {
                       final myModel =
-                          Provider.of<MainViewModel>(context, listen: false);
+                          Provider.of<AudioViewModel>(context, listen: false);
                       showMaterialModalBottomSheet(
                           context: context,
                           builder: (context) {
                             return ChangeNotifierProvider.value(
                                 value: myModel,
-                                child: const NowPlayListScreen());
+                                child: const NowPlayTrackListScreen());
                           });
                     },
                     icon: const Icon(

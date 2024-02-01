@@ -23,6 +23,7 @@ import 'package:music_player/domain/use_case/play_list/interface/add_song.dart';
 import 'package:music_player/domain/use_case/play_list/interface/click_play_list_song.dart';
 import 'package:music_player/domain/use_case/play_list/interface/insert_song.dart';
 import 'package:music_player/domain/use_case/play_list/interface/play_list_setting.dart';
+import 'package:music_player/view/view_model/audio_view_model.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
 import '../domain/use_case/audio_player_stream/interface/get_current_index.dart';
 import '../domain/use_case/button_change/impl/repeat_change_impl.dart';
@@ -63,7 +64,7 @@ Future<void> diSetup() async {
   // USE_CASE
 
 
-  getIt.registerFactory<MainViewModel>(() => MainViewModel(
+  getIt.registerFactory<AudioViewModel>(() => AudioViewModel(
          songRepository: getIt<SongRepository>(),
           audioHandler:  getIt<AudioHandler>(),
         setMusicList: getIt<PlayListSetting>(),
@@ -83,6 +84,8 @@ Future<void> diSetup() async {
         getCurrentIndex: getIt<GetCurrentIndex>(),
 
       ));
+  getIt.registerSingleton<MainViewModel>(MainViewModel());
+
 
 }
 

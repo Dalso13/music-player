@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:music_player/domain/model/audio_model.dart';
 import 'package:provider/provider.dart';
 
-import '../../view_model/main_view_model.dart';
+import '../../view_model/audio_view_model.dart';
 import '../audio_part/audio_image.dart';
 import 'detail_song_control.dart';
 
@@ -44,7 +44,7 @@ class SongTile extends StatelessWidget {
       leading: AudioImage(audioId: _song.id),
       trailing: IconButton(
         onPressed: () {
-          final myModel = Provider.of<MainViewModel>(context, listen: false);
+          final myModel = Provider.of<AudioViewModel>(context, listen: false);
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,

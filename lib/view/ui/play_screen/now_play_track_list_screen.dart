@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_player/view/ui/audio_part/audio_bar.dart';
 import 'package:music_player/view/ui/song_part/song_tile.dart';
-import 'package:music_player/view/view_model/main_view_model.dart';
+import 'package:music_player/view/view_model/audio_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../song_part/detail_song_control.dart';
 
-class NowPlayListScreen extends StatelessWidget {
-  const NowPlayListScreen({super.key});
+class NowPlayTrackListScreen extends StatelessWidget {
+  const NowPlayTrackListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<MainViewModel>();
+    final viewModel = context.watch<AudioViewModel>();
     final state = viewModel.mainState;
     final song = state.nowPlaySong;
 
@@ -62,7 +62,7 @@ class NowPlayListScreen extends StatelessWidget {
                           viewModel.mainState.currentIndex == idx;
                       return GestureDetector(
                           onLongPress: () {
-                            final myModel = Provider.of<MainViewModel>(context,
+                            final myModel = Provider.of<AudioViewModel>(context,
                                 listen: false);
                             showModalBottomSheet(
                               context: context,

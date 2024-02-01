@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:music_player/di/di_setup.dart';
 import 'package:music_player/route/router.dart';
 
+
+
 void main() async {
   await diSetup();
   runApp(const MyApp());
@@ -9,6 +11,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
 
   @override
   Widget build(BuildContext context) {

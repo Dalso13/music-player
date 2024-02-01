@@ -1,6 +1,6 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:music_player/view/view_model/main_view_model.dart';
+import 'package:music_player/view/view_model/audio_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/button_state.dart';
@@ -11,7 +11,7 @@ class AudioBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<MainViewModel>();
+    final viewModel = context.watch<AudioViewModel>();
     final song = viewModel.mainState.nowPlaySong;
     return Row(
       children: [

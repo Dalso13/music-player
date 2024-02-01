@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_player/domain/model/audio_model.dart';
 import 'package:music_player/view/ui/song_part/detail_tile.dart';
-import 'package:music_player/view/ui/song_part/song_tile.dart';
-import 'package:music_player/view/view_model/main_view_model.dart';
+import 'package:music_player/view/view_model/audio_view_model.dart';
 import 'package:provider/provider.dart';
 
 class DetailSongControl extends StatelessWidget {
@@ -13,7 +12,7 @@ class DetailSongControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<MainViewModel>();
+    final viewModel = context.watch<AudioViewModel>();
     return Container(
       width: double.maxFinite,
       child: Column(
