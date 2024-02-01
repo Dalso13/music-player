@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/view/ui/song_part/detail_song_control.dart';
 import 'package:music_player/view/ui/song_part/song_tile.dart';
-import 'package:music_player/view/view_model/main_view_model.dart';
+import 'package:music_player/view/view_model/audio_view_model.dart';
 import 'package:provider/provider.dart';
 
 class MusicListView extends StatelessWidget {
@@ -9,14 +9,14 @@ class MusicListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<MainViewModel>();
+    final viewModel = context.watch<AudioViewModel>();
     final state = viewModel.mainState;
     return ListView(
       children: state.songList.map((e) {
         bool isEqual = e.id == state.nowPlaySong.id;
         return GestureDetector(
           onLongPress: () {
-            final myModel = Provider.of<MainViewModel>(context, listen: false);
+            final myModel = Provider.of<AudioViewModel>(context, listen: false);
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
