@@ -118,6 +118,14 @@ class AudioViewModel extends ChangeNotifier {
     clickPlayButton();
     notifyListeners();
   }
+  // TODO: 커스텀 플레이 리스트 곡 재생
+  void customPlayListPlayMusic({required bool isShuffle, required List<AudioModel> list}) async {
+    _audioState = _audioState.copyWith(isShuffleModeEnabled: false);
+    if (isShuffle) list.shuffle();
+    await _setMusicList.execute(songList: list);
+    clickPlayButton();
+    notifyListeners();
+  }
 
   // TODO: 메인 화면 서플 버튼 누를시
   void shufflePlayList() async {

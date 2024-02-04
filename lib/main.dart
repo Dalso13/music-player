@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:music_player/di/di_setup.dart';
+import 'package:music_player/domain/model/audio_model.dart';
+import 'package:music_player/domain/model/custom_play_list_model.dart';
 import 'package:music_player/route/router.dart';
 
 
 
 void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(AudioModelAdapter());
+  Hive.registerAdapter(CustomPlayListModelAdapter());
+  await Hive.openBox<CustomPlayListModel>('customPlayList');
   await diSetup();
   runApp(const MyApp());
 }

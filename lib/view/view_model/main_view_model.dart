@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:music_player/core/screen_change_state.dart';
+import 'package:music_player/domain/use_case/custom_play_list_box/interface/custom_play_list_data_check.dart';
 import 'package:music_player/view/view_model/state/main_state.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -8,13 +9,29 @@ class MainViewModel extends ChangeNotifier {
   final PageController _pageController = PageController(
     initialPage: 0,
   );
+  final TextEditingController _textEditingController = TextEditingController();
+  // useCase
+  final CustomPlayListDataCheck _customPlayListDataCheck;
+
+  // useCase
+  MainViewModel({
+    required CustomPlayListDataCheck customPlayListDataCheck,
+  })  : _customPlayListDataCheck = customPlayListDataCheck;
+
 
   PageController get pageController => _pageController;
+
   MainState get mainState => _mainState;
+
+  TextEditingController get textEditingController => _textEditingController;
 
   Future<void> init() async {
     await requestPermissions();
     notifyListeners();
+  }
+
+  void dataCheck() {
+    _customPlayListDataCheck.execute();
   }
 
   void homeChange() {
@@ -36,15 +53,20 @@ class MainViewModel extends ChangeNotifier {
     _pageController.animateToPage(_mainState.screenChangeState.idx,
         duration: const Duration(milliseconds: 500), curve: Curves.ease);
   }
+
   void scrollPageChange({required int index}) {
-    if (index == ScreenChangeState.playList.idx){
-      _mainState = _mainState.copyWith(screenChangeState: ScreenChangeState.playList);
+    if (index == ScreenChangeState.playList.idx) {
+      _mainState =
+          _mainState.copyWith(screenChangeState: ScreenChangeState.playList);
     } else if (index == ScreenChangeState.home.idx) {
-      _mainState = _mainState.copyWith(screenChangeState: ScreenChangeState.home);
+      _mainState =
+          _mainState.copyWith(screenChangeState: ScreenChangeState.home);
     }
 
     notifyListeners();
   }
+
+
 
   // TODO : 권한 처리
   Future<void> checkPermissions() async {
@@ -73,5 +95,13 @@ class MainViewModel extends ChangeNotifier {
       Permission.videos,
     ].request();
     await checkPermissions();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    _textEditingController.dispose();
+    _pageController.dispose();
+    super.dispose();
   }
 }

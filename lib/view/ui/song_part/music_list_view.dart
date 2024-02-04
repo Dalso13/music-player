@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:music_player/domain/model/audio_model.dart';
 import 'package:music_player/view/ui/song_part/detail_song_control.dart';
 import 'package:music_player/view/ui/song_part/song_tile.dart';
 import 'package:music_player/view/view_model/audio_view_model.dart';
 import 'package:provider/provider.dart';
 
 class MusicListView extends StatelessWidget {
-  const MusicListView({super.key});
+  final List<AudioModel> audioModel;
+
+  const MusicListView({
+    super.key,
+    required this.audioModel,
+  });
 
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<AudioViewModel>();
     final state = viewModel.mainState;
     return ListView(
-      children: state.songList.map((e) {
+      children: audioModel.map((e) {
         bool isEqual = e.id == state.nowPlaySong.id;
         return GestureDetector(
           onLongPress: () {

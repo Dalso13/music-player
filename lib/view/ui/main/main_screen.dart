@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_player/view/ui/main/main_music_screen.dart';
 import 'package:music_player/view/ui/main/permission_page.dart';
 import 'package:music_player/view/view_model/audio_view_model.dart';
@@ -21,6 +20,7 @@ class _MainScreenState extends State<MainScreen> {
       context.read<MainViewModel>().init().then((_) {
         if (context.read<MainViewModel>().mainState.isPermission) {
           context.read<AudioViewModel>().init();
+          context.read<MainViewModel>().dataCheck();
         }
       });
     });
