@@ -19,9 +19,8 @@ class NowPlayTrackScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<AudioViewModel>();
-    final state = viewModel.mainState;
+    final state = viewModel.state;
     final song = state.nowPlaySong;
-    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       body: Stack(
@@ -68,174 +67,164 @@ class NowPlayTrackScreen extends StatelessWidget {
             ),
           ),
           SingleChildScrollView(
-            child: Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 500,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                context.pop();
-                              },
-                              icon: Icon(Icons.expand_more),
-                              iconSize: 40,
-                            ),
-                          ],
-                        ),
-                        ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(8.0)),
-                          child: Container(
-                            width: 250,
-                            height: 250,
-                            decoration: BoxDecoration(),
-                            child: QueryArtworkWidget(
-                              keepOldArtwork: true,
-                              nullArtworkWidget: Image.asset(
-                                'assets/images/art_image.png',
-                              ),
-                              id: song.id,
-                              type: ArtworkType.AUDIO,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 500,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-                        child: Container(
-                          margin: const EdgeInsets.only(left: 16, right: 16),
-                          child: Text(
-                            song.displayNameWOExt,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: 26, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        song.artist,
-                        style: TextStyle(color: Colors.blueGrey, fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ProgressBar(
-                      timeLabelPadding: 8,
-                      progress: viewModel.progressNotifier.current,
-                      buffered: viewModel.progressNotifier.buffered,
-                      total: viewModel.progressNotifier.total,
-                      onSeek: viewModel.seek,
-                      barHeight: 8,
-                      timeLabelTextStyle: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.blueGrey),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        child: IconButton(
-                          onPressed: viewModel.repeatModeChange,
-                          icon: switch (state.repeatState) {
-                            RepeatState.off =>
-                              Icon(Icons.repeat, color: Colors.white54),
-                            RepeatState.repeatPlaylist => Icon(Icons.repeat),
-                            RepeatState.repeatSong => Icon(Icons.repeat_one),
-                          },
-                        ),
-                      ),
                       Row(
                         children: [
-                          Container(
-                            child: IconButton(
-                              iconSize: 40,
-                              onPressed: viewModel.previousPlay,
-                              icon: Icon(Icons.skip_previous),
-                            ),
-                          ),
-                          Container(
-                            child: switch (state.buttonState) {
-                              ButtonState.paused => IconButton(
-                                  iconSize: 80,
-                                  icon: Icon(Icons.play_circle),
-                                  onPressed: viewModel.clickPlayButton,
-                                ),
-                              ButtonState.playing => IconButton(
-                                  iconSize: 80,
-                                  icon: const Icon(Icons.pause_circle),
-                                  onPressed: viewModel.stopMusic,
-                                ),
-                              ButtonState.loading => Container(
-                                  margin: EdgeInsets.only(right: 8, left: 8),
-                                  width: 80.0,
-                                  height: 80.0,
-                                  child: const CircularProgressIndicator(),
-                                ),
+                          IconButton(
+                            onPressed: () {
+                              context.pop();
                             },
-                          ),
-                          Container(
-                            child: IconButton(
-                              iconSize: 40,
-                              onPressed: viewModel.nextPlay,
-                              icon: Icon(Icons.skip_next),
-                            ),
+                            icon: const Icon(Icons.expand_more),
+                            iconSize: 40,
                           ),
                         ],
                       ),
-                      Container(
-                        child: IconButton(
-                          onPressed: viewModel.shuffleModeChange,
-                          icon: Icon(
-                            Icons.shuffle,
-                            color: state.isShuffleModeEnabled
-                                ? Colors.black
-                                : Colors.white54,
+                      ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8.0)),
+                        child: Container(
+                          width: 250,
+                          height: 250,
+                          decoration: const BoxDecoration(),
+                          child: QueryArtworkWidget(
+                            keepOldArtwork: true,
+                            nullArtworkWidget: Image.asset(
+                              'assets/images/art_image.png',
+                            ),
+                            id: song.id,
+                            type: ArtworkType.AUDIO,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      final myModel =
-                          Provider.of<AudioViewModel>(context, listen: false);
-                      showMaterialModalBottomSheet(
-                          context: context,
-                          builder: (context) {
-                            return ChangeNotifierProvider.value(
-                                value: myModel,
-                                child: const NowPlayTrackListScreen());
-                          });
-                    },
-                    icon: const Icon(
-                      Icons.playlist_play,
-                      size: 36,
+                ),
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 16, right: 16),
+                        child: Text(
+                          song.displayNameWOExt,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              fontSize: 26, fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ),
-                    label: Text('next track'),
-                  )
-                ],
-              ),
+                    Text(
+                      song.artist,
+                      style: const TextStyle(color: Colors.blueGrey, fontSize: 16),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ProgressBar(
+                    timeLabelPadding: 8,
+                    progress: viewModel.progressNotifier.current,
+                    buffered: viewModel.progressNotifier.buffered,
+                    total: viewModel.progressNotifier.total,
+                    onSeek: viewModel.seek,
+                    barHeight: 8,
+                    timeLabelTextStyle: const TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.blueGrey),
+                  ),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: viewModel.repeatModeChange,
+                      icon: switch (state.repeatState) {
+                        RepeatState.off =>
+                          const Icon(Icons.repeat, color: Colors.white54),
+                        RepeatState.repeatPlaylist => const Icon(Icons.repeat),
+                        RepeatState.repeatSong => const Icon(Icons.repeat_one),
+                      },
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          iconSize: 40,
+                          onPressed: viewModel.previousPlay,
+                          icon: const Icon(Icons.skip_previous),
+                        ),
+                        Container(
+                          child: switch (state.buttonState) {
+                            ButtonState.paused => IconButton(
+                                iconSize: 80,
+                                icon: const Icon(Icons.play_circle),
+                                onPressed: viewModel.clickPlayButton,
+                              ),
+                            ButtonState.playing => IconButton(
+                                iconSize: 80,
+                                icon: const Icon(Icons.pause_circle),
+                                onPressed: viewModel.stopMusic,
+                              ),
+                            ButtonState.loading => Container(
+                                margin: const EdgeInsets.only(right: 8, left: 8),
+                                width: 80.0,
+                                height: 80.0,
+                                child: const CircularProgressIndicator(),
+                              ),
+                          },
+                        ),
+                        IconButton(
+                          iconSize: 40,
+                          onPressed: viewModel.nextPlay,
+                          icon: const Icon(Icons.skip_next),
+                        ),
+                      ],
+                    ),
+                    IconButton(
+                      onPressed: viewModel.shuffleModeChange,
+                      icon: Icon(
+                        Icons.shuffle,
+                        color: state.isShuffleModeEnabled
+                            ? Colors.black
+                            : Colors.white54,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    final myModel =
+                        Provider.of<AudioViewModel>(context, listen: false);
+                    showMaterialModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return ChangeNotifierProvider.value(
+                              value: myModel,
+                              child: const NowPlayTrackListScreen());
+                        });
+                  },
+                  icon: const Icon(
+                    Icons.playlist_play,
+                    size: 36,
+                  ),
+                  label: const Text('next track'),
+                )
+              ],
             ),
           ),
         ],

@@ -9,7 +9,7 @@ Future<AudioHandler> initAudioService() async {
     builder: () => MyAudioHandler(),
     config: const AudioServiceConfig(
       androidNotificationChannelId: 'com.mycompany.myapp.audio',
-      androidNotificationChannelName: 'Audio Service Demo',
+      androidNotificationChannelName: 'music player',
       androidNotificationOngoing: true,
       androidStopForegroundOnPause: true,
     ),
@@ -255,7 +255,7 @@ class MyAudioHandler extends BaseAudioHandler {
   }
 
 
-
+  Timer? _sleepTimer;
 
   @override
   Future<void> customAction(String name, [Map<String, dynamic>? extras]) async {
@@ -263,7 +263,30 @@ class MyAudioHandler extends BaseAudioHandler {
       await _player.dispose();
       super.stop();
     }
+    if (name == 'sleepTimerStart') {
+
+      if (_sleepTimer != null) {
+        _sleepTimer!.cancel();
+      }
+      if (extras != null &&
+          extras['time'] > 0) {
+        _sleepTimer = Timer(Duration(minutes: extras['time']), () {
+          if (_player.playing){
+            pause();
+          }
+          customAction(name, extras);
+        });
+      }
+    }
+    if (name == 'sleepTimerPause') {
+      if (_sleepTimer != null) {
+        _sleepTimer!.cancel();
+      }
+    }
   }
+
+
+
 
   @override
   Future<void> stop() async {

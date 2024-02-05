@@ -20,6 +20,9 @@ class AudioState with _$AudioState {
     @Default([]) List<AudioModel> songList,
     @Default([]) List<AudioModel> playList,
     @Default(AudioModel()) AudioModel nowPlaySong,
+    @Default(false) bool isSleepTimerEnabled,
+    @Default(0) int hour,
+    @Default(5) int minutes,
   }) = _AudioState;
 
   factory AudioState.fromJson(Map<String, Object?> json) => _$AudioStateFromJson(json);

@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:music_player/data/mapper/mediaItem_mapper.dart';
 import 'package:music_player/domain/model/audio_model.dart';
+import 'package:music_player/domain/use_case/sleep_timer/interface/sleep_timer_pause.dart';
 
 // 리포지터리
 import '../../domain/repository/song_repository.dart';
@@ -21,6 +22,7 @@ import 'package:music_player/domain/use_case/play_list/interface/add_song.dart';
 import 'package:music_player/domain/use_case/play_list/interface/insert_song.dart';
 
 // state
+import '../../domain/use_case/sleep_timer/interface/sleep_timer_start.dart';
 import 'state/audio_state.dart';
 import 'state/progress_bar_state.dart';
 
@@ -53,6 +55,8 @@ class AudioViewModel extends ChangeNotifier {
   final InsertSong _insertSong;
   final AddSong _addSong;
   final GetCurrentIndex _getCurrentIndex;
+  final SleepTimerStart _sleepTimerStart;
+  final SleepTimerPause _sleepTimerPause;
   // use_case
 
   AudioViewModel({
@@ -73,6 +77,8 @@ class AudioViewModel extends ChangeNotifier {
     required InsertSong insertSong,
     required AddSong addSong,
     required GetCurrentIndex getCurrentIndex,
+    required SleepTimerStart sleepTimerStart,
+    required SleepTimerPause sleepTimerPause,
   })  : _songRepository = songRepository,
         _setMusicList = setMusicList,
         _playController = playController,
@@ -89,11 +95,13 @@ class AudioViewModel extends ChangeNotifier {
         _insertSong = insertSong,
         _addSong = addSong,
         _getCurrentIndex = getCurrentIndex,
+        _sleepTimerStart = sleepTimerStart,
+        _sleepTimerPause = sleepTimerPause,
         _audioHandler = audioHandler;
 
   ProgressBarState get progressNotifier => _progressNotifier;
 
-  AudioState get mainState => _audioState;
+  AudioState get state => _audioState;
 
   void init() async {
     _audioState = _audioState.copyWith(isLoading: true);
@@ -114,7 +122,7 @@ class AudioViewModel extends ChangeNotifier {
   // TODO: 리스트에 곡 클릭시
   void playMusic({required int index}) async {
     _audioState = _audioState.copyWith(isShuffleModeEnabled: false);
-    await _setMusicList.execute(songList: mainState.songList.toList(), index: index);
+    await _setMusicList.execute(songList: state.songList.toList(), index: index);
     clickPlayButton();
     notifyListeners();
   }
@@ -131,7 +139,7 @@ class AudioViewModel extends ChangeNotifier {
   // TODO: 메인 화면 서플 버튼 누를시
   void shufflePlayList() async {
     _audioState = _audioState.copyWith(isShuffleModeEnabled: false);
-    final songList = mainState.songList.toList();
+    final songList = state.songList.toList();
     songList.shuffle();
     await _setMusicList.execute(songList: songList);
     clickPlayButton();
@@ -186,7 +194,7 @@ class AudioViewModel extends ChangeNotifier {
 
   // TODO: 재생 목록에 곡 추가
   void addSong({bool isCurrentPlaylistNext = false, required AudioModel song}) async {
-    if (!isCurrentPlaylistNext && _audioState.playList.isEmpty){
+    if (!isCurrentPlaylistNext || _audioState.playList.isEmpty){
       _addSong.execute(model: song);
     } else {
       _insertSong.execute(model: song, index: _audioState.currentIndex);
@@ -198,6 +206,34 @@ class AudioViewModel extends ChangeNotifier {
 
   }
 
+
+  // 취침 타이머 조작
+  void changeHour({required int hour}) {
+    _audioState = _audioState.copyWith(hour: hour);
+    notifyListeners();
+  }
+  void changeSecond({required int minutes}) {
+    _audioState = _audioState.copyWith(minutes: minutes);
+    notifyListeners();
+  }
+  void changeTimerEnabled({required bool isSleepTimerEnabled}) {
+    _audioState = _audioState.copyWith(isSleepTimerEnabled:  isSleepTimerEnabled);
+    saveSleepTimer();
+    notifyListeners();
+  }
+  void _goSleepTimerStart() {
+    int time = Duration(hours: _audioState.hour, minutes: _audioState.minutes).inMinutes;
+    _sleepTimerStart.execute(minutes: time);
+    notifyListeners();
+  }
+  void _goSleepTimerPause() {
+    _sleepTimerPause.execute();
+    notifyListeners();
+  }
+  void saveSleepTimer() {
+    _audioState.isSleepTimerEnabled ? _goSleepTimerStart() : _goSleepTimerPause();
+    notifyListeners();
+  }
 
 
 
@@ -235,7 +271,7 @@ class AudioViewModel extends ChangeNotifier {
       _progressNotifier = _progressNotifier.copyWith(
         buffered: playbackState.bufferedPosition,
       );
-      if (playbackState.queueIndex != null && mainState.playList.isNotEmpty) {
+      if (playbackState.queueIndex != null && state.playList.isNotEmpty) {
         int index = _getCurrentIndex.execute(index: playbackState.queueIndex!);
         _audioState =
             _audioState.copyWith(currentIndex: index);

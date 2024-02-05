@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:music_player/view/ui/audio_part/audio_bar.dart';
 import 'package:music_player/view/ui/song_part/song_tile.dart';
 import 'package:music_player/view/view_model/audio_view_model.dart';
@@ -13,8 +12,7 @@ class NowPlayTrackListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<AudioViewModel>();
-    final state = viewModel.mainState;
-    final song = state.nowPlaySong;
+    final state = viewModel.state;
 
     return Scaffold(
       backgroundColor: Color(state.artColor).withOpacity(0.6),
@@ -30,7 +28,7 @@ class NowPlayTrackListScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       Container(
-                        margin: EdgeInsets.only(top: 5),
+                        margin: const EdgeInsets.only(top: 5),
                         decoration: const BoxDecoration(
                           borderRadius: BorderRadius.all(
                             Radius.circular(8),
@@ -59,7 +57,7 @@ class NowPlayTrackListScreen extends StatelessWidget {
                       int idx = map.key;
                       final e = map.value;
                       final bool isEqual =
-                          viewModel.mainState.currentIndex == idx;
+                          viewModel.state.currentIndex == idx;
                       return GestureDetector(
                           onLongPress: () {
                             final myModel = Provider.of<AudioViewModel>(context,

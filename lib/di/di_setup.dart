@@ -27,6 +27,10 @@ import 'package:music_player/domain/use_case/play_list/interface/add_song.dart';
 import 'package:music_player/domain/use_case/play_list/interface/click_play_list_song.dart';
 import 'package:music_player/domain/use_case/play_list/interface/insert_song.dart';
 import 'package:music_player/domain/use_case/play_list/interface/play_list_setting.dart';
+import 'package:music_player/domain/use_case/sleep_timer/impl/sleep_timer_pause_impl.dart';
+import 'package:music_player/domain/use_case/sleep_timer/impl/sleep_timer_start_impl.dart';
+import 'package:music_player/domain/use_case/sleep_timer/interface/sleep_timer_pause.dart';
+import 'package:music_player/domain/use_case/sleep_timer/interface/sleep_timer_start.dart';
 import 'package:music_player/view/view_model/audio_view_model.dart';
 import 'package:music_player/view/view_model/play_list_model.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
@@ -89,6 +93,10 @@ Future<void> diSetup() async {
       AddSongImpl(audioService: getIt<AudioHandler>()));
   getIt.registerSingleton<GetCurrentIndex>(GetCurrentIndexImpl());
 
+  getIt.registerSingleton<SleepTimerStart>(
+      SleepTimerStartImpl(audioService: getIt<AudioHandler>()));
+  getIt.registerSingleton<SleepTimerPause>(
+      SleepTimerPauseImpl(audioService: getIt<AudioHandler>()));
 
   getIt.registerSingleton<CustomPlayListUpdateBox>(CustomPlayListUpdateBoxImpl(
       playListRepository: getIt<PlayListRepository>()));
@@ -122,7 +130,8 @@ Future<void> diSetup() async {
         insertSong: getIt<InsertSong>(),
         addSong: getIt<AddSong>(),
         getCurrentIndex: getIt<GetCurrentIndex>(),
-
+        sleepTimerStart: getIt<SleepTimerStart>(),
+        sleepTimerPause: getIt<SleepTimerPause>(),
       ));
 
 

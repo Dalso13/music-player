@@ -16,7 +16,7 @@ class MainMusicScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final AudioViewModel audioViewModel = context.watch<AudioViewModel>();
     final MainViewModel mainViewModel = context.watch<MainViewModel>();
-    final state = audioViewModel.mainState;
+    final state = audioViewModel.state;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Music Player'),
@@ -29,7 +29,7 @@ class MainMusicScreen extends StatelessWidget {
         children: [
           Expanded(
             child: Center(
-              child: audioViewModel.mainState.isLoading
+              child: audioViewModel.state.isLoading
                   ? const Center(
                       child: CircularProgressIndicator(),
                     )
@@ -48,13 +48,13 @@ class MainMusicScreen extends StatelessWidget {
                     ),
             ),
           ),
-          AudioBarCheck(isBool: audioViewModel.mainState.playList.isNotEmpty),
+          AudioBarCheck(isBool: audioViewModel.state.playList.isNotEmpty),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: null,
         onPressed: audioViewModel.shufflePlayList,
-        child: Icon(Icons.shuffle),
+        child: const Icon(Icons.shuffle),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
       bottomNavigationBar: const MainBottomNavigationBar(),

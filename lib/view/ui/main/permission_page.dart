@@ -36,23 +36,21 @@ class _PermissionPageState extends State<PermissionPage> {
                     barrierDismissible: false, //바깥 영역 터치시 닫을지 여부 결정
                     builder: ((context) {
                       return AlertDialog(
-                        title: Text("권한 요청"),
-                        content: Text("권한을 직접 요청하셔야 합니다."),
+                        title: const Text("permissions setting"),
+                        content: const Text("You will need to request permission directly..."),
                         actions: <Widget>[
-                          Container(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(); //창 닫기
-                                openAppSettings().then((_) {
-                                  mainViewModel.checkPermissions().then((_) {
-                                    if(mainViewModel.mainState.isPermission) {
-                                      context.pop();
-                                    }
-                                  });
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); //창 닫기
+                              openAppSettings().then((_) {
+                                mainViewModel.checkPermissions().then((_) {
+                                  if(mainViewModel.mainState.isPermission) {
+                                    context.pop();
+                                  }
                                 });
-                              },
-                              child: Text("닫기"),
-                            ),
+                              });
+                            },
+                            child: const Text("close"),
                           ),
                         ],
                       );

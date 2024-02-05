@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_player/view/ui/custom_play_list/custom_play_list_menu/play_list_grid_tile.dart';
@@ -18,54 +17,48 @@ class MainPlayListScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-            Container(
-              child: IconButton(
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text("new play list"),
-                          content: TextField(
-                            controller: mainViewModel.textEditingController,
-                            decoration: const InputDecoration(
-                              labelText: 'Title',
-                            ),
-                            maxLength: 20,
-                            maxLines: 1,
+            IconButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text("new play list"),
+                        content: TextField(
+                          controller: mainViewModel.textEditingController,
+                          decoration: const InputDecoration(
+                            labelText: 'Title',
                           ),
-                          actions: <Widget>[
-                            Container(
-                              child: TextButton(
-                                onPressed: () {
-                                  context.pop();
-                                },
-                                child: const Text("닫기"),
-                              ),
-                            ),
-                            Container(
-                              child: TextButton(
-                                onPressed: () {
-                                  if (mainViewModel
-                                          .textEditingController.text ==
-                                      '') return;
-                                  playListViewModel.setPlayList(
-                                    title: mainViewModel
-                                        .textEditingController.text,
-                                    playList: [],
-                                  );
-                                  context.pop();
-                                  mainViewModel.textEditingController.text = '';
-                                },
-                                child: const Text("만들기"),
-                              ),
-                            ),
-                          ],
-                        );
-                      });
-                },
-                icon: const Icon(Icons.add),
-              ),
+                          maxLength: 20,
+                          maxLines: 1,
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              context.pop();
+                            },
+                            child: const Text("close"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              if (mainViewModel
+                                      .textEditingController.text ==
+                                  '') return;
+                              playListViewModel.setPlayList(
+                                title: mainViewModel
+                                    .textEditingController.text,
+                                playList: [],
+                              );
+                              context.pop();
+                              mainViewModel.textEditingController.text = '';
+                            },
+                            child: const Text("create"),
+                          ),
+                        ],
+                      );
+                    });
+              },
+              icon: const Icon(Icons.add),
             ),
             const Text('New Play List')
           ],

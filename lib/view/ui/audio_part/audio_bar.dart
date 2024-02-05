@@ -12,7 +12,7 @@ class AudioBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<AudioViewModel>();
-    final song = viewModel.mainState.nowPlaySong;
+    final song = viewModel.state.nowPlaySong;
     return Row(
       children: [
         Expanded(
@@ -42,13 +42,13 @@ class AudioBar extends StatelessWidget {
                               song.displayNameWOExt,
                               softWrap: false,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16),
                               maxLines: 1,
                             ),
                             Text(
                               song.artist,
-                              style: TextStyle(color: Colors.grey),
+                              style: const TextStyle(color: Colors.grey),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -57,52 +57,44 @@ class AudioBar extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Container(
-                    child: Row(
-                      children: [
-                        Container(
-                          child: IconButton(
-                            onPressed: viewModel.previousPlay,
-                            icon: Icon(Icons.skip_previous),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: viewModel.previousPlay,
+                        icon: const Icon(Icons.skip_previous),
+                      ),
+                      Container(
+                          child: switch (viewModel.state.buttonState) {
+                        ButtonState.paused => IconButton(
+                            icon: const Icon(Icons.play_arrow),
+                            onPressed: viewModel.clickPlayButton,
                           ),
-                        ),
-                        Container(
-                            child: switch (viewModel.mainState.buttonState) {
-                          ButtonState.paused => IconButton(
-                              icon: const Icon(Icons.play_arrow),
-                              onPressed: viewModel.clickPlayButton,
-                            ),
-                          ButtonState.playing => IconButton(
-                              icon: const Icon(Icons.pause),
-                              onPressed: viewModel.stopMusic,
-                            ),
-                          ButtonState.loading => Container(
-                              margin: EdgeInsets.only(right: 8, left: 8),
-                              width: 16.0,
-                              height: 16.0,
-                              child: const CircularProgressIndicator(),
-                            ),
-                        }),
-                        Container(
-                          child: IconButton(
-                            onPressed: viewModel.nextPlay,
-                            icon: Icon(Icons.skip_next),
+                        ButtonState.playing => IconButton(
+                            icon: const Icon(Icons.pause),
+                            onPressed: viewModel.stopMusic,
                           ),
-                        ),
-                      ],
-                    ),
+                        ButtonState.loading => Container(
+                            margin: const EdgeInsets.only(right: 8, left: 8),
+                            width: 16.0,
+                            height: 16.0,
+                            child: const CircularProgressIndicator(),
+                          ),
+                      }),
+                      IconButton(
+                        onPressed: viewModel.nextPlay,
+                        icon: const Icon(Icons.skip_next),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              Container(
-                child: ProgressBar(
-                  progress: viewModel.progressNotifier.current,
-                  buffered: viewModel.progressNotifier.buffered,
-                  total: viewModel.progressNotifier.total,
-                  onSeek: viewModel.seek,
-                  timeLabelLocation: TimeLabelLocation.none,
-                  barHeight: 3,
-                ),
+              ProgressBar(
+                progress: viewModel.progressNotifier.current,
+                buffered: viewModel.progressNotifier.buffered,
+                total: viewModel.progressNotifier.total,
+                onSeek: viewModel.seek,
+                timeLabelLocation: TimeLabelLocation.none,
+                barHeight: 3,
               ),
             ],
           )

@@ -16,7 +16,7 @@ class MusicListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<AudioViewModel>();
-    final state = viewModel.mainState;
+    final state = viewModel.state;
     return ListView(
       children: audioModel.map((e) {
         bool isEqual = e.id == state.nowPlaySong.id;

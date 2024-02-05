@@ -25,7 +25,7 @@ class PlayListsMenu extends StatelessWidget {
                   barrierDismissible: true, //바깥 영역 터치시 닫을지 여부 결정
                   builder: ((context) {
                     return AlertDialog(
-                      title: const Text("삭제 하시겠습니까?"),
+                      title: const Text("you want delete it?"),
                       actions: <Widget>[
                         Container(
                           child: ElevatedButton(

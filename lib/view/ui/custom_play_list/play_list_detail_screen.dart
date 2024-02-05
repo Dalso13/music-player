@@ -115,7 +115,7 @@ class PlayListDetailScreen extends StatelessWidget {
                   : const Center(
                       child: Text('empty play list'),
                     )),
-          AudioBarCheck(isBool: audioViewModel.mainState.playList.isNotEmpty),
+          AudioBarCheck(isBool: audioViewModel.state.playList.isNotEmpty),
         ],
       ),
     );

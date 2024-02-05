@@ -18,7 +18,7 @@ class AddMusicScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<AudioViewModel>();
     final playListViewModel = context.watch<PlayListViewModel>();
-    final mainState = viewModel.mainState;
+    final mainState = viewModel.state;
     final playListState = playListViewModel.state;
     final list = mainState.songList
         .where((e) =>

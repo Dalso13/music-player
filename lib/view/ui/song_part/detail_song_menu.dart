@@ -29,16 +29,16 @@ class DetailSongMenu extends StatelessWidget {
               ),
               child: DetailTile(song: _song,),
             ),
-            viewModel.mainState.isShuffleModeEnabled
+            viewModel.state.isShuffleModeEnabled
                 ? Container()
                 : InkWell(
                     onTap: () {
                       viewModel.addSong(song: _song, isCurrentPlaylistNext: true);
                       context.pop();
                     },
-                    child: Container(
+                    child: const SizedBox(
                       width: double.maxFinite,
-                      child: const Row(
+                      child: Row(
                         children: [
                           Padding(
                             padding: EdgeInsets.only(
@@ -58,9 +58,9 @@ class DetailSongMenu extends StatelessWidget {
                 viewModel.addSong(song: _song);
                 context.pop();
               },
-              child: Container(
+              child: const SizedBox(
                 width: double.maxFinite,
-                child: const Row(
+                child: Row(
                   children: [
                     Padding(
                       padding:
