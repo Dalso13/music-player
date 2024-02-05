@@ -20,29 +20,27 @@ class EmptyAudioBar extends StatelessWidget {
                   color: Colors.grey.withOpacity(0.5),
                 ),
                 Container(
-                  padding: const EdgeInsets.only(left: 8),
-                  width: 180,
-                  child: const Column(
-                    children: [
-                      Text(
-                        'Not Playing List.',
-                        softWrap: false,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 14),
-                        maxLines: 1,
-                      ),
-                    ],
+                  margin: const EdgeInsets.only(left: 8),
+                  child: const Text(
+                    'Not Playing List.',
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 14),
+                    maxLines: 1,
                   ),
                 ),
               ],
             ),
-            Row(
-              children: [
-                IconButton(onPressed: (){}, icon: const Icon(Icons.skip_previous)),
-                IconButton(onPressed: (){}, icon: const Icon(Icons.play_arrow)),
-                IconButton(onPressed: (){}, icon: const Icon(Icons.skip_next)),
-              ],
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(onPressed: (){}, icon: const Icon(Icons.skip_previous)),
+                  IconButton(onPressed: (){}, icon: const Icon(Icons.play_arrow)),
+                  IconButton(onPressed: (){}, icon: const Icon(Icons.skip_next)),
+                ],
+              ),
             ),
           ],
         ),

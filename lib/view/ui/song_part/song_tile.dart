@@ -18,7 +18,7 @@ class SongTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      tileColor: _isEqual ? Colors.grey[200]!.withOpacity(0.6) : null,
+      tileColor: _isEqual ? Colors.grey[300]!.withOpacity(0.7) : null,
       title: Text(_song.displayNameWOExt,
           overflow: TextOverflow.ellipsis,
           softWrap: false,
