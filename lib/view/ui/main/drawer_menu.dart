@@ -13,31 +13,31 @@ class DrawerMenu extends StatelessWidget {
       // Important: Remove any padding from the ListView.
       padding: EdgeInsets.zero,
       children: [
-        DrawerHeader(
+        const DrawerHeader(
             child: Text(
           'Music Player',
         )),
         ListTile(
-          leading: Icon(Icons.home),
-          title: Text('home'),
+          leading: const Icon(Icons.home),
+          title: const Text('home'),
           selected: viewModel.mainState.screenChangeState == ScreenChangeState.home,
           onTap: () {
             viewModel.homeChange();
           },
         ),
         ListTile(
-          leading: Icon(Icons.playlist_add_check),
-          title: Text('play list'),
+          leading: const Icon(Icons.playlist_add_check),
+          title: const Text('play list'),
           selected: viewModel.mainState.screenChangeState == ScreenChangeState.playList,
           onTap: () {
             viewModel.playListChange();
           },
         ),
-        Divider(
+        const Divider(
           height: 1,
           thickness: 1,
         ),
-        ListTile(
+        const ListTile(
           leading: Icon(Icons.more_time_rounded),
           title: Text('sleep timer'),
         ),

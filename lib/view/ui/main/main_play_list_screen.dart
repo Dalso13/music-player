@@ -2,8 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:music_player/view/ui/custom_play_list/custom_play_list_menu/play_list_grid_tile.dart';
-import 'package:music_player/view/view_model/audio_view_model.dart';
-import 'package:music_player/view/view_model/hive_view_model.dart';
+import 'package:music_player/view/view_model/play_list_model.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +12,8 @@ class MainPlayListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MainViewModel mainViewModel = context.watch<MainViewModel>();
-    final HiveViewModel hiveViewModel = context.watch<HiveViewModel>();
+    final PlayListViewModel playListViewModel = context.watch<PlayListViewModel>();
+    final playListState = playListViewModel.state;
     return Column(
       children: [
         Row(
@@ -28,7 +28,7 @@ class MainPlayListScreen extends StatelessWidget {
                           title: const Text("new play list"),
                           content: TextField(
                             controller: mainViewModel.textEditingController,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Title',
                             ),
                             maxLength: 20,
@@ -40,7 +40,7 @@ class MainPlayListScreen extends StatelessWidget {
                                 onPressed: () {
                                   context.pop();
                                 },
-                                child: Text("닫기"),
+                                child: const Text("닫기"),
                               ),
                             ),
                             Container(
@@ -49,41 +49,46 @@ class MainPlayListScreen extends StatelessWidget {
                                   if (mainViewModel
                                           .textEditingController.text ==
                                       '') return;
-                                  hiveViewModel.setPlayList(
+                                  playListViewModel.setPlayList(
                                     title: mainViewModel
                                         .textEditingController.text,
                                     playList: [],
                                   );
                                   context.pop();
+                                  mainViewModel.textEditingController.text = '';
                                 },
-                                child: Text("만들기"),
+                                child: const Text("만들기"),
                               ),
                             ),
                           ],
                         );
                       });
                 },
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
               ),
             ),
-            Text('New Play List')
+            const Text('New Play List')
           ],
+        ),
+        const Divider(
+          height: 1,
+          thickness: 1,
         ),
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {
-              hiveViewModel.refreshPlayList();
+              playListViewModel.refreshPlayList();
             },
             child: GridView.count(
                 padding: const EdgeInsets.all(20),
                 mainAxisSpacing: 15,
                 crossAxisSpacing: 15,
                 crossAxisCount: 2,
-                children: hiveViewModel.customPlayList
+                children: playListState.customPlayList
                     .map((e) => GestureDetector(
                         onTap: () async {
-                          await context.push('/custom-play-list', extra:  hiveViewModel.getIndex(e.modelKey!));
-                          hiveViewModel.refreshPlayList();
+                          await context.push('/custom-play-list', extra:  playListViewModel.getIndex(e.modelKey!));
+                          playListViewModel.refreshPlayList();
                         },
                         child: PlayListGridTile(
                           model: e,

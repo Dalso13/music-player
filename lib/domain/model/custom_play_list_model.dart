@@ -19,4 +19,20 @@ class CustomPlayListModel{
     required this.playList,
     this.modelKey,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': this.title,
+      'playList': this.playList,
+      'modelKey': this.modelKey,
+    };
+  }
+
+  factory CustomPlayListModel.fromJson(Map<String, dynamic> map) {
+    return CustomPlayListModel(
+      title: map['title'] as String,
+      playList: map['playList'] as List<AudioModel>,
+      modelKey: map['modelKey'] as int,
+    );
+  }
 }

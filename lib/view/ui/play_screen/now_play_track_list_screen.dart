@@ -5,7 +5,7 @@ import 'package:music_player/view/ui/song_part/song_tile.dart';
 import 'package:music_player/view/view_model/audio_view_model.dart';
 import 'package:provider/provider.dart';
 
-import '../song_part/detail_song_control.dart';
+import '../song_part/detail_song_menu.dart';
 
 class NowPlayTrackListScreen extends StatelessWidget {
   const NowPlayTrackListScreen({super.key});
@@ -77,7 +77,7 @@ class NowPlayTrackListScreen extends StatelessWidget {
                                   builder: (context, scrollController) =>
                                       ChangeNotifierProvider.value(
                                     value: myModel,
-                                    child: DetailSongControl(song: e),
+                                    child: DetailSongMenu(song: e),
                                   ),
                                 );
                               },

@@ -20,6 +20,7 @@ class MainMusicScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Music Player'),
+        backgroundColor: Theme.of(context).primaryColorLight,
       ),
       endDrawer: const Drawer(
         child: DrawerMenu(),

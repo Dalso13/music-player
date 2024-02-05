@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/domain/model/audio_model.dart';
-import 'package:music_player/view/ui/song_part/detail_song_control.dart';
+import 'package:music_player/view/ui/song_part/detail_song_menu.dart';
 import 'package:music_player/view/ui/song_part/song_tile.dart';
 import 'package:music_player/view/view_model/audio_view_model.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +36,7 @@ class MusicListView extends StatelessWidget {
                   builder: (context, scrollController) =>
                       ChangeNotifierProvider.value(
                     value: myModel,
-                    child: DetailSongControl(song: e),
+                    child: DetailSongMenu(song: e),
                   ),
                 );
               },

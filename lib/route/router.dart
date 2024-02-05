@@ -7,7 +7,7 @@ import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:provider/provider.dart';
 import '../di/di_setup.dart';
 import '../view/ui/custom_play_list/add_music_screen.dart';
-import '../view/view_model/hive_view_model.dart';
+import '../view/view_model/play_list_model.dart';
 
 final _audioViewModel = getIt<AudioViewModel>();
 
@@ -18,39 +18,53 @@ final router = GoRouter(
       path: '/main',
       builder: (context, state) => MultiProvider(providers: [
         ChangeNotifierProvider.value(value: _audioViewModel),
-        ChangeNotifierProvider(create: (_)=> getIt<MainViewModel>()),
-        ChangeNotifierProvider(create: (_)=>  getIt<HiveViewModel>()),
+        ChangeNotifierProvider(create: (_) => getIt<MainViewModel>()),
+        ChangeNotifierProvider(create: (_) => getIt<PlayListViewModel>()),
       ], child: const MainScreen()),
     ),
     GoRoute(
       path: '/custom-play-list',
       builder: (context, state) {
         int modelKey = state.extra as int;
-        return MultiProvider(providers: [
-        ChangeNotifierProvider.value(value: _audioViewModel),
-          ChangeNotifierProvider(create: (_)=>  getIt<HiveViewModel>()),
-
-      ], child: PlayListDetailScreen(modelKey: modelKey,));
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: _audioViewModel),
+            ChangeNotifierProvider(create: (_) => getIt<PlayListViewModel>()),
+          ],
+          child: PlayListDetailScreen(
+            modelKey: modelKey,
+          ),
+        );
       },
     ),
     GoRoute(
       path: '/custom-play-list/add-music',
       builder: (context, state) {
         int modelKey = state.extra as int;
-        return MultiProvider(providers: [
-        ChangeNotifierProvider.value(value: _audioViewModel),
-        ChangeNotifierProvider(create: (_)=>  getIt<HiveViewModel>()),
-      ], child: AddMusicScreen(modelKey: modelKey,));
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: _audioViewModel),
+            ChangeNotifierProvider(create: (_) => getIt<PlayListViewModel>()),
+          ],
+          child: AddMusicScreen(
+            modelKey: modelKey,
+          ),
+        );
       },
     ),
     GoRoute(
       path: '/custom-play-list/remove-music',
       builder: (context, state) {
         int modelKey = state.extra as int;
-        return MultiProvider(providers: [
-        ChangeNotifierProvider.value(value: _audioViewModel),
-        ChangeNotifierProvider(create: (_)=>  getIt<HiveViewModel>()),
-      ], child: RemoveMusicScreen(modelKey: modelKey,));
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: _audioViewModel),
+            ChangeNotifierProvider(create: (_) => getIt<PlayListViewModel>()),
+          ],
+          child: RemoveMusicScreen(
+            modelKey: modelKey,
+          ),
+        );
       },
     ),
   ],

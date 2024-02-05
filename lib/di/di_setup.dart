@@ -28,7 +28,7 @@ import 'package:music_player/domain/use_case/play_list/interface/click_play_list
 import 'package:music_player/domain/use_case/play_list/interface/insert_song.dart';
 import 'package:music_player/domain/use_case/play_list/interface/play_list_setting.dart';
 import 'package:music_player/view/view_model/audio_view_model.dart';
-import 'package:music_player/view/view_model/hive_view_model.dart';
+import 'package:music_player/view/view_model/play_list_model.dart';
 import 'package:music_player/view/view_model/main_view_model.dart';
 import '../data/repository/play_list_repository_impl.dart';
 import '../domain/repository/play_list_repository.dart';
@@ -131,8 +131,8 @@ Future<void> diSetup() async {
         customPlayListDataCheck: getIt<CustomPlayListDataCheck>(),
       ));
 
-  getIt.registerFactory <HiveViewModel>(() =>
-      HiveViewModel(removeCustomPlayList: getIt<RemoveCustomPlayList>(),
+  getIt.registerFactory <PlayListViewModel>(() =>
+      PlayListViewModel(removeCustomPlayList: getIt<RemoveCustomPlayList>(),
         customPlayListSetBox: getIt<CustomPlayListSetBox>(),
         customPlayListUpdateBox: getIt<CustomPlayListUpdateBox>(),
         getCustomPlayList: getIt<GetCustomPlayList>(),

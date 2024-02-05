@@ -120,6 +120,7 @@ class AudioViewModel extends ChangeNotifier {
   }
   // TODO: 커스텀 플레이 리스트 곡 재생
   void customPlayListPlayMusic({required bool isShuffle, required List<AudioModel> list}) async {
+    if (list.isEmpty) return;
     _audioState = _audioState.copyWith(isShuffleModeEnabled: false);
     if (isShuffle) list.shuffle();
     await _setMusicList.execute(songList: list);

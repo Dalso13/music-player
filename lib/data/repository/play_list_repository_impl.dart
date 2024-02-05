@@ -49,29 +49,4 @@ class PlayListRepositoryImpl implements PlayListRepository {
     await _box.addAll(newData);
     _getCustomPlayLists();
   }
-
-  @override
-  void setBox({
-    required String title,
-    required List<AudioModel> playList,
-  }) async {
-    int key =
-        await box.add(CustomPlayListModel(title: title, playList: playList));
-    box.put(key, CustomPlayListModel(title: title, playList: playList, modelKey: key));
-  }
-
-  @override
-  Future<void> updateBox({required CustomPlayListModel model}) async {
-    Hive.isAdapterRegistered(0);
-
-    final data = box.get(model.modelKey);
-    if (data != null){
-      await box.put(model.modelKey, model);
-
-    }
-  }
-
-  void deleteBox(dynamic key) {
-    box.delete(key);
-  }
 }

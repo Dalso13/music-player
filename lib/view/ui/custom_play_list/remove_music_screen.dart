@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../view_model/audio_view_model.dart';
-import '../../view_model/hive_view_model.dart';
+import '../../view_model/play_list_model.dart';
 import '../audio_part/audio_image.dart';
 
 class RemoveMusicScreen extends StatelessWidget {
@@ -16,23 +15,24 @@ class RemoveMusicScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hiveViewModel = context.watch<HiveViewModel>();
+    final playListViewModel = context.watch<PlayListViewModel>();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('remove music'),
+        title: const Text('remove music'),
+        backgroundColor: Theme.of(context).primaryColorLight,
         actions: [
           IconButton(
               onPressed: () {
-                hiveViewModel.removePlayListSong(modelKey: _modelKey);
+                playListViewModel.removePlayListSong(modelKey: _modelKey);
                 context.pop();
               },
-              icon: Icon(Icons.check))
+              icon: const Icon(Icons.check))
         ],
       ),
       body: ListView(
-        children: hiveViewModel
-            .customPlayList[hiveViewModel.getIndex(_modelKey)].playList
+        children: playListViewModel
+            .state.customPlayList[playListViewModel.getIndex(_modelKey)].playList
             .toList()
             .map((e) {
           return ListTile(
@@ -57,20 +57,14 @@ class RemoveMusicScreen extends StatelessWidget {
             leading: AudioImage(audioId: e.id),
             trailing: IconButton(
                 onPressed: () {
-                  hiveViewModel.selectMusic(audioModel: e);
+                  playListViewModel.selectMusic(audioModel: e);
                 },
-                icon: hiveViewModel.selectList.contains(e)
-                    ? Icon(Icons.check_box)
+                icon: playListViewModel.state.selectList.contains(e)
+                    ? const Icon(Icons.check_box)
                     : const Icon(Icons.check_box_outline_blank)),
           );
         }).toList(),
       ),
-    );
-  }
-
-  Widget _buildSelectIcon() {
-    return Icon(
-      Icons.check_box,
     );
   }
 }

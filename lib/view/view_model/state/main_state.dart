@@ -12,7 +12,6 @@ class MainState with _$MainState {
     @Default(ScreenChangeState.home) ScreenChangeState screenChangeState,
     @Default(false) bool isPermission,
     @Default(false) bool isPermissionLoading,
-    @Default(0) int clickPlayListIndex,
   }) = _MainState;
 
   factory MainState.fromJson(Map<String, Object?> json) => _$MainStateFromJson(json);

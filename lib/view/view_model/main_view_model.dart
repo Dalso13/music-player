@@ -89,7 +89,7 @@ class MainViewModel extends ChangeNotifier {
   }
 
   Future<void> requestPermissions() async {
-    Map<Permission, PermissionStatus> statuses = await [
+    await [
       Permission.audio,
       Permission.photos,
       Permission.videos,

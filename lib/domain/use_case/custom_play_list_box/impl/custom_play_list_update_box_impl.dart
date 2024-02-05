@@ -17,8 +17,10 @@ class CustomPlayListUpdateBoxImpl implements CustomPlayListUpdateBox {
     required String title,
     required List<AudioModel> playList,
   }) async {
-
-    await _playListRepository.updateBox(model: CustomPlayListModel(
-        title: title, playList: playList, modelKey: key));
+    final data = _playListRepository.box.get(key);
+    if (data != null){
+      await _playListRepository.box.put(key , CustomPlayListModel(
+          title: title, playList: playList, modelKey: key));
+    }
   }
 }

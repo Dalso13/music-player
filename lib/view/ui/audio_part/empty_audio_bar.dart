@@ -23,10 +23,9 @@ class EmptyAudioBar extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 8),
                   width: 180,
                   child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        '재생중인 목록이 없습니다.',
+                        'Not Playing List.',
                         softWrap: false,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(

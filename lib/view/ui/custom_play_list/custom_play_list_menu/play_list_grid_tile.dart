@@ -3,7 +3,7 @@ import 'package:music_player/view/ui/custom_play_list/custom_play_list_menu/play
 import 'package:provider/provider.dart';
 
 import '../../../../domain/model/custom_play_list_model.dart';
-import '../../../view_model/hive_view_model.dart';
+import '../../../view_model/play_list_model.dart';
 import '../../audio_part/audio_image.dart';
 
 class PlayListGridTile extends StatelessWidget {
@@ -28,7 +28,7 @@ class PlayListGridTile extends StatelessWidget {
         ),
         trailing: IconButton(
           onPressed: () {
-            final viewModel = Provider.of<HiveViewModel>(context, listen: false);
+            final viewModel = Provider.of<PlayListViewModel>(context, listen: false);
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
@@ -45,7 +45,7 @@ class PlayListGridTile extends StatelessWidget {
                 );
               },
             ).then((_) {
-              context.read<HiveViewModel>().refreshPlayList();
+              context.read<PlayListViewModel>().refreshPlayList();
             });
           },
           icon: const Icon(Icons.more_vert_outlined, color: Colors.white)

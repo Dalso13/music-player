@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../view_model/audio_view_model.dart';
 import '../audio_part/audio_image.dart';
-import 'detail_song_control.dart';
+import 'detail_song_menu.dart';
 
 class SongTile extends StatelessWidget {
   final AudioModel _song;
@@ -37,6 +37,9 @@ class SongTile extends StatelessWidget {
           Text(
             DateFormat('mm:ss')
                 .format(DateTime.fromMillisecondsSinceEpoch(_song.duration)),
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            maxLines: 1,
             style: const TextStyle(color: Colors.grey, fontSize: 12),
           ),
         ],
@@ -57,13 +60,17 @@ class SongTile extends StatelessWidget {
                 builder: (context, scrollController) =>
                     ChangeNotifierProvider.value(
                   value: myModel,
-                  child: DetailSongControl(song: _song),
+                  child: DetailSongMenu(song: _song),
                 ),
               );
             },
           );
         },
-        icon: Icon(Icons.more_vert_outlined, color: Colors.grey[500], size: 20,),
+        icon: Icon(
+          Icons.more_vert_outlined,
+          color: Colors.grey[500],
+          size: 20,
+        ),
       ),
     );
   }
