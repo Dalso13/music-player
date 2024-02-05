@@ -23,24 +23,28 @@ class SongTile extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           softWrap: false,
           maxLines: 1,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          style: const TextStyle(fontSize: 14)),
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            _song.artist,
-            overflow: TextOverflow.ellipsis,
-            softWrap: false,
-            maxLines: 1,
-            style: const TextStyle(color: Colors.grey, fontSize: 12),
-          ),
-          Text(
-            DateFormat('mm:ss')
-                .format(DateTime.fromMillisecondsSinceEpoch(_song.duration)),
-            overflow: TextOverflow.ellipsis,
-            softWrap: false,
-            maxLines: 1,
-            style: const TextStyle(color: Colors.grey, fontSize: 12),
+            Text(
+              _song.artist,
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+              style: const TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: Text(
+                DateFormat('mm:ss')
+                    .format(DateTime.fromMillisecondsSinceEpoch(_song.duration)),
+                overflow: TextOverflow.ellipsis,
+                softWrap: false,
+                maxLines: 1,
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+            ),
           ),
         ],
       ),
