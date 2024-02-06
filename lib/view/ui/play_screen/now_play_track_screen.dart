@@ -42,7 +42,6 @@ class NowPlayTrackScreen extends StatelessWidget {
                   ),
                   id: song.id,
                   type: ArtworkType.AUDIO,
-                  artworkFit: BoxFit.cover,
                 ),
               ),
             ),
@@ -70,7 +69,7 @@ class NowPlayTrackScreen extends StatelessWidget {
                       ClipRRect(
                         borderRadius:
                             const BorderRadius.all(Radius.circular(8.0)),
-                        child: Container(
+                        child: SizedBox(
                           width: 250,
                           height: 250,
                           child: QueryArtworkWidget(
@@ -175,8 +174,8 @@ class NowPlayTrackScreen extends StatelessWidget {
                                 margin: const EdgeInsets.only(right: 8, left: 8),
                                 width: 80.0,
                                 height: 80.0,
-                                child: const CircularProgressIndicator(),
                                 color: Color(viewModel.state.artColor),
+                                child: const CircularProgressIndicator(),
                               ),
                           },
                         ),

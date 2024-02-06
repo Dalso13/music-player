@@ -13,7 +13,7 @@ class ImageBaseColorImpl implements ImageBaseColor {
     );
     final image;
     if (bytes == null) {
-      image = AssetImage('assets/images/art_image.png');
+      image = AssetImage('assets/images/play_list_image.png');
     } else {
       image = MemoryImage(bytes);
     }

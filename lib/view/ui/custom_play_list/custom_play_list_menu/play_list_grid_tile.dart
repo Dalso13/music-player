@@ -51,10 +51,8 @@ class PlayListGridTile extends StatelessWidget {
           icon: const Icon(Icons.more_vert_outlined, color: Colors.white)
         ),
       ),
-      child: Container(
-        child: AudioImage(
-            audioId: _model.playList.isEmpty ? 0 : _model.playList[0].id),
-      ),
+      child: AudioImage(
+          audioId: _model.playList.isEmpty ? 0 : _model.playList[0].id, isPlayList: true),
     );
   }
 }

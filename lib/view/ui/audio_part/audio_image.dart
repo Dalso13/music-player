@@ -4,17 +4,20 @@ import 'package:on_audio_query/on_audio_query.dart';
 class AudioImage extends StatelessWidget {
   // ignore: prefer_typing_uninitialized_variables
   final _audioId;
-  const AudioImage({super.key, required int audioId}): _audioId = audioId;
+  final bool _isPlayList;
+
+  const AudioImage({super.key, required int audioId, bool isPlayList = false})
+      : _audioId = audioId,
+        _isPlayList = isPlayList;
 
   @override
   Widget build(BuildContext context) {
     return QueryArtworkWidget(
       keepOldArtwork: true,
-      nullArtworkWidget: Image.asset(
-          'assets/images/art_image.png',
-          // color: Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0),
-          // colorBlendMode: BlendMode.lighten
-        ),
+      nullArtworkWidget: Image.asset(_isPlayList
+              ? 'assets/images/play_list_image.png'
+              : 'assets/images/art_image.png'
+          ),
       id: _audioId,
       type: ArtworkType.AUDIO,
     );

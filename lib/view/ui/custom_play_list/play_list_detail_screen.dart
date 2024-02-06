@@ -10,15 +10,19 @@ import '../audio_part/audio_bar_check.dart';
 
 class PlayListDetailScreen extends StatelessWidget {
   final int _modelKey;
+
   const PlayListDetailScreen({
-    super.key, required int modelKey,
+    super.key,
+    required int modelKey,
   }) : _modelKey = modelKey;
 
   @override
   Widget build(BuildContext context) {
     final AudioViewModel audioViewModel = context.watch<AudioViewModel>();
-    final PlayListViewModel playListViewModel = context.watch<PlayListViewModel>();
-    final model = playListViewModel.state.customPlayList[playListViewModel.getIndex(_modelKey)];
+    final PlayListViewModel playListViewModel =
+        context.watch<PlayListViewModel>();
+    final model = playListViewModel
+        .state.customPlayList[playListViewModel.getIndex(_modelKey)];
     return Scaffold(
       appBar: AppBar(
         title: const Text('my play list'),
@@ -40,8 +44,10 @@ class PlayListDetailScreen extends StatelessWidget {
                           width: 200,
                           height: 200,
                           child: AudioImage(
-                              audioId:
-                                  model.playList.isEmpty ? 0 : model.playList.first.id),
+                              audioId: model.playList.isEmpty
+                                  ? 0
+                                  : model.playList.first.id,
+                              isPlayList: true),
                         ),
                         Expanded(
                           child: Column(
@@ -58,7 +64,9 @@ class PlayListDetailScreen extends StatelessWidget {
                               ),
                               IconButton(
                                   onPressed: () {
-                                    final viewModel = Provider.of<PlayListViewModel>(context, listen: false);
+                                    final viewModel =
+                                        Provider.of<PlayListViewModel>(context,
+                                            listen: false);
                                     showModalBottomSheet(
                                       context: context,
                                       isScrollControlled: true,
@@ -69,9 +77,12 @@ class PlayListDetailScreen extends StatelessWidget {
                                         return DraggableScrollableSheet(
                                           expand: false,
                                           initialChildSize: 0.3,
-                                          builder: (context, scrollController) =>
-                                              ChangeNotifierProvider.value(value: viewModel,
-                                                  child: OnlyOnePlayListMenu(modelKey: _modelKey)),
+                                          builder: (context,
+                                                  scrollController) =>
+                                              ChangeNotifierProvider.value(
+                                                  value: viewModel,
+                                                  child: OnlyOnePlayListMenu(
+                                                      modelKey: _modelKey)),
                                         );
                                       },
                                     );
@@ -91,14 +102,16 @@ class PlayListDetailScreen extends StatelessWidget {
                     children: [
                       OutlinedButton.icon(
                         onPressed: () {
-                          audioViewModel.customPlayListPlayMusic(isShuffle: true, list: model.playList.toList());
+                          audioViewModel.customPlayListPlayMusic(
+                              isShuffle: true, list: model.playList.toList());
                         },
                         icon: const Icon(Icons.shuffle, size: 18),
                         label: const Text("shuffle"),
                       ),
                       OutlinedButton.icon(
                         onPressed: () {
-                          audioViewModel.customPlayListPlayMusic(isShuffle: false, list: model.playList.toList());
+                          audioViewModel.customPlayListPlayMusic(
+                              isShuffle: false, list: model.playList.toList());
                         },
                         icon: const Icon(Icons.play_arrow, size: 18),
                         label: const Text("play"),
