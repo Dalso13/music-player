@@ -23,9 +23,9 @@ class CustomPlayListModel{
 
   Map<String, dynamic> toJson() {
     return {
-      'title': this.title,
-      'playList': this.playList,
-      'modelKey': this.modelKey,
+      'title': title,
+      'playList': playList,
+      'modelKey': modelKey,
     };
   }
 

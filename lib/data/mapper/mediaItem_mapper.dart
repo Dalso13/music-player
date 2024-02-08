@@ -1,5 +1,4 @@
 import 'package:audio_service/audio_service.dart';
-
 import '../../domain/model/audio_model.dart';
 
 extension MediaItemMapper on MediaItem {

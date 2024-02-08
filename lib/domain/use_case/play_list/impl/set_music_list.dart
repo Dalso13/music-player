@@ -1,7 +1,5 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:pristine_sound/data/mapper/audio_model_mapper.dart';
-import '../../../../data/repository/audio_repository_impl.dart';
 import '../../../model/audio_model.dart';
 import '../interface/play_list_setting.dart';
 

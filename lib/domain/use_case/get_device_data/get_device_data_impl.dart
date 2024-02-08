@@ -8,6 +8,7 @@ class GetDeviceDataImpl implements GetDeviceData {
     required this.deviceRepository,
   });
 
+  @override
   Future<Map<String, dynamic>> execute() async {
     return await deviceRepository.getDeviceInfo();
   }
