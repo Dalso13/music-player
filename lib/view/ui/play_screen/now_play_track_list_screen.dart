@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/view/ui/audio_part/audio_bar.dart';
-import 'package:music_player/view/ui/song_part/song_tile.dart';
-import 'package:music_player/view/view_model/audio_view_model.dart';
 import 'package:provider/provider.dart';
 
+import '../../view_model/audio_view_model.dart';
+import '../audio_part/audio_bar.dart';
 import '../song_part/detail_song_menu.dart';
+import '../song_part/song_tile.dart';
 
 class NowPlayTrackListScreen extends StatelessWidget {
   const NowPlayTrackListScreen({super.key});

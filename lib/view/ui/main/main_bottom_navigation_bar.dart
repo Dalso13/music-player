@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/core/screen_change_state.dart';
-import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../../core/screen_change_state.dart';
+import '../../view_model/main_view_model.dart';
 
 class MainBottomNavigationBar extends StatelessWidget {
   const MainBottomNavigationBar({super.key});

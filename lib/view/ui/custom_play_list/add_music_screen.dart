@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../view_model/audio_view_model.dart';
-import '../../view_model/play_list_model.dart';
+import '../../view_model/play_list_view_model.dart';
 import '../audio_part/audio_image.dart';
 
 class AddMusicScreen extends StatelessWidget {

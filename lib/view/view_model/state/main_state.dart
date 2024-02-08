@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:music_player/core/screen_change_state.dart';
+import '../../../core/screen_change_state.dart';
 
 part 'main_state.freezed.dart';
 

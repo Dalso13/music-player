@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:music_player/domain/model/audio_model.dart';
 
+import '../../../domain/model/audio_model.dart';
 import '../audio_part/audio_image.dart';
 
 class DetailTile extends StatelessWidget {

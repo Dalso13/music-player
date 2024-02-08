@@ -1,7 +1,7 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:music_player/data/mapper/audio_model_mapper.dart';
-import 'package:music_player/domain/model/audio_model.dart';
-import 'package:music_player/domain/use_case/play_list/interface/insert_song.dart';
+import 'package:pristine_sound/data/mapper/audio_model_mapper.dart';
+import '../../../model/audio_model.dart';
+import '../interface/insert_song.dart';
 
 class InsertSongImpl implements InsertSong {
   final AudioHandler _audioService;

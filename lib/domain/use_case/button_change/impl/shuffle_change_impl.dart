@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:music_player/domain/use_case/button_change/interface/shuffle_change.dart';
+
+import '../interface/shuffle_change.dart';
 
 class ShuffleChangeImpl implements ShuffleChange{
   final AudioHandler _audioService;

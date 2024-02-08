@@ -1,10 +1,8 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:music_player/data/mapper/mediaItem_mapper.dart';
-import 'package:music_player/domain/model/audio_model.dart';
-import 'package:music_player/domain/use_case/sleep_timer/interface/sleep_timer_pause.dart';
-
+import 'package:pristine_sound/data/mapper/mediaItem_mapper.dart';
 // 리포지터리
+import '../../domain/model/audio_model.dart';
 import '../../domain/repository/song_repository.dart';
 
 // use_case
@@ -13,15 +11,16 @@ import '../../domain/use_case/audio_player_stream/interface/dispose_controller.d
 import '../../domain/use_case/audio_player_stream/interface/get_current_index.dart';
 import '../../domain/use_case/button_change/interface/repeat_change.dart';
 import '../../domain/use_case/button_change/interface/shuffle_change.dart';
+import '../../domain/use_case/color/interface/imag_base_color.dart';
 import '../../domain/use_case/music_controller/interface/music_controller.dart';
 import '../../domain/use_case/music_controller/interface/seek_controller.dart';
+import '../../domain/use_case/play_list/interface/add_song.dart';
 import '../../domain/use_case/play_list/interface/click_play_list_song.dart';
+import '../../domain/use_case/play_list/interface/insert_song.dart';
 import '../../domain/use_case/play_list/interface/play_list_setting.dart';
-import 'package:music_player/domain/use_case/color/interface/imag_base_color.dart';
-import 'package:music_player/domain/use_case/play_list/interface/add_song.dart';
-import 'package:music_player/domain/use_case/play_list/interface/insert_song.dart';
 
 // state
+import '../../domain/use_case/sleep_timer/interface/sleep_timer_pause.dart';
 import '../../domain/use_case/sleep_timer/interface/sleep_timer_start.dart';
 import 'state/audio_state.dart';
 import 'state/progress_bar_state.dart';
@@ -188,7 +187,11 @@ class AudioViewModel extends ChangeNotifier {
     final enable = await _shuffleChange.execute(
         isShuffleModeEnabled: _audioState.isShuffleModeEnabled);
     _audioState = _audioState.copyWith(isShuffleModeEnabled: enable);
+    int index = _audioState.playList.indexOf(_audioState.nowPlaySong);
 
+    _audioState = _audioState.copyWith(
+      currentIndex: index
+    );
     notifyListeners();
   }
 

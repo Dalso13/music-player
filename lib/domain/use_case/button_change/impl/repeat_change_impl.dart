@@ -1,5 +1,5 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:music_player/core/repeat_state.dart';
+import '../../../../core/repeat_state.dart';
 import '../interface/repeat_change.dart';
 
 class RepeatChangeImpl implements RepeatChange{

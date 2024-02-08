@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:music_player/domain/model/audio_model.dart';
 import 'package:provider/provider.dart';
 
+import '../../../domain/model/audio_model.dart';
 import '../../view_model/audio_view_model.dart';
 import '../audio_part/audio_image.dart';
 import 'detail_song_menu.dart';

@@ -1,8 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:music_player/domain/model/audio_model.dart';
-import 'package:music_player/domain/model/custom_play_list_model.dart';
-import 'package:music_player/domain/repository/play_list_repository.dart';
-
+import '../../domain/model/custom_play_list_model.dart';
+import '../../domain/repository/play_list_repository.dart';
 import '../../domain/repository/song_repository.dart';
 
 class PlayListRepositoryImpl implements PlayListRepository {

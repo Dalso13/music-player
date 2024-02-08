@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/view/ui/main/main_music_screen.dart';
-import 'package:music_player/view/ui/main/permission_page.dart';
-import 'package:music_player/view/view_model/audio_view_model.dart';
-import 'package:music_player/view/view_model/main_view_model.dart';
+import 'package:pristine_sound/view/ui/main/permission_page.dart';
 import 'package:provider/provider.dart';
+
+import '../../view_model/audio_view_model.dart';
+import '../../view_model/main_view_model.dart';
+import 'main_music_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

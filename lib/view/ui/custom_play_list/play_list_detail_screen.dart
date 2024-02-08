@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/view/ui/audio_part/audio_image.dart';
-import 'package:music_player/view/ui/custom_play_list/custom_play_list_menu/only_one_play_list_menu.dart';
-import 'package:music_player/view/ui/song_part/music_list_view.dart';
-import 'package:music_player/view/view_model/play_list_model.dart';
+import 'package:pristine_sound/view/ui/custom_play_list/custom_play_list_menu/detail_play_list_icon.dart';
 import 'package:provider/provider.dart';
 
 import '../../view_model/audio_view_model.dart';
-import '../audio_part/audio_bar_check.dart';
+import '../../view_model/play_list_view_model.dart';
+import '../audio_part/audio_image.dart';
+import '../song_part/music_list_tile.dart';
+
 
 class PlayListDetailScreen extends StatelessWidget {
   final int _modelKey;
@@ -24,23 +24,21 @@ class PlayListDetailScreen extends StatelessWidget {
     final model = playListViewModel
         .state.customPlayList[playListViewModel.getIndex(_modelKey)];
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('my play list'),
-        backgroundColor: Theme.of(context).primaryColorLight,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 400,
+            pinned: true,
+            floating: true,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Column(
                 children: [
-                  SizedBox(
-                    width: double.maxFinite,
-                    height: 250,
+                  SafeArea(
                     child: Row(
                       children: [
                         Container(
-                          margin: const EdgeInsets.all(20),
+                          margin: const EdgeInsets.only(
+                              left: 20, right: 20, bottom: 40, top: 40),
                           width: 200,
                           height: 200,
                           child: AudioImage(
@@ -50,48 +48,26 @@ class PlayListDetailScreen extends StatelessWidget {
                               isPlayList: true),
                         ),
                         Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
-                                child: Text(model.title,
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        overflow: TextOverflow.ellipsis),
-                                    maxLines: 4),
-                              ),
-                              IconButton(
-                                  onPressed: () {
-                                    final viewModel =
-                                        Provider.of<PlayListViewModel>(context,
-                                            listen: false);
-                                    showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.vertical(
-                                              top: Radius.circular(30))),
-                                      builder: (context) {
-                                        return DraggableScrollableSheet(
-                                          expand: false,
-                                          initialChildSize: 0.3,
-                                          builder: (context,
-                                                  scrollController) =>
-                                              ChangeNotifierProvider.value(
-                                                  value: viewModel,
-                                                  child: OnlyOnePlayListMenu(
-                                                      modelKey: _modelKey)),
-                                        );
-                                      },
-                                    );
-                                  },
-                                  icon: const Icon(
-                                    Icons.menu,
-                                    size: 40,
-                                  ))
-                            ],
+                          child: SizedBox(
+                            height: 200,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: Text(model.title,
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          overflow: TextOverflow.ellipsis),
+                                      maxLines: 4),
+                                ),
+                                DetailPlayListIcon(
+                                  title: model.title,
+                                  modelKey: model.modelKey!,
+                                ),
+                              ],
+                            ),
                           ),
                         )
                       ],
@@ -122,13 +98,18 @@ class PlayListDetailScreen extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-              child: model.playList.isNotEmpty
-                  ? MusicListView(audioModel: model.playList)
-                  : const Center(
+          SliverList(
+            delegate: SliverChildListDelegate(model.playList.isNotEmpty
+                ? model.playList.map((e) {
+                    bool isEqual = e.id == audioViewModel.state.nowPlaySong.id;
+                    return MusicListTile(isEqual: isEqual, audioModel: e);
+                  }).toList()
+                : [
+                    const Center(
                       child: Text('empty play list'),
-                    )),
-          AudioBarCheck(isBool: audioViewModel.state.playList.isNotEmpty),
+                    ),
+                  ]),
+          )
         ],
       ),
     );

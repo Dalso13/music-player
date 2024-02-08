@@ -1,7 +1,7 @@
-import 'package:music_player/domain/model/custom_play_list_model.dart';
-import 'package:music_player/domain/use_case/custom_play_list_box/interface/get_custom_play_list.dart';
 
+import '../../../model/custom_play_list_model.dart';
 import '../../../repository/play_list_repository.dart';
+import '../interface/get_custom_play_list.dart';
 
 class GetCustomPlayListImpl implements GetCustomPlayList {
   final PlayListRepository _playListRepository;

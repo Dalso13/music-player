@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/core/screen_change_state.dart';
-import 'package:music_player/view/ui/sleep_timer/sleep_timer.dart';
-import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/screen_change_state.dart';
 import '../../view_model/audio_view_model.dart';
+import '../../view_model/main_view_model.dart';
+import '../sleep_timer/sleep_timer.dart';
 
 class DrawerMenu extends StatelessWidget {
   const DrawerMenu({super.key});
@@ -19,7 +19,7 @@ class DrawerMenu extends StatelessWidget {
       children: [
         const DrawerHeader(
             child: Text(
-          'Music Player',
+          'Pristine Sound',
         )),
         ListTile(
           leading: const Icon(Icons.home),

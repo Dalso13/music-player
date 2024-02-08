@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:music_player/di/di_setup.dart';
-import 'package:music_player/domain/model/audio_model.dart';
-import 'package:music_player/domain/model/custom_play_list_model.dart';
-import 'package:music_player/route/router.dart';
+import 'package:pristine_sound/route/router.dart';
+import 'di/di_setup.dart';
+import 'domain/model/audio_model.dart';
+import 'domain/model/custom_play_list_model.dart';
 
 
 

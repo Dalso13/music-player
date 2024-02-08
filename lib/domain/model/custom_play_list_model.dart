@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
-import 'package:music_player/domain/model/audio_model.dart';
+
+import 'audio_model.dart';
 
 part 'custom_play_list_model.g.dart';
 

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:music_player/domain/model/audio_model.dart';
-import 'package:music_player/view/ui/song_part/detail_tile.dart';
-import 'package:music_player/view/view_model/audio_view_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../../domain/model/audio_model.dart';
+import '../../view_model/audio_view_model.dart';
+import 'detail_tile.dart';
 
 class DetailSongMenu extends StatelessWidget {
   final AudioModel _song;

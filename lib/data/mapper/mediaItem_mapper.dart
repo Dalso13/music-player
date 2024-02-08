@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:music_player/domain/model/audio_model.dart';
+
+import '../../domain/model/audio_model.dart';
 
 extension MediaItemMapper on MediaItem {
   AudioModel toAudioModel() {

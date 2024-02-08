@@ -1,6 +1,5 @@
-import 'package:music_player/domain/use_case/play_list/interface/click_play_list_song.dart';
-
 import '../../../../data/repository/audio_repository_impl.dart';
+import '../interface/click_play_list_song.dart';
 
 class ClickPlayListSongImpl implements ClickPlayListSong {
   final _audioRepository = AudioRepositoryImpl();

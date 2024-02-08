@@ -1,7 +1,7 @@
-import 'package:music_player/data/mapper/song_model_mapper.dart';
-import 'package:music_player/domain/repository/song_repository.dart';
-import 'package:music_player/domain/model/audio_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:pristine_sound/data/mapper/song_model_mapper.dart';
+import '../../domain/model/audio_model.dart';
+import '../../domain/repository/song_repository.dart';
 
 class SongRepositoryImpl implements SongRepository {
   final OnAudioQuery _audioQuery = OnAudioQuery();

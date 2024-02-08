@@ -1,5 +1,6 @@
-import 'package:music_player/domain/model/audio_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+
+import '../../domain/model/audio_model.dart';
 
 extension SongModelMapper on SongModel {
   AudioModel toMapper() {

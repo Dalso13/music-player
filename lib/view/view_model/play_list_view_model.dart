@@ -10,6 +10,9 @@ import 'state/play_list_state.dart';
 
 class PlayListViewModel extends ChangeNotifier {
   PlayListState _state = const PlayListState();
+  final TextEditingController _textEditingController = TextEditingController();
+
+  TextEditingController get textEditingController => _textEditingController;
 
   // useCase
   final CustomPlayListUpdateBox _customPlayListUpdateBox;
@@ -37,20 +40,20 @@ class PlayListViewModel extends ChangeNotifier {
   PlayListState get state => _state;
 
   int getIndex(int modelKey) {
-    return _state.customPlayList.map((e) => e.modelKey).toList().indexOf(modelKey);
+    return _state.customPlayList
+        .map((e) => e.modelKey)
+        .toList()
+        .indexOf(modelKey);
   }
 
   void refreshPlayList() {
-    final list =  _getCustomPlayList.execute();
+    final list = _getCustomPlayList.execute();
     _state = _state.copyWith(customPlayList: list);
     notifyListeners();
   }
 
-  void setPlayList({
-    required String title,
-    required List<AudioModel> playList,
-  }) async {
-    await _customPlayListSetBox.execute(title: title, playList: playList);
+  void setPlayList() async {
+    await _customPlayListSetBox.execute(title: _textEditingController.text, playList: []);
     refreshPlayList();
     notifyListeners();
   }
@@ -84,10 +87,22 @@ class PlayListViewModel extends ChangeNotifier {
     final list = _state.customPlayList[getIndex(modelKey)];
     if (list.modelKey == null) return;
     await _customPlayListUpdateBox.execute(
-        title: list.title,
-        playList: list.playList.toList()..addAll(_state.selectList),
-        key: list.modelKey!);
+      title: list.title,
+      playList: list.playList.toList()..addAll(_state.selectList),
+      key: list.modelKey!,
+    );
 
+    notifyListeners();
+  }
+
+  void changeTitle({required int modelKey}) async {
+    final list = _state.customPlayList[getIndex(modelKey)];
+    await _customPlayListUpdateBox.execute(
+      title: _textEditingController.text,
+      playList: list.playList,
+      key: list.modelKey!,
+    );
+    refreshPlayList();
     notifyListeners();
   }
 
@@ -100,5 +115,12 @@ class PlayListViewModel extends ChangeNotifier {
     }
     _state = _state.copyWith(selectList: list);
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    _textEditingController.dispose();
+    super.dispose();
   }
 }

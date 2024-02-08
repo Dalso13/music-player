@@ -1,13 +1,13 @@
 import 'package:go_router/go_router.dart';
-import 'package:music_player/view/ui/custom_play_list/remove_music_screen.dart';
-import 'package:music_player/view/ui/main/main_screen.dart';
-import 'package:music_player/view/ui/custom_play_list/play_list_detail_screen.dart';
-import 'package:music_player/view/view_model/audio_view_model.dart';
-import 'package:music_player/view/view_model/main_view_model.dart';
 import 'package:provider/provider.dart';
 import '../di/di_setup.dart';
 import '../view/ui/custom_play_list/add_music_screen.dart';
-import '../view/view_model/play_list_model.dart';
+import '../view/ui/custom_play_list/play_list_detail_screen.dart';
+import '../view/ui/custom_play_list/remove_music_screen.dart';
+import '../view/ui/main/main_screen.dart';
+import '../view/view_model/audio_view_model.dart';
+import '../view/view_model/main_view_model.dart';
+import '../view/view_model/play_list_view_model.dart';
 
 final _audioViewModel = getIt<AudioViewModel>();
 

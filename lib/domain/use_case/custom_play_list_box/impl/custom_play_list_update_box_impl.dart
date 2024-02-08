@@ -1,6 +1,6 @@
-import 'package:music_player/domain/model/custom_play_list_model.dart';
 
 import '../../../model/audio_model.dart';
+import '../../../model/custom_play_list_model.dart';
 import '../../../repository/play_list_repository.dart';
 import '../interface/custom_play_list_update_box.dart';
 

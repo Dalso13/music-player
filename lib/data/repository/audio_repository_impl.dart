@@ -1,5 +1,6 @@
 import 'package:just_audio/just_audio.dart';
-import 'package:music_player/domain/repository/audio_repository.dart';
+
+import '../../domain/repository/audio_repository.dart';
 
 class AudioRepositoryImpl implements AudioRepository {
   AudioRepositoryImpl._internal();

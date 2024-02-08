@@ -4,14 +4,13 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-
-import 'package:music_player/core/repeat_state.dart';
-import 'package:music_player/view/ui/play_screen/now_play_track_list_screen.dart';
-import 'package:music_player/view/view_model/audio_view_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/button_state.dart';
+import '../../../core/repeat_state.dart';
+import '../../view_model/audio_view_model.dart';
+import 'now_play_track_list_screen.dart';
 
 class NowPlayTrackScreen extends StatelessWidget {
   const NowPlayTrackScreen({super.key});
