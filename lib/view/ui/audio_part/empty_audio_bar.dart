@@ -6,7 +6,7 @@ class EmptyAudioBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isSize = MediaQuery.of(context).size.width < 380;
+    final isSize = MediaQuery.of(context).size.width < 360;
     return Column(
       children: [
         Row(

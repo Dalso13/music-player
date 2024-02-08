@@ -11,7 +11,7 @@ class AudioBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isSize = MediaQuery.of(context).size.width < 380;
+    final isSize = MediaQuery.of(context).size.width < 360;
     final viewModel = context.watch<AudioViewModel>();
     final song = viewModel.state.nowPlaySong;
     return Row(

@@ -1,6 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:pristine_sound/data/mapper/mediaItem_mapper.dart';
+import 'package:pristine_sound/data/mapper/media_item_mapper.dart';
 // 리포지터리
 import '../../domain/model/audio_model.dart';
 import '../../domain/repository/song_repository.dart';

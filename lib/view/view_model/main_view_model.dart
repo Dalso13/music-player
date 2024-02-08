@@ -11,6 +11,7 @@ class MainViewModel extends ChangeNotifier {
   final PageController _pageController = PageController(
     initialPage: 0,
   );
+
   // useCase
   final CustomPlayListDataCheck _customPlayListDataCheck;
   final GetDeviceData _getDeviceData;
@@ -23,15 +24,17 @@ class MainViewModel extends ChangeNotifier {
   })  : _customPlayListDataCheck = customPlayListDataCheck,
         _getDeviceData = getDeviceData;
 
-
-
   PageController get pageController => _pageController;
 
   MainState get mainState => _mainState;
 
-
   Future<void> init() async {
-    await requestPermissions();
+    final checkPermission = await _permission();
+    if (checkPermission == false) {
+      await requestPermissions();
+    } else {
+      await checkPermissions();
+    }
     notifyListeners();
   }
 
@@ -71,44 +74,22 @@ class MainViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-
-
   // TODO : 권한 처리
   Future<void> checkPermissions() async {
     _mainState = _mainState.copyWith(isPermissionLoading: true);
     notifyListeners();
-    final device = await _getDeviceData.execute();
+    final checkPermission = await _permission();
 
-    if (int.parse(device['version']) > 12){
-      if (await Permission.audio.isGranted &&
-          await Permission.photos.isGranted &&
-          await Permission.videos.isGranted) {
-        _mainState = _mainState.copyWith(
-          isPermission: true,
-        );
-      } else {
-        _mainState = _mainState.copyWith(
-          isPermission: false,
-        );
-      }
-    } else {
-      if (await Permission.storage.isGranted) {
-        _mainState = _mainState.copyWith(
-          isPermission: true,
-        );
-      } else {
-        _mainState = _mainState.copyWith(
-          isPermission: false,
-        );
-      }
-    }
-    _mainState = _mainState.copyWith(isPermissionLoading: false);
+    _mainState = _mainState.copyWith(
+      isPermissionLoading: false,
+      isPermission: checkPermission,
+    );
     notifyListeners();
   }
 
   Future<void> requestPermissions() async {
     final device = await _getDeviceData.execute();
-    if (int.parse(device['version']) > 12){
+    if (int.parse(device['version']) > 12) {
       await [
         Permission.audio,
         Permission.photos,
@@ -123,9 +104,27 @@ class MainViewModel extends ChangeNotifier {
     await checkPermissions();
   }
 
+  Future<bool> _permission() async {
+    _mainState = _mainState.copyWith(isPermissionLoading: true);
+    notifyListeners();
+    final device = await _getDeviceData.execute();
 
-
-
+    if (int.parse(device['version']) > 12) {
+      if (await Permission.audio.isGranted &&
+          await Permission.photos.isGranted &&
+          await Permission.videos.isGranted) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (await Permission.storage.isGranted) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -133,5 +132,4 @@ class MainViewModel extends ChangeNotifier {
     _pageController.dispose();
     super.dispose();
   }
-
 }

@@ -36,7 +36,7 @@ class DeviceRepositoryImpl implements DeviceRepository{
   }
 
   Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo info) {
-    var systemName = info.systemName;
+    // var systemName = info.systemName;
     var version = info.systemVersion;
     var machine = info.utsname.machine;
 

@@ -92,6 +92,7 @@ class MyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> skipToQueueItem(int index) async {
     if (_playlist.children.isEmpty) return;
+    // await _player.seek(Duration.zero,index: index);
     await _player.setAudioSource(_playlist, initialIndex: index);
   }
 

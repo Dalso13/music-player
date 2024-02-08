@@ -40,7 +40,7 @@ class MainMusicScreen extends StatelessWidget {
                       },
                       children: [
                         state.songList.isEmpty
-                            ? const Text("Nothing found!")
+                            ? const Center(child: Text("Nothing found!"))
                             : MusicList(audioModel: state.songList),
                         const MainPlayListScreen(),
                         //const Center(child: Text('준비중'),)

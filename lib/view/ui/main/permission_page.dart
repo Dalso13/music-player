@@ -41,13 +41,9 @@ class _PermissionPageState extends State<PermissionPage> {
                         actions: <Widget>[
                           ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context).pop(); //창 닫기
-                              openAppSettings().then((_) {
-                                mainViewModel.checkPermissions().then((_) {
-                                  if(mainViewModel.mainState.isPermission) {
-                                    context.pop();
-                                  }
-                                });
+                              openAppSettings().then((_) async {
+                                context.pop();
+                                await mainViewModel.checkPermissions();
                               });
                             },
                             child: const Text("close"),
