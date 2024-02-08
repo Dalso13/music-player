@@ -7,6 +7,4 @@ abstract interface class PlayListRepository {
   Box<CustomPlayListModel> get box;
 
   get playList;
-
-
 }

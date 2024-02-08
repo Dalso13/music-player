@@ -6,6 +6,7 @@ import '../../view_model/audio_view_model.dart';
 import '../../view_model/play_list_view_model.dart';
 import '../audio_part/audio_bar_check.dart';
 import '../audio_part/audio_image.dart';
+import '../play_screen/now_play_track_screen.dart';
 import '../song_part/music_list_tile.dart';
 
 class PlayListDetailScreen extends StatelessWidget {
@@ -41,7 +42,7 @@ class PlayListDetailScreen extends StatelessWidget {
                           margin: const EdgeInsets.only(
                               left: 20, right: 20, bottom: 40, top: 40),
                           width: isSize ? 100 : 200,
-                          height: isSize ? 100 :200,
+                          height: isSize ? 100 : 200,
                           child: AudioImage(
                               audioId: model.playList.isEmpty
                                   ? 0
@@ -116,7 +117,24 @@ class PlayListDetailScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: SizedBox(height: 90 ,child: AudioBarCheck(isBool: audioViewModel.state.playList.isNotEmpty))
+      bottomNavigationBar: SizedBox(
+        height: 90,
+        child: AudioBarCheck(
+          onTap: () {
+            showModalBottomSheet(
+                isScrollControlled: true,
+                context: context,
+                builder: (context) {
+                  return ChangeNotifierProvider.value(
+                    value: audioViewModel,
+                    child: const NowPlayTrackScreen(),
+                  );
+                });
+          },
+          audioState: audioViewModel.state,
+          progressBarState: audioViewModel.progressNotifier,
+        ),
+      ),
     );
   }
 }
