@@ -45,7 +45,7 @@ class MyAudioHandler extends BaseAudioHandler {
       await _player.pause();
     }
     final audioSource = mediaItems.map(_createAudioSource);
-    _playlist.clear();
+    await _playlist.clear();
     _playlist.addAll(audioSource.toList());
 
     queue.add(mediaItems);
@@ -91,6 +91,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> skipToQueueItem(int index) async {
+    if (_playlist.children.isEmpty) return;
     await _player.setAudioSource(_playlist, initialIndex: index);
   }
 

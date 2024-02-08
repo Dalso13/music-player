@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 
 import '../../view_model/audio_view_model.dart';
 import '../../view_model/play_list_view_model.dart';
+import '../audio_part/audio_bar_check.dart';
 import '../audio_part/audio_image.dart';
 import '../song_part/music_list_tile.dart';
-
 
 class PlayListDetailScreen extends StatelessWidget {
   final int _modelKey;
@@ -18,6 +18,7 @@ class PlayListDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isSize = MediaQuery.of(context).size.width < 380;
     final AudioViewModel audioViewModel = context.watch<AudioViewModel>();
     final PlayListViewModel playListViewModel =
         context.watch<PlayListViewModel>();
@@ -39,8 +40,8 @@ class PlayListDetailScreen extends StatelessWidget {
                         Container(
                           margin: const EdgeInsets.only(
                               left: 20, right: 20, bottom: 40, top: 40),
-                          width: 200,
-                          height: 200,
+                          width: isSize ? 100 : 200,
+                          height: isSize ? 100 :200,
                           child: AudioImage(
                               audioId: model.playList.isEmpty
                                   ? 0
@@ -49,7 +50,7 @@ class PlayListDetailScreen extends StatelessWidget {
                         ),
                         Expanded(
                           child: SizedBox(
-                            height: 200,
+                            height: isSize ? 100 : 200,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -99,19 +100,23 @@ class PlayListDetailScreen extends StatelessWidget {
             ),
           ),
           SliverList(
-            delegate: SliverChildListDelegate(model.playList.isNotEmpty
-                ? model.playList.map((e) {
-                    bool isEqual = e.id == audioViewModel.state.nowPlaySong.id;
-                    return MusicListTile(isEqual: isEqual, audioModel: e);
-                  }).toList()
-                : [
-                    const Center(
-                      child: Text('empty play list'),
-                    ),
-                  ]),
-          )
+            delegate: SliverChildListDelegate(
+              model.playList.isNotEmpty
+                  ? model.playList.map((e) {
+                      bool isEqual =
+                          e.id == audioViewModel.state.nowPlaySong.id;
+                      return MusicListTile(isEqual: isEqual, audioModel: e);
+                    }).toList()
+                  : [
+                      const Center(
+                        child: Text('empty play list'),
+                      ),
+                    ],
+            ),
+          ),
         ],
       ),
+      bottomNavigationBar: SizedBox(height: 90 ,child: AudioBarCheck(isBool: audioViewModel.state.playList.isNotEmpty))
     );
   }
 }

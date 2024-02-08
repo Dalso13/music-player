@@ -6,6 +6,7 @@ class EmptyAudioBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isSize = MediaQuery.of(context).size.width < 380;
     return Column(
       children: [
         Row(
@@ -36,7 +37,7 @@ class EmptyAudioBar extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  IconButton(onPressed: (){}, icon: const Icon(Icons.skip_previous)),
+                  isSize ?  Container() : IconButton(onPressed: (){}, icon: const Icon(Icons.skip_previous)),
                   IconButton(onPressed: (){}, icon: const Icon(Icons.play_arrow)),
                   IconButton(onPressed: (){}, icon: const Icon(Icons.skip_next)),
                 ],
