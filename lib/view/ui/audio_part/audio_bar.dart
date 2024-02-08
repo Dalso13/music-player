@@ -1,19 +1,28 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:pristine_sound/view/ui/audio_part/audio_event.dart';
 
 import '../../../core/button_state.dart';
-import '../../view_model/audio_view_model.dart';
+import '../../view_model/state/audio_state.dart';
+import '../../view_model/state/progress_bar_state.dart';
 import 'audio_image.dart';
 
 class AudioBar extends StatelessWidget {
-  const AudioBar({super.key});
+  final void Function(AudioEvent event)? callback;
+  final AudioState audioState;
+  final ProgressBarState progressBarState;
+
+  const AudioBar({
+    super.key,
+    this.callback,
+    required this.audioState,
+    required this.progressBarState,
+  });
 
   @override
   Widget build(BuildContext context) {
     final isSize = MediaQuery.of(context).size.width < 360;
-    final viewModel = context.watch<AudioViewModel>();
-    final song = viewModel.state.nowPlaySong;
+    final song = audioState.nowPlaySong;
     return Row(
       children: [
         Expanded(
@@ -63,18 +72,18 @@ class AudioBar extends StatelessWidget {
                     isSize
                         ? Container()
                         : IconButton(
-                            onPressed: viewModel.previousPlay,
+                            onPressed: () => callback?.call(const AudioEvent.previousPlay()),
                             icon: const Icon(Icons.skip_previous),
                           ),
                     Container(
-                        child: switch (viewModel.state.buttonState) {
+                        child: switch (audioState.buttonState) {
                       ButtonState.paused => IconButton(
                           icon: const Icon(Icons.play_arrow),
-                          onPressed: viewModel.clickPlayButton,
+                          onPressed: () => callback?.call(const AudioEvent.clickPlayButton()),
                         ),
                       ButtonState.playing => IconButton(
                           icon: const Icon(Icons.pause),
-                          onPressed: viewModel.stopMusic,
+                          onPressed: () => callback?.call(const AudioEvent.stopMusic()),
                         ),
                       ButtonState.loading => Container(
                           margin: const EdgeInsets.only(right: 8, left: 8),
@@ -84,7 +93,7 @@ class AudioBar extends StatelessWidget {
                         ),
                     }),
                     IconButton(
-                      onPressed: viewModel.nextPlay,
+                      onPressed: () => callback?.call(const AudioEvent.nextPlay()),
                       icon: const Icon(Icons.skip_next),
                     ),
                   ],
@@ -92,10 +101,10 @@ class AudioBar extends StatelessWidget {
               ],
             ),
             ProgressBar(
-              progress: viewModel.progressNotifier.current,
-              buffered: viewModel.progressNotifier.buffered,
-              total: viewModel.progressNotifier.total,
-              onSeek: viewModel.seek,
+              progress: progressBarState.current,
+              buffered: progressBarState.buffered,
+              total: progressBarState.total,
+              onSeek: (duration) => callback?.call(AudioEvent.seek(duration)),
               timeLabelLocation: TimeLabelLocation.none,
               barHeight: 3,
             ),

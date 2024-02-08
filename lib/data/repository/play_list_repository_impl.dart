@@ -15,9 +15,6 @@ class PlayListRepositoryImpl implements PlayListRepository {
   }
 
   @override
-  Box<CustomPlayListModel> get box => _box;
-
-  @override
   List<CustomPlayListModel> get playList => _playList;
 
   void _getCustomPlayLists() {
@@ -47,4 +44,8 @@ class PlayListRepositoryImpl implements PlayListRepository {
     await _box.addAll(newData);
     _getCustomPlayLists();
   }
+
+  @override
+  // TODO: implement box
+  Box<CustomPlayListModel> get box => throw UnimplementedError();
 }

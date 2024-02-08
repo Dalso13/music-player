@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:pristine_sound/view/ui/audio_part/audio_event.dart';
 import 'package:provider/provider.dart';
 
 import '../../view_model/audio_view_model.dart';
@@ -18,7 +21,25 @@ class NowPlayTrackListScreen extends StatelessWidget {
       backgroundColor: Color(state.artColor).withOpacity(0.6),
       body: Column(
         children: [
-          const SafeArea(child: AudioBar()),
+          SafeArea(
+              child: AudioBar(
+            audioState: state,
+            progressBarState: viewModel.progressNotifier,
+            callback: (event) {
+              switch (event) {
+                case PreviousPlay():
+                  viewModel.previousPlay();
+                case ClickPlayButton():
+                  viewModel.clickPlayButton();
+                case Seek():
+                  viewModel.seek(event.duration);
+                case NextPlay():
+                  viewModel.nextPlay();
+                case StopMusic():
+                  viewModel.stopMusic();
+              }
+            },
+          )),
           Expanded(
             child: Column(
               children: [
@@ -42,9 +63,7 @@ class NowPlayTrackListScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           'now track list',
-                          style: TextStyle(
-                            color: Colors.grey[200]
-                          ),
+                          style: TextStyle(color: Colors.grey[200]),
                         ),
                       ),
                     ],
@@ -56,8 +75,7 @@ class NowPlayTrackListScreen extends StatelessWidget {
                     children: state.playList.asMap().entries.map((map) {
                       int idx = map.key;
                       final e = map.value;
-                      final bool isEqual =
-                          viewModel.state.currentIndex == idx;
+                      final bool isEqual = viewModel.state.currentIndex == idx;
                       return GestureDetector(
                           onLongPress: () {
                             final myModel = Provider.of<AudioViewModel>(context,

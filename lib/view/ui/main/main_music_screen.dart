@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../view_model/audio_view_model.dart';
 import '../../view_model/main_view_model.dart';
 import '../audio_part/audio_bar_check.dart';
+import '../play_screen/now_play_track_screen.dart';
 import '../song_part/music_list.dart';
 import 'drawer_menu.dart';
 import 'main_bottom_navigation_bar.dart';
@@ -48,7 +49,20 @@ class MainMusicScreen extends StatelessWidget {
                     ),
             ),
           ),
-          AudioBarCheck(isBool: audioViewModel.state.playList.isNotEmpty),
+          AudioBarCheck(
+            audioState: audioViewModel.state,
+            progressBarState: audioViewModel.progressNotifier,
+            onTap: () {
+              showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (context) {
+                    return ChangeNotifierProvider.value(
+                        value: audioViewModel,
+                        child: const NowPlayTrackScreen());
+                  });
+            },
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

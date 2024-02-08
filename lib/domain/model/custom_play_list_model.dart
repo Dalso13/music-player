@@ -5,7 +5,7 @@ import 'audio_model.dart';
 part 'custom_play_list_model.g.dart';
 
 @HiveType(typeId: 0)
-class CustomPlayListModel{
+class CustomPlayListModel {
   @HiveField(0)
   String title;
 

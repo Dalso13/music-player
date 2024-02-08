@@ -7,9 +7,6 @@ class SongRepositoryImpl implements SongRepository {
   final OnAudioQuery _audioQuery = OnAudioQuery();
 
   @override
-  OnAudioQuery get audioQuery => _audioQuery;
-
-  @override
   Future<List<AudioModel>> getAudioSource() async {
     final songModelList = await _audioQuery.querySongs(
       sortType: null,
