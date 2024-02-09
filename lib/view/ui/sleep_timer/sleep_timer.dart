@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:pristine_sound/view/view_model/audio_view_model.dart';
 import 'package:provider/provider.dart';
-
-import '../../view_model/audio_view_model.dart';
 
 class SleepTimer extends StatelessWidget {
   final bool _oldSleepTimerEnabled;
@@ -19,17 +18,20 @@ class SleepTimer extends StatelessWidget {
         _oldHour = oldHour,
         _oldMinutes = oldMinutes;
 
+
   @override
   Widget build(BuildContext context) {
-    final AudioViewModel audioViewModel = context.watch<AudioViewModel>();
+    final audioViewModel = context.watch<AudioViewModel>();
+    final state = audioViewModel.state;
     return AlertDialog(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text('sleep timer'),
           Switch(
-              value: audioViewModel.state.isSleepTimerEnabled,
-              onChanged: (value) => audioViewModel.changeTimerEnabled(isSleepTimerEnabled: value))
+              value: state.isSleepTimerEnabled,
+              onChanged: (value) => audioViewModel.changeTimerEnabled(isSleepTimerEnabled: value),
+          )
         ],
       ),
       content: Row(
@@ -37,7 +39,7 @@ class SleepTimer extends StatelessWidget {
           Container(
             margin: const EdgeInsets.all(8),
             child: NumberPicker(
-              value: audioViewModel.state.hour,
+              value: state.hour,
               minValue: 0,
               maxValue: 23,
               decoration: const BoxDecoration(
@@ -53,7 +55,7 @@ class SleepTimer extends StatelessWidget {
           Container(
             margin: const EdgeInsets.all(8),
             child: NumberPicker(
-              value: audioViewModel.state.minutes,
+              value: state.minutes,
               step: 5,
               minValue: 5,
               maxValue: 55,
@@ -64,7 +66,7 @@ class SleepTimer extends StatelessWidget {
                   top: BorderSide(width: 1),
                 ),
               ),
-              onChanged: (value) => audioViewModel.changeSecond(minutes: value),
+              onChanged: (value) => audioViewModel.changeMinute(minutes: value),
             ),
           ),
         ],
@@ -75,7 +77,7 @@ class SleepTimer extends StatelessWidget {
             context.pop(); //창 닫기
             audioViewModel.changeTimerEnabled(isSleepTimerEnabled: _oldSleepTimerEnabled);
             audioViewModel.changeHour(hour: _oldHour);
-            audioViewModel.changeSecond(minutes: _oldMinutes);
+            audioViewModel.changeMinute(minutes: _oldMinutes);
           },
           child: const Text("close"),
         ),
@@ -89,4 +91,5 @@ class SleepTimer extends StatelessWidget {
       ],
     );
   }
+
 }

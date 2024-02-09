@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../view_model/play_list_view_model.dart';
 import '../custom_play_list/custom_play_list_menu/play_list_grid_tile.dart';
 import '../custom_play_list/custom_play_list_menu/play_lists_dialog.dart';
+import '../custom_play_list/custom_play_list_menu/play_lists_menu.dart';
 
 class MainPlayListScreen extends StatelessWidget {
   const MainPlayListScreen({super.key});
@@ -19,13 +20,12 @@ class MainPlayListScreen extends StatelessWidget {
           children: [
             IconButton(
               onPressed: () {
-                final viewModel =
-                    Provider.of<PlayListViewModel>(context, listen: false);
                 showDialog(
                   context: context,
                   builder: (context) {
                     return ChangeNotifierProvider.value(
-                        value: viewModel, child: const PlayListsDialog());
+                        value: playListViewModel,
+                        child: const PlayListsDialog());
                   },
                 );
               },
@@ -49,7 +49,8 @@ class MainPlayListScreen extends StatelessWidget {
               crossAxisSpacing: 15,
               crossAxisCount: 2,
               children: playListState.customPlayList
-                  .map((e) => GestureDetector(
+                  .map(
+                    (e) => GestureDetector(
                       onTap: () async {
                         await context.push('/custom-play-list',
                             extra: playListViewModel.getIndex(e.modelKey!));
@@ -57,7 +58,19 @@ class MainPlayListScreen extends StatelessWidget {
                       },
                       child: PlayListGridTile(
                         model: e,
-                      )))
+                        onPressed: () {
+                          return ChangeNotifierProvider.value(
+                            value: playListViewModel,
+                            child: PlayListsMenu(
+                              modelKey: e.modelKey!,
+                              title: e.title,
+                            ),
+                          );
+                        },
+                        refreshPlayList: playListViewModel.refreshPlayList,
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
           ),

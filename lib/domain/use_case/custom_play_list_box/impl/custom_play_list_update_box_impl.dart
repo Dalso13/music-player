@@ -1,4 +1,3 @@
-
 import '../../../model/audio_model.dart';
 import '../../../model/custom_play_list_model.dart';
 import '../../../repository/play_list_repository.dart';
@@ -17,10 +16,11 @@ class CustomPlayListUpdateBoxImpl implements CustomPlayListUpdateBox {
     required String title,
     required List<AudioModel> playList,
   }) async {
-    final data = _playListRepository.box.get(key);
-    if (data != null){
-      await _playListRepository.box.put(key , CustomPlayListModel(
-          title: title, playList: playList, modelKey: key));
-    }
+    await _playListRepository.updatePlayList(
+        listModel: CustomPlayListModel(
+      title: title,
+      playList: playList,
+      modelKey: key,
+    ));
   }
 }

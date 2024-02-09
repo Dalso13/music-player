@@ -15,10 +15,10 @@ class PlayListRepositoryImpl implements PlayListRepository {
   }
 
   @override
-  Box<CustomPlayListModel> get box => _box;
-
-  @override
-  List<CustomPlayListModel> get playList => _playList;
+  List<CustomPlayListModel> get playList {
+    _getCustomPlayLists();
+    return _playList;
+  }
 
   void _getCustomPlayLists() {
     _playList = _box.values.toList();
@@ -37,14 +37,47 @@ class PlayListRepositoryImpl implements PlayListRepository {
     final data = await _songRepository.getAudioSource();
     final newData = _playList.map((e1) {
       return CustomPlayListModel(
-        title: e1.title,
-        modelKey: e1.modelKey,
-        playList: e1.playList.where((element) => data.contains(element)).toList()
-      );
+          title: e1.title,
+          modelKey: e1.modelKey,
+          playList:
+              e1.playList.where((element) => data.contains(element)).toList());
     }).toList();
 
     await _box.clear();
     await _box.addAll(newData);
     _getCustomPlayLists();
   }
+
+  @override
+  Future<void> setPlayList(
+      {required CustomPlayListModel listModel}) async {
+    int key = await _box.add(CustomPlayListModel(
+      title: listModel.title,
+      playList: listModel.playList,
+    ));
+    final model = CustomPlayListModel(
+        title: listModel.title, playList: listModel.playList, modelKey: key);
+    await _box.put(key, model);
+
+  }
+
+  @override
+  Future<void> updatePlayList({required CustomPlayListModel listModel}) async {
+    final data = _box.get(listModel.modelKey);
+    if (data != null) {
+      await _box.put(
+        listModel.modelKey,
+        CustomPlayListModel(
+          title: listModel.title,
+          playList: listModel.playList,
+          modelKey: listModel.modelKey,
+        ),
+      );
+    }
+  }
+  @override
+  void removePlayList({required int key}) async {
+    await _box.delete(key);
+  }
+
 }

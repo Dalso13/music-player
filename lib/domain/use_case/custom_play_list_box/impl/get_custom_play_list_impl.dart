@@ -12,6 +12,6 @@ class GetCustomPlayListImpl implements GetCustomPlayList {
 
   @override
   List<CustomPlayListModel> execute() {
-    return _playListRepository.box.values.toList();
+    return _playListRepository.playList;
   }
 }
