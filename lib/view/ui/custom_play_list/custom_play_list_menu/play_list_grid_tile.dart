@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:pristine_sound/view/ui/custom_play_list/custom_play_list_menu/play_lists_menu.dart';
-import 'package:provider/provider.dart';
-
 import '../../../../domain/model/custom_play_list_model.dart';
-import '../../../view_model/play_list_view_model.dart';
 import '../../audio_part/audio_image.dart';
 
 class PlayListGridTile extends StatelessWidget {
   final CustomPlayListModel _model;
+  final Function() _onPressed;
+  final void Function() _refreshPlayList;
 
   const PlayListGridTile({
     super.key,
     required CustomPlayListModel model,
-  }) : _model = model;
+    required Function() onPressed,
+    required void Function() refreshPlayList,
+  })  : _model = model,
+        _onPressed = onPressed,
+        _refreshPlayList = refreshPlayList;
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +30,6 @@ class PlayListGridTile extends StatelessWidget {
         ),
         trailing: IconButton(
             onPressed: () {
-              final viewModel =
-                  Provider.of<PlayListViewModel>(context, listen: false);
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
@@ -40,17 +40,13 @@ class PlayListGridTile extends StatelessWidget {
                   return DraggableScrollableSheet(
                     expand: false,
                     initialChildSize: 0.3,
-                    builder: (context, scrollController) =>
-                        ChangeNotifierProvider.value(
-                            value: viewModel,
-                            child: PlayListsMenu(
-                              modelKey: _model.modelKey ?? -1,
-                              title: _model.title,
-                            )),
+                    builder: (context, scrollController) {
+                      return _onPressed();
+                    }
                   );
                 },
               ).then((_) {
-                context.read<PlayListViewModel>().refreshPlayList();
+                _refreshPlayList();
               });
             },
             icon: const Icon(Icons.more_vert_outlined, color: Colors.white)),

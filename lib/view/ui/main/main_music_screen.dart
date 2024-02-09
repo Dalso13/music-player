@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:pristine_sound/view/ui_sealed/drawer_event.dart';
 import 'package:provider/provider.dart';
 
+import '../../../domain/model/audio_model.dart';
 import '../../view_model/audio_view_model.dart';
 import '../../view_model/main_view_model.dart';
 import '../audio_part/audio_bar_check.dart';
+import '../sleep_timer/sleep_timer.dart';
+import '../song_part/detail_song_menu.dart';
 import '../song_part/music_list.dart';
 import 'drawer_menu.dart';
 import 'main_bottom_navigation_bar.dart';
@@ -22,8 +26,36 @@ class MainMusicScreen extends StatelessWidget {
         title: const Text('Pristine Sound'),
         backgroundColor: Theme.of(context).primaryColorLight,
       ),
-      endDrawer: const Drawer(
-        child: DrawerMenu(),
+      endDrawer: Drawer(
+        child: DrawerMenu(
+          state: mainViewModel.mainState,
+          onTab: (DrawerEvent event) {
+            switch (event) {
+              case HomeChange():
+                mainViewModel.homeChange();
+                break;
+              case PlayListChange():
+                mainViewModel.playListChange();
+                break;
+              case SleepTimerOnTap():
+                showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (context) {
+                    return ChangeNotifierProvider.value(
+                      value: audioViewModel,
+                      child: SleepTimer(
+                        oldHour: audioViewModel.state.hour,
+                        oldMinutes: audioViewModel.state.minutes,
+                        oldSleepTimerEnabled:
+                            audioViewModel.state.isSleepTimerEnabled,
+                      ),
+                    );
+                  },
+                );
+            }
+          },
+        ),
       ),
       body: Column(
         children: [
@@ -41,14 +73,66 @@ class MainMusicScreen extends StatelessWidget {
                       children: [
                         state.songList.isEmpty
                             ? const Center(child: Text("Nothing found!"))
-                            : MusicList(audioModel: state.songList),
+                            : MusicList(
+                                audioModel: state.songList,
+                                currentId: state.nowPlaySong.id,
+                                playMusic: ({required AudioModel audioModel}) {
+                                  audioViewModel.playMusic(
+                                      index:
+                                          state.songList.indexOf(audioModel));
+                                },
+                                onLongPress: (
+                                    {required AudioModel audioModel}) {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(30))),
+                                    builder: (context) {
+                                      return DraggableScrollableSheet(
+                                        expand: false,
+                                        initialChildSize: 0.3,
+                                        builder: (context, scrollController) =>
+                                            ChangeNotifierProvider.value(
+                                          value: audioViewModel,
+                                          child:
+                                              DetailSongMenu(song: audioModel),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                detailSongMenu: (
+                                    {required AudioModel audioModel}) {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(30))),
+                                    builder: (context) {
+                                      return DraggableScrollableSheet(
+                                        expand: false,
+                                        initialChildSize: 0.3,
+                                        builder: (context, scrollController) =>
+                                            ChangeNotifierProvider.value(
+                                          value: audioViewModel,
+                                          child:
+                                              DetailSongMenu(song: audioModel),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
                         const MainPlayListScreen(),
                         //const Center(child: Text('준비중'),)
                       ],
                     ),
             ),
           ),
-          AudioBarCheck(isBool: audioViewModel.state.playList.isNotEmpty),
+          const AudioBarCheck(),
         ],
       ),
       floatingActionButton: FloatingActionButton(

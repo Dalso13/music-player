@@ -27,7 +27,6 @@ class MyAudioHandler extends BaseAudioHandler {
     _listenForDurationChanges();
     _listenForCurrentSongIndexChanges();
     _listenForSequenceStateChanges();
-
   }
 
   Future<void> _loadEmptyPlaylist() async {
@@ -41,12 +40,10 @@ class MyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> addQueueItems(List<MediaItem> mediaItems) async {
     await _player.setShuffleModeEnabled(false);
-    if (_player.playing){
-      await _player.pause();
-    }
+    await stop();
     final audioSource = mediaItems.map(_createAudioSource);
     await _playlist.clear();
-    _playlist.addAll(audioSource.toList());
+    await _playlist.addAll(audioSource.toList());
 
     queue.add(mediaItems);
   }
@@ -62,7 +59,6 @@ class MyAudioHandler extends BaseAudioHandler {
     queue.add(newQueue);
   }
 
-
   @override
   Future<void> insertQueueItem(int index, MediaItem mediaItem) async {
     // manage Just Audio
@@ -75,11 +71,10 @@ class MyAudioHandler extends BaseAudioHandler {
       //final newQueue = queue.value..insert(index,mediaItem);
       //queue.add(newQueue);
     } else {
-      _playlist.insert(index,audioSource);
+      _playlist.insert(index, audioSource);
       final newQueue = queue.value..insert(index, mediaItem);
       queue.add(newQueue);
     }
-
   }
 
   UriAudioSource _createAudioSource(MediaItem mediaItem) {
@@ -91,9 +86,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> skipToQueueItem(int index) async {
-    if (_playlist.children.isEmpty) return;
-    // await _player.seek(Duration.zero,index: index);
-    await _player.setAudioSource(_playlist, initialIndex: index);
+    await _player.seek(Duration.zero,index: index);
   }
 
   void _notifyAudioHandlerAboutPlaybackEvents() {
@@ -160,7 +153,6 @@ class MyAudioHandler extends BaseAudioHandler {
       mediaItem.add(playlist[index]);
     });
   }
-
 
   void _listenForSequenceStateChanges() {
     _player.sequenceStateStream.listen((SequenceState? sequenceState) {
@@ -235,7 +227,6 @@ class MyAudioHandler extends BaseAudioHandler {
   //   }
   // }
 
-
   @override
   Future<void> setShuffleMode(AudioServiceShuffleMode shuffleMode) async {
     final oldIndices = _player.effectiveIndices!;
@@ -251,12 +242,11 @@ class MyAudioHandler extends BaseAudioHandler {
         _player.setShuffleModeEnabled(true);
         _player.shuffle();
         final playlist =
-        _player.shuffleIndices!.map((index) => queue.value[index]).toList();
+            _player.shuffleIndices!.map((index) => queue.value[index]).toList();
         queue.add(playlist);
         break;
     }
   }
-
 
   Timer? _sleepTimer;
 
@@ -267,14 +257,12 @@ class MyAudioHandler extends BaseAudioHandler {
       super.stop();
     }
     if (name == 'sleepTimerStart') {
-
       if (_sleepTimer != null) {
         _sleepTimer!.cancel();
       }
-      if (extras != null &&
-          extras['time'] > 0) {
+      if (extras != null && extras['time'] > 0) {
         _sleepTimer = Timer(Duration(minutes: extras['time']), () {
-          if (_player.playing){
+          if (_player.playing) {
             pause();
           }
           customAction(name, extras);
@@ -287,9 +275,6 @@ class MyAudioHandler extends BaseAudioHandler {
       }
     }
   }
-
-
-
 
   @override
   Future<void> stop() async {

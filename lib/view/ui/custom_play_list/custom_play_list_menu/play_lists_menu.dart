@@ -77,13 +77,11 @@ class PlayListsMenu extends StatelessWidget {
             InkWell(
               onTap: () async {
                 playListViewModel.textEditingController.text = _title;
-                final viewModel =
-                Provider.of<PlayListViewModel>(context, listen: false);
                 showDialog(
                   context: context,
                   builder: (context) {
                     return ChangeNotifierProvider.value(
-                        value: viewModel,
+                        value: playListViewModel,
                         child: PlayListsDialog(
                           modalKey: _modelKey,
                         ));

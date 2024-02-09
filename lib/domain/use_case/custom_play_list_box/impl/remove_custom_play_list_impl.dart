@@ -11,7 +11,7 @@ class RemoveCustomPlayListImpl implements RemoveCustomPlayList{
 
   @override
   void execute({required int key}) {
-    _playListRepository.box.delete(key);
+    _playListRepository.removePlayList(key: key);
   }
 
 }

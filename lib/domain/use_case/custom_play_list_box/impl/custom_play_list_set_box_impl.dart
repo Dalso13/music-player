@@ -1,5 +1,4 @@
 
-
 import '../../../model/audio_model.dart';
 import '../../../model/custom_play_list_model.dart';
 import '../../../repository/play_list_repository.dart';
@@ -13,17 +12,11 @@ class CustomPlayListSetBoxImpl implements CustomPlayListSetBox{
   }) : _playListRepository = playListRepository;
 
   @override
-  Future<CustomPlayListModel> execute({required String title,
+  Future<void> execute({required String title,
     required List<AudioModel> playList,}) async{
 
-    int key = await _playListRepository.box.add(CustomPlayListModel(
+    await _playListRepository.setPlayList(listModel: CustomPlayListModel(
         title: title, playList: playList));
-
-    final model = CustomPlayListModel(
-        title: title, playList: playList, modelKey: key);
-    await _playListRepository.box.put(key, model);
-
-    return model;
   }
 
 }

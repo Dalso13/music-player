@@ -215,7 +215,7 @@ class AudioViewModel extends ChangeNotifier {
     _audioState = _audioState.copyWith(hour: hour);
     notifyListeners();
   }
-  void changeSecond({required int minutes}) {
+  void changeMinute({required int minutes}) {
     _audioState = _audioState.copyWith(minutes: minutes);
     notifyListeners();
   }

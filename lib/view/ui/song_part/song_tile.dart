@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-
 import '../../../domain/model/audio_model.dart';
-import '../../view_model/audio_view_model.dart';
 import '../audio_part/audio_image.dart';
-import 'detail_song_menu.dart';
 
 class SongTile extends StatelessWidget {
   final AudioModel _song;
   final bool _isEqual;
+  final void Function({required AudioModel audioModel}) _detailSongMenu;
 
-  const SongTile({super.key, required AudioModel song, required bool isEqual})
-      : _song = song,
+  const SongTile({
+    super.key,
+    required void Function({required AudioModel audioModel}) detailSongMenu,
+    required AudioModel song,
+    required bool isEqual,
+  })  : _detailSongMenu = detailSongMenu,
+        _song = song,
         _isEqual = isEqual;
 
   @override
@@ -27,18 +29,18 @@ class SongTile extends StatelessWidget {
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-            Text(
-              _song.artist,
-              overflow: TextOverflow.ellipsis,
-              softWrap: false,
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
-            ),
+          Text(
+            _song.artist,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            style: const TextStyle(color: Colors.grey, fontSize: 12),
+          ),
           Expanded(
             child: Align(
               alignment: Alignment.bottomRight,
               child: Text(
-                DateFormat('mm:ss')
-                    .format(DateTime.fromMillisecondsSinceEpoch(_song.duration)),
+                DateFormat('mm:ss').format(
+                    DateTime.fromMillisecondsSinceEpoch(_song.duration)),
                 overflow: TextOverflow.ellipsis,
                 softWrap: false,
                 maxLines: 1,
@@ -51,24 +53,7 @@ class SongTile extends StatelessWidget {
       leading: AudioImage(audioId: _song.id),
       trailing: IconButton(
         onPressed: () {
-          final myModel = Provider.of<AudioViewModel>(context, listen: false);
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
-            builder: (context) {
-              return DraggableScrollableSheet(
-                expand: false,
-                initialChildSize: 0.3,
-                builder: (context, scrollController) =>
-                    ChangeNotifierProvider.value(
-                  value: myModel,
-                  child: DetailSongMenu(song: _song),
-                ),
-              );
-            },
-          );
+            _detailSongMenu(audioModel: _song);
         },
         icon: Icon(
           Icons.more_vert_outlined,

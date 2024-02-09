@@ -1,6 +1,6 @@
 enum ScreenChangeState {
   home(idx : 0),
-  playList(idx :1);
+  playList(idx : 1);
 
   final int idx;
 

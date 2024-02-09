@@ -15,9 +15,13 @@ class SetMusicList implements PlayListSetting {
   @override
   Future<void> execute({required List<AudioModel> songList , int? index}) async {
 
-    await _audioService.addQueueItems(songList.map((e) => e.toMediaItem()).toList());
-    if(index == null || index <= 0) return;
-    await _audioService.skipToQueueItem(index);
+    final data = songList.map((e) => e.toMediaItem()).toList();
+    await _audioService.addQueueItems(data);
+    if (index != null) {
+      await _audioService.skipToQueueItem(index);
+    } else {
+      await _audioService.skipToQueueItem(0);
+    }
   }
 
 }
