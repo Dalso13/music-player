@@ -5,10 +5,10 @@ import 'package:provider/provider.dart';
 import '../../../view_model/play_list_view_model.dart';
 
 class OnlyOnePlayListMenu extends StatelessWidget {
-  final int _modelKey;
+  final int _index;
   const OnlyOnePlayListMenu({
-    super.key, required int modelKey,
-  }) : _modelKey = modelKey;
+    super.key, required int index,
+  }) : _index = index;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class OnlyOnePlayListMenu extends StatelessWidget {
           children: [
             InkWell(
               onTap: () async {
-                await context.push('/custom-play-list/add-music', extra: _modelKey);
+                await context.push('/custom-play-list/add-music', extra: _index);
                 hiveViewModel.refreshPlayList();
               },
               child: Container(
@@ -47,7 +47,7 @@ class OnlyOnePlayListMenu extends StatelessWidget {
             ),
             InkWell(
               onTap: () async {
-                await context.push('/custom-play-list/remove-music', extra: _modelKey);
+                await context.push('/custom-play-list/remove-music', extra: _index);
                 hiveViewModel.refreshPlayList();
               },
               child: Container(

@@ -1,4 +1,4 @@
 
 abstract interface class RemoveCustomPlayList {
-  void execute({required int key});
+  void execute({required int index});
 }

@@ -13,12 +13,12 @@ import 'custom_play_list_menu/only_one_play_list_menu.dart';
 import 'custom_play_list_menu/play_lists_dialog.dart';
 
 class PlayListDetailScreen extends StatelessWidget {
-  final int _modelKey;
+  final int _index;
 
   const PlayListDetailScreen({
     super.key,
-    required int modelKey,
-  }) : _modelKey = modelKey;
+    required int index,
+  }) : _index = index;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class PlayListDetailScreen extends StatelessWidget {
     final PlayListViewModel playListViewModel =
         context.watch<PlayListViewModel>();
     final model = playListViewModel
-        .state.customPlayList[playListViewModel.getIndex(_modelKey)];
+        .state.customPlayList[_index];
     return Scaffold(
         body: CustomScrollView(
           slivers: [
@@ -76,7 +76,7 @@ class PlayListDetailScreen extends StatelessWidget {
                                       return ChangeNotifierProvider.value(
                                         value: playListViewModel,
                                         child: PlayListsDialog(
-                                          modalKey: _modelKey,
+                                          index: _index,
                                         ),
                                       );
                                     },
@@ -84,7 +84,7 @@ class PlayListDetailScreen extends StatelessWidget {
                                       return ChangeNotifierProvider.value(
                                         value: playListViewModel,
                                         child: OnlyOnePlayListMenu(
-                                          modelKey: _modelKey,
+                                          index: _index,
                                         ),
                                       );
                                     },

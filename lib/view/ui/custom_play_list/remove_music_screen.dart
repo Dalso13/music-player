@@ -6,12 +6,12 @@ import '../../view_model/play_list_view_model.dart';
 import '../audio_part/audio_image.dart';
 
 class RemoveMusicScreen extends StatelessWidget {
-  final int _modelKey;
+  final int _index;
 
   const RemoveMusicScreen({
     super.key,
-    required int modelKey,
-  }) : _modelKey = modelKey;
+    required int index,
+  }) : _index = index;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class RemoveMusicScreen extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                playListViewModel.removePlayListSong(modelKey: _modelKey);
+                playListViewModel.removePlayListSong(index: _index);
                 context.pop();
               },
               icon: const Icon(Icons.check))
@@ -32,7 +32,7 @@ class RemoveMusicScreen extends StatelessWidget {
       ),
       body: ListView(
         children: playListViewModel
-            .state.customPlayList[playListViewModel.getIndex(_modelKey)].playList
+            .state.customPlayList[_index].playList
             .toList()
             .map((e) {
           return ListTile(

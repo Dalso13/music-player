@@ -4,6 +4,6 @@ abstract interface class PlayListRepository {
   get playList;
   void dataCheck();
   Future<void> setPlayList({required CustomPlayListModel listModel});
-  Future<void> updatePlayList({required CustomPlayListModel listModel});
-  void removePlayList({required int key});
+  Future<void> updatePlayList({required CustomPlayListModel listModel, required int index});
+  void removePlayList({required int index});
 }

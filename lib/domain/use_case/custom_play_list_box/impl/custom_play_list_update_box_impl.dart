@@ -15,12 +15,13 @@ class CustomPlayListUpdateBoxImpl implements CustomPlayListUpdateBox {
     required int key,
     required String title,
     required List<AudioModel> playList,
+    required int index,
   }) async {
     await _playListRepository.updatePlayList(
         listModel: CustomPlayListModel(
       title: title,
       playList: playList,
       modelKey: key,
-    ));
+    ), index: index);
   }
 }

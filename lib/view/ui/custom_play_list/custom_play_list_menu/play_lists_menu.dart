@@ -5,14 +5,14 @@ import 'package:provider/provider.dart';
 import '../../../view_model/play_list_view_model.dart';
 
 class PlayListsMenu extends StatelessWidget {
-  final int _modelKey;
+  final int _index;
   final String _title;
 
   const PlayListsMenu({
     super.key,
-    required int modelKey,
+    required int index,
     required String title,
-  })  : _modelKey = modelKey,
+  })  : _index = index,
         _title = title;
 
   @override
@@ -23,6 +23,7 @@ class PlayListsMenu extends StatelessWidget {
         width: double.maxFinite,
         child: Column(
           children: [
+            // TODO: Remove 이슈 떔에 막아둠
             InkWell(
               onTap: () async {
                 showDialog(
@@ -34,7 +35,7 @@ class PlayListsMenu extends StatelessWidget {
                       actions: <Widget>[
                         ElevatedButton(
                           onPressed: () {
-                            playListViewModel.removePlayList(modelKey: _modelKey);
+                            playListViewModel.removePlayList(index: _index);
                             Navigator.of(context).pop(); //창 닫기
                           },
                           child: const Text("yes"),
@@ -83,7 +84,7 @@ class PlayListsMenu extends StatelessWidget {
                     return ChangeNotifierProvider.value(
                         value: playListViewModel,
                         child: PlayListsDialog(
-                          modalKey: _modelKey,
+                          index: _index,
                         ));
                   },
                 ).then((value) {

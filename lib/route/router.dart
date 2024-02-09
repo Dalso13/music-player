@@ -25,14 +25,14 @@ final router = GoRouter(
     GoRoute(
       path: '/custom-play-list',
       builder: (context, state) {
-        int modelKey = state.extra as int;
+        int index = state.extra as int;
         return MultiProvider(
           providers: [
             ChangeNotifierProvider.value(value: _audioViewModel),
             ChangeNotifierProvider(create: (_) => getIt<PlayListViewModel>()),
           ],
           child: PlayListDetailScreen(
-            modelKey: modelKey,
+            index: index,
           ),
         );
       },
@@ -40,14 +40,14 @@ final router = GoRouter(
     GoRoute(
       path: '/custom-play-list/add-music',
       builder: (context, state) {
-        int modelKey = state.extra as int;
+        int index = state.extra as int;
         return MultiProvider(
           providers: [
             ChangeNotifierProvider.value(value: _audioViewModel),
             ChangeNotifierProvider(create: (_) => getIt<PlayListViewModel>()),
           ],
           child: AddMusicScreen(
-            modelKey: modelKey,
+            index: index,
           ),
         );
       },
@@ -55,14 +55,14 @@ final router = GoRouter(
     GoRoute(
       path: '/custom-play-list/remove-music',
       builder: (context, state) {
-        int modelKey = state.extra as int;
+        int index = state.extra as int;
         return MultiProvider(
           providers: [
             ChangeNotifierProvider.value(value: _audioViewModel),
             ChangeNotifierProvider(create: (_) => getIt<PlayListViewModel>()),
           ],
           child: RemoveMusicScreen(
-            modelKey: modelKey,
+            index: index,
           ),
         );
       },

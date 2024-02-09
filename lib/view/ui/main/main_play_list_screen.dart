@@ -53,7 +53,7 @@ class MainPlayListScreen extends StatelessWidget {
                     (e) => GestureDetector(
                       onTap: () async {
                         await context.push('/custom-play-list',
-                            extra: playListViewModel.getIndex(e.modelKey!));
+                            extra: playListViewModel.getIndex(e));
                         playListViewModel.refreshPlayList();
                       },
                       child: PlayListGridTile(
@@ -62,7 +62,7 @@ class MainPlayListScreen extends StatelessWidget {
                           return ChangeNotifierProvider.value(
                             value: playListViewModel,
                             child: PlayListsMenu(
-                              modelKey: e.modelKey!,
+                              index: playListViewModel.getIndex(e),
                               title: e.title,
                             ),
                           );

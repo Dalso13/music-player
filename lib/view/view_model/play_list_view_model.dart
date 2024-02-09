@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:pristine_sound/domain/model/custom_play_list_model.dart';
 
 import '../../domain/model/audio_model.dart';
 import '../../domain/use_case/custom_play_list_box/interface/custom_play_list_data_check.dart';
@@ -39,11 +40,8 @@ class PlayListViewModel extends ChangeNotifier {
 
   PlayListState get state => _state;
 
-  int getIndex(int modelKey) {
-    return _state.customPlayList
-        .map((e) => e.modelKey)
-        .toList()
-        .indexOf(modelKey);
+  int getIndex(CustomPlayListModel model) {
+    return _state.customPlayList.toList().indexOf(model);
   }
 
   void refreshPlayList() {
@@ -53,7 +51,8 @@ class PlayListViewModel extends ChangeNotifier {
   }
 
   void setPlayList() async {
-    await _customPlayListSetBox.execute(title: _textEditingController.text, playList: []);
+    await _customPlayListSetBox
+        .execute(title: _textEditingController.text, playList: []);
     refreshPlayList();
     notifyListeners();
   }
@@ -62,9 +61,9 @@ class PlayListViewModel extends ChangeNotifier {
     _customPlayListDataCheck.execute();
   }
 
-  void removePlayListSong({required int modelKey}) async {
+  void removePlayListSong({required int index}) async {
     if (_state.selectList.isEmpty) return;
-    final list = _state.customPlayList[getIndex(modelKey)];
+    final list = _state.customPlayList[index];
     final playList = list.playList.toList();
     if (list.modelKey == null) return;
 
@@ -72,35 +71,41 @@ class PlayListViewModel extends ChangeNotifier {
       playList.remove(element);
     }
     await _customPlayListUpdateBox.execute(
-        title: list.title, playList: playList, key: list.modelKey!);
-
-    notifyListeners();
-  }
-
-  void removePlayList({required int modelKey}) async {
-    _removeCustomPlayList.execute(key: modelKey);
-    notifyListeners();
-  }
-
-  void addSongPlayList({required int modelKey}) async {
-    if (_state.selectList.isEmpty) return;
-    final list = _state.customPlayList[getIndex(modelKey)];
-    if (list.modelKey == null) return;
-    await _customPlayListUpdateBox.execute(
       title: list.title,
-      playList: list.playList.toList()..addAll(_state.selectList),
+      playList: playList,
       key: list.modelKey!,
+      index: index,
     );
 
     notifyListeners();
   }
 
-  void changeTitle({required int modelKey}) async {
-    final list = _state.customPlayList[getIndex(modelKey)];
+  void removePlayList({required int index}) async {
+    _removeCustomPlayList.execute(index: index);
+    notifyListeners();
+  }
+
+  void addSongPlayList({required int index}) async {
+    if (_state.selectList.isEmpty) return;
+    final list = _state.customPlayList[index];
+    if (list.modelKey == null) return;
+    await _customPlayListUpdateBox.execute(
+      title: list.title,
+      playList: list.playList.toList()..addAll(_state.selectList),
+      key: list.modelKey!,
+      index: index,
+    );
+
+    notifyListeners();
+  }
+
+  void changeTitle({required int index}) async {
+    final list = _state.customPlayList[index];
     await _customPlayListUpdateBox.execute(
       title: _textEditingController.text,
       playList: list.playList,
       key: list.modelKey!,
+      index: index,
     );
     refreshPlayList();
     notifyListeners();

@@ -7,12 +7,12 @@ import '../../view_model/play_list_view_model.dart';
 import '../audio_part/audio_image.dart';
 
 class AddMusicScreen extends StatelessWidget {
-  final int _modelKey;
+  final int _index;
 
   const AddMusicScreen({
     super.key,
-    required int modelKey,
-  }) : _modelKey = modelKey;
+    required int index,
+  }) : _index = index;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class AddMusicScreen extends StatelessWidget {
     final list = mainState.songList
         .where((e) =>
           playListState
-                .customPlayList[playListViewModel.getIndex(_modelKey)].playList
+                .customPlayList[_index].playList
                 .toList()
                 .contains(e) ==
             false)
@@ -36,7 +36,7 @@ class AddMusicScreen extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                playListViewModel.addSongPlayList(modelKey: _modelKey);
+                playListViewModel.addSongPlayList(index: _index);
                 context.pop();
               },
               icon: const Icon(Icons.check))

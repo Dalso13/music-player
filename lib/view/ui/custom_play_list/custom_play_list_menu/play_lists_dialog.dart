@@ -5,17 +5,17 @@ import 'package:provider/provider.dart';
 import '../../../view_model/play_list_view_model.dart';
 
 class PlayListsDialog extends StatelessWidget {
-  final int? _modalKey;
+  final int? _index;
 
-  const PlayListsDialog({super.key, int? modalKey})
-      : _modalKey = modalKey;
+  const PlayListsDialog({super.key, int? index})
+      : _index = index;
 
   @override
   Widget build(BuildContext context) {
     final PlayListViewModel playListViewModel =
         context.watch<PlayListViewModel>();
     return AlertDialog(
-      title: Text(_modalKey != null ? "change title" : "new play list" ),
+      title: Text(_index != null ? "change title" : "new play list" ),
       content: TextField(
         controller: playListViewModel.textEditingController,
         decoration: const InputDecoration(
@@ -35,15 +35,15 @@ class PlayListsDialog extends StatelessWidget {
           onPressed: () {
             if (playListViewModel.textEditingController.text == '') return;
 
-            if (_modalKey == null) {
+            if (_index == null) {
               playListViewModel.setPlayList();
             } else {
-              playListViewModel.changeTitle(modelKey: _modalKey);
+              playListViewModel.changeTitle(index: _index);
             }
             context.pop();
             playListViewModel.textEditingController.text = '';
           },
-          child: Text(_modalKey != null ? "set" : "create"),
+          child: Text(_index != null ? "set" : "create"),
         ),
       ],
     );

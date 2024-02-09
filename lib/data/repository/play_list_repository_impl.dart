@@ -62,11 +62,11 @@ class PlayListRepositoryImpl implements PlayListRepository {
   }
 
   @override
-  Future<void> updatePlayList({required CustomPlayListModel listModel}) async {
+  Future<void> updatePlayList({required CustomPlayListModel listModel, required int index,}) async {
     final data = _box.get(listModel.modelKey);
     if (data != null) {
-      await _box.put(
-        listModel.modelKey,
+      await _box.putAt(
+        index,
         CustomPlayListModel(
           title: listModel.title,
           playList: listModel.playList,
@@ -76,8 +76,8 @@ class PlayListRepositoryImpl implements PlayListRepository {
     }
   }
   @override
-  void removePlayList({required int key}) async {
-    await _box.delete(key);
+  void removePlayList({required int index}) async {
+    await _box.deleteAt(index);
   }
 
 }

@@ -10,8 +10,8 @@ class RemoveCustomPlayListImpl implements RemoveCustomPlayList{
   }) : _playListRepository = playListRepository;
 
   @override
-  void execute({required int key}) {
-    _playListRepository.removePlayList(key: key);
+  void execute({required int index}) {
+    _playListRepository.removePlayList(index: index);
   }
 
 }
