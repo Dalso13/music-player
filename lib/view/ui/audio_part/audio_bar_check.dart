@@ -33,7 +33,7 @@ class AudioBarCheck extends StatelessWidget {
               child: AudioBar(
                   audioState: audioViewModel.state,
                   progressBarState: audioViewModel.progressNotifier,
-                callback: (event) {
+                onEvent: (event) {
                     switch(event) {
                       case PreviousPlay():
                         audioViewModel.previousPlay();
