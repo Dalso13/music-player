@@ -89,7 +89,14 @@ class MainViewModel extends ChangeNotifier {
 
   Future<void> requestPermissions() async {
     final device = await _getDeviceData.execute();
-    if (int.parse(device['version']) > 12) {
+    // 버전이 3.1.0 이런식으로 들어올때도 있어서 그냥 int로 바꾸기
+    String version = device['version'];
+    int index = version.indexOf('.');
+    if (index > -1) {
+      version = version.substring(0,index);
+    }
+
+   if (int.parse(version) >= 13) {
       await [
         Permission.audio,
         Permission.photos,
@@ -109,7 +116,13 @@ class MainViewModel extends ChangeNotifier {
     notifyListeners();
     final device = await _getDeviceData.execute();
 
-    if (int.parse(device['version']) > 12) {
+    String version = device['version'];
+    int index = version.indexOf('.');
+    if (index > -1) {
+      version = version.substring(0,index);
+    }
+
+    if (int.parse(version) >= 13) {
       if (await Permission.audio.isGranted &&
           await Permission.photos.isGranted &&
           await Permission.videos.isGranted) {
