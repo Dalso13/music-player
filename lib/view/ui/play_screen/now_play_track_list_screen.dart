@@ -19,7 +19,7 @@ class NowPlayTrackListScreen extends StatelessWidget {
       backgroundColor: Color(state.artColor).withOpacity(0.6),
       body: Column(
         children: [
-          const SafeArea(child: AudioBarCheck()),
+          const SafeArea(child: AudioBarCheck(isTrackList: true)),
           Expanded(
             child: Column(
               children: [
