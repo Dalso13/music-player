@@ -37,31 +37,28 @@ class AudioBarCheck extends StatelessWidget {
 
 
             },
-            child: Container(
-              color: Colors.white,
-              child: AudioBar(
-                audioState: audioViewModel.state,
-                progressBarState: audioViewModel.progressNotifier,
-                onEvent: (event) {
-                  switch (event) {
-                    case PreviousPlay():
-                      audioViewModel.previousPlay();
-                      break;
-                    case ClickPlayButton():
-                      audioViewModel.clickPlayButton();
-                      break;
-                    case Seek():
-                      audioViewModel.seek(event.duration);
-                      break;
-                    case NextPlay():
-                      audioViewModel.nextPlay();
-                      break;
-                    case StopMusic():
-                      audioViewModel.stopMusic();
-                      break;
-                  }
-                },
-              ),
+            child: AudioBar(
+              audioState: audioViewModel.state,
+              progressBarState: audioViewModel.progressNotifier,
+              onEvent: (event) {
+                switch (event) {
+                  case PreviousPlay():
+                    audioViewModel.previousPlay();
+                    break;
+                  case ClickPlayButton():
+                    audioViewModel.clickPlayButton();
+                    break;
+                  case Seek():
+                    audioViewModel.seek(event.duration);
+                    break;
+                  case NextPlay():
+                    audioViewModel.nextPlay();
+                    break;
+                  case StopMusic():
+                    audioViewModel.stopMusic();
+                    break;
+                }
+              },
             ),
           )
         : const EmptyAudioBar();

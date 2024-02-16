@@ -12,14 +12,17 @@ class AudioImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return QueryArtworkWidget(
-      keepOldArtwork: true,
-      nullArtworkWidget: Image.asset(_isPlayList
-              ? 'assets/images/play_list_image.png'
-              : 'assets/images/art_image.png'
-          ),
-      id: _audioId,
-      type: ArtworkType.AUDIO,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(40),
+      child: QueryArtworkWidget(
+        keepOldArtwork: true,
+        nullArtworkWidget: Image.asset(_isPlayList
+                ? 'assets/images/play_list_image.png'
+                : 'assets/images/art_image.png'
+            ),
+        id: _audioId,
+        type: ArtworkType.AUDIO,
+      ),
     );
   }
 }

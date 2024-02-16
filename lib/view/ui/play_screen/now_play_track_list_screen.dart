@@ -16,7 +16,7 @@ class NowPlayTrackListScreen extends StatelessWidget {
     final state = viewModel.state;
 
     return Scaffold(
-      backgroundColor: Color(state.artColor).withOpacity(0.6),
+      backgroundColor: Color(state.artColor).withOpacity(0.2),
       body: Column(
         children: [
           const SafeArea(child: AudioBarCheck(isTrackList: true)),
@@ -25,7 +25,13 @@ class NowPlayTrackListScreen extends StatelessWidget {
               children: [
                 Container(
                   width: double.maxFinite,
-                  color: Colors.grey.withOpacity(0.6),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(24),
+                      topRight: Radius.circular(24)
+                    ),
+                    color: Color(state.artColor).withOpacity(0.15)
+                  ),
                   child: Column(
                     children: [
                       Container(
@@ -39,70 +45,74 @@ class NowPlayTrackListScreen extends StatelessWidget {
                         width: 30,
                         height: 5,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Text(
                           'now track list',
-                          style: TextStyle(color: Colors.grey[200]),
+                          style: TextStyle(color: Colors.black),
                         ),
                       ),
                     ],
                   ),
                 ),
                 Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.only(top: 0),
-                    children: state.playList.asMap().entries.map((map) {
-                      int idx = map.key;
-                      final e = map.value;
-                      final bool isEqual = viewModel.state.currentIndex == idx;
-                      return MusicListTile(
-                        audioModel: e,
-                        playMusic: ({required AudioModel audioModel}) {
-                          viewModel.clickPlayListSong(idx: idx);
-                        },
-                        onLongPress: ({required AudioModel audioModel}) {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(30))),
-                            builder: (context) {
-                              return DraggableScrollableSheet(
-                                expand: false,
-                                initialChildSize: 0.3,
-                                builder: (context, scrollController) =>
-                                    ChangeNotifierProvider.value(
-                                  value: viewModel,
-                                  child: DetailSongMenu(song: e),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        isEqual: isEqual,
-                        detailSongMenu: ({required AudioModel audioModel}) {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
-                            builder: (context) {
-                              return DraggableScrollableSheet(
-                                expand: false,
-                                initialChildSize: 0.3,
-                                builder: (context, scrollController) =>
-                                    ChangeNotifierProvider.value(
-                                      value: viewModel,
-                                      child: DetailSongMenu(song: e),
-                                    ),
-                              );
-                            },
-                          );
-                        },
-                      );
-                    }).toList(),
+                  child: Container(
+                    color: Color(state.artColor).withOpacity(0.15),
+                    child: ListView(
+                      padding: const EdgeInsets.only(top: 0),
+                      children: state.playList.asMap().entries.map((map) {
+                        int idx = map.key;
+                        final e = map.value;
+                        final bool isEqual = viewModel.state.currentIndex == idx;
+                        return MusicListTile(
+                          audioModel: e,
+                          playMusic: ({required AudioModel audioModel}) {
+                            viewModel.clickPlayListSong(idx: idx);
+                          },
+                          onLongPress: ({required AudioModel audioModel}) {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(30))),
+                              builder: (context) {
+                                return DraggableScrollableSheet(
+                                  expand: false,
+                                  initialChildSize: 0.3,
+                                  builder: (context, scrollController) =>
+                                      ChangeNotifierProvider.value(
+                                    value: viewModel,
+                                    child: DetailSongMenu(song: e),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          isEqual: isEqual,
+                          detailSongMenu: ({required AudioModel audioModel}) {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(30))),
+                              builder: (context) {
+                                return DraggableScrollableSheet(
+                                  expand: false,
+                                  initialChildSize: 0.3,
+                                  builder: (context, scrollController) =>
+                                      ChangeNotifierProvider.value(
+                                    value: viewModel,
+                                    child: DetailSongMenu(song: e),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               ],

@@ -33,14 +33,18 @@ class NowPlayTrackScreen extends StatelessWidget {
               opacity: 0.2,
               child: ImageFiltered(
                 imageFilter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
-                child: QueryArtworkWidget(
-                  artworkQuality: FilterQuality.high,
-                  keepOldArtwork: true,
-                  nullArtworkWidget: Image.asset(
-                    'assets/images/art_image.png',
+                child: FittedBox(
+                  fit: BoxFit.fitHeight,
+                  child: QueryArtworkWidget(
+                    artworkBorder: BorderRadius.circular(0),
+                    artworkQuality: FilterQuality.high,
+                    keepOldArtwork: true,
+                    nullArtworkWidget: Image.asset(
+                      'assets/images/art_image.png',
+                    ),
+                    id: song.id,
+                    type: ArtworkType.AUDIO,
                   ),
-                  id: song.id,
-                  type: ArtworkType.AUDIO,
                 ),
               ),
             ),
@@ -67,7 +71,7 @@ class NowPlayTrackScreen extends StatelessWidget {
                       ),
                       ClipRRect(
                         borderRadius:
-                            const BorderRadius.all(Radius.circular(8.0)),
+                            const BorderRadius.all(Radius.circular(48.0)),
                         child: SizedBox(
                           width: 250,
                           height: 250,
@@ -201,23 +205,24 @@ class NowPlayTrackScreen extends StatelessWidget {
                   height: 10,
                 ),
                 ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[800]
+                  ),
                   onPressed: () {
-                    final myModel =
-                        Provider.of<AudioViewModel>(context, listen: false);
                     showMaterialModalBottomSheet(
                         context: context,
                         builder: (context) {
                           return ChangeNotifierProvider.value(
-                              value: myModel,
+                              value: viewModel,
                               child: const NowPlayTrackListScreen());
                         });
                   },
                   icon: const Icon(
                     Icons.playlist_play,
                     size: 36,
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
-                  label: const Text('next track', style: TextStyle(color: Colors.black)),
+                  label: const Text('NEXT TRACK', style: TextStyle(color: Colors.white)),
                 )
               ],
             ),
