@@ -2,8 +2,11 @@
 
 ![App Store and Google Play template (Community)](https://github.com/Dalso13/music-player/assets/119721317/2c573dcd-fb03-47e0-927e-5dc4177307f7)
 
-플러터로 제작한 로컬 뮤직 플레이어 입니다.
-로컬에 있는 뮤직 파일을 불러와
+
+스토어 링크 : [Play Store](https://play.google.com/store/apps/details?id=com.dalso.pristine_sound&pli=1)
+
+플러터로 제작한 로컬 뮤직 플레이어 입니다. </br>
+로컬에 있는 뮤직 파일을 불러와 </br>
 다양한 오디오 조작, 트랙 리스트 구성, 커스텀 플레이리스트, 취침 타이머 기능을 제공하고 있습니다.
 
 
